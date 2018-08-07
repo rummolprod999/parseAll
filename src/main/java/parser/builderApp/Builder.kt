@@ -20,6 +20,7 @@ object BuilderApp {
     lateinit var TempPath: String
     lateinit var LogPath: String
     lateinit var LogFile: String
+    lateinit var UrlConnect: String
 }
 
 const val arguments = "salavat"
@@ -93,6 +94,7 @@ class Builder(args: Array<String>) {
         BuilderApp.LogPath = LogPath
         BuilderApp.TempPath = TempPath
         BuilderApp.LogFile = LogFile
+        BuilderApp.UrlConnect = "jdbc:mysql://$Server:$Port/$Database?jdbcCompliantTruncation=false&useUnicode=true&characterEncoding=utf-8&useLegacyDatetimeCode=false&serverTimezone=Europe/Moscow&connectTimeout=5000&socketTimeout=30000"
     }
 }
 
