@@ -10,6 +10,7 @@ abstract class TenderAbstract {
         var AddTender = 0
         var UpdateTender = 0
     }
+
     var etpName = ""
     var etpUrl = ""
 

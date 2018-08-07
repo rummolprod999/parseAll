@@ -5,7 +5,7 @@ import parser.tenders.ITender
 import parser.tenders.TenderAbstract
 
 abstract class ParserAbstract {
-    fun Parse(fn: () -> Unit) {
+    fun parse(fn: () -> Unit) {
         logger("Начало парсинга")
         fn()
         logger("Добавили тендеров ${TenderAbstract.AddTender}")
