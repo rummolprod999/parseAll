@@ -7,9 +7,10 @@ import parser.parsers.IParser
 import parser.parsers.ParserSalavat
 
 class Executor {
+    lateinit var p: IParser
     init {
         when (BuilderApp.arg) {
-            Arguments.SALAVAT -> run { val d = ParserSalavat(); executeParser(d) { parser() } }
+            Arguments.SALAVAT -> run { p = ParserSalavat(); executeParser(p) { parser() } }
         }
     }
 
