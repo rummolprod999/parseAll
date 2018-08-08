@@ -25,7 +25,7 @@ class ParserSalavat : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "http://salavat-neftekhim.gazprom.ru/tenders/#"
+        const val BaseUrl = "http://salavat-neftekhim.gazprom.ru/tenders"
         const val timeoutB = 120L
         const val CountPage = 5
     }
@@ -57,15 +57,20 @@ class ParserSalavat : IParser, ParserAbstract() {
         options.addArguments("no-sandbox")
         val driver = ChromeDriver(options)
         val wait = WebDriverWait(driver, timeoutB)
+        driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
+        driver.manage().deleteAllCookies()
         try {
-            driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
-            driver.manage().deleteAllCookies()
-            (1..CountPage).forEach {
+            driver.get(BaseUrl)
+            try {
+                parserPageN(driver, wait)
+            } catch (e: Exception) {
+                logger("Error in parserPageN function", e.stackTrace, e)
+            }
+            (2..CountPage).forEach {
                 try {
-                    val url = "$BaseUrl$it"
-                    parserPageN(driver, wait, url, it)
+                    parserPageN(driver, wait, it)
                 } catch (e: Exception) {
-                    logger("Error in parserE function", e.stackTrace, e)
+                    logger("Error in parserPageN function", e.stackTrace, e)
                 }
             }
 
@@ -77,12 +82,13 @@ class ParserSalavat : IParser, ParserAbstract() {
 
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait, url: String, np: Int) {
-        driver.get(url)
-        try {
-            val js = driver as JavascriptExecutor
-            js.executeScript("document.querySelectorAll('div.dataTables_paginate span[data-href = \"$np\"]')[0].click()")
-        } catch (e: Exception) {
+    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait, np: Int = 0) {
+        if (np != 0) {
+            try {
+                val js = driver as JavascriptExecutor
+                js.executeScript("document.querySelectorAll('div.dataTables_paginate span[data-href = \"$np\"]')[0].click()")
+            } catch (e: Exception) {
+            }
         }
         Thread.sleep(5000)
         driver.switchTo().defaultContent()
