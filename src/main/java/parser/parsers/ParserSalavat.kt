@@ -1,6 +1,7 @@
 package parser.parsers
 
 import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -26,7 +27,7 @@ class ParserSalavat : IParser, ParserAbstract() {
     companion object WebCl {
         const val BaseUrl = "http://salavat-neftekhim.gazprom.ru/tenders/#"
         const val timeoutB = 120L
-        const val CountPage = 7
+        const val CountPage = 5
     }
 
     override fun parser() = parse { parserSalavat() }
@@ -62,7 +63,7 @@ class ParserSalavat : IParser, ParserAbstract() {
             (1..CountPage).forEach {
                 try {
                     val url = "$BaseUrl$it"
-                    parserPageN(driver, wait, url)
+                    parserPageN(driver, wait, url, it)
                 } catch (e: Exception) {
                     logger("Error in parserE function", e.stackTrace, e)
                 }
@@ -76,11 +77,16 @@ class ParserSalavat : IParser, ParserAbstract() {
 
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait, url: String) {
+    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait, url: String, np: Int) {
         driver.get(url)
+        try {
+            val js = driver as JavascriptExecutor
+            js.executeScript("document.querySelectorAll('div.dataTables_paginate span[data-href = \"$np\"]')[0].click()")
+        } catch (e: Exception) {
+        }
+        Thread.sleep(5000)
         driver.switchTo().defaultContent()
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//section[@class = 'dataTables_wrapper']//table[contains(@class, 'text_data')]/tbody")))
-        Thread.sleep(5000)
         driver.switchTo().defaultContent()
         val tenders = driver.findElements(By.xpath("//section[@class = 'dataTables_wrapper']//table[contains(@class, 'text_data')]/tbody/tr"))
         tenders.forEach {
