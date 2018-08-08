@@ -66,7 +66,7 @@ class ParserSalavat : IParser, ParserAbstract() {
             } catch (e: Exception) {
                 logger("Error in parserPageN function", e.stackTrace, e)
             }
-            (2..CountPage).forEach {
+            (1..CountPage).forEach {
                 try {
                     parserPageN(driver, wait, it)
                 } catch (e: Exception) {
