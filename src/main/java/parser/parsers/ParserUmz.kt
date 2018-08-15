@@ -29,7 +29,7 @@ class ParserUmz : IParser, ParserAbstract() {
     companion object WebCl {
         const val BaseUrl = "http://umz-vrn.etc.ru/FKS/Home/PublicPurchaseList/PublishedRequest"
         const val timeoutB = 120L
-        const val CountPage = 30
+        const val CountPage = 15
     }
 
     class UrlTen {
