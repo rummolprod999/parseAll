@@ -45,6 +45,7 @@ class Builder(args: Array<String>) {
         }
         when (args[0]) {
             "salavat" -> arg = Arguments.SALAVAT
+            "umz" -> arg = Arguments.UMZ
             else -> run { println("Неверно указаны аргументы, используйте $arguments, выходим из программы"); System.exit(0) }
         }
         setSettings()

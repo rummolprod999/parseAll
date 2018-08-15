@@ -1,23 +1,25 @@
 package parser.parsers
 
+import com.google.gson.Gson
 import org.openqa.selenium.By
-import org.openqa.selenium.JavascriptExecutor
+import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
+import parser.extensions.deleteAllWhiteSpace
 import parser.extensions.findElementWithoutException
 import parser.extensions.getDateFromString
 import parser.logger.logger
-import parser.tenderClasses.Salavat
-import parser.tenders.TenderSalavat
-import parser.tools.formatterGpn
+import parser.tenderClasses.Umz
+import parser.tenders.TenderUmz
+import parser.tools.formatterOnlyDate
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserSalavat : IParser, ParserAbstract() {
+class ParserUmz : IParser, ParserAbstract() {
     init {
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
@@ -25,14 +27,19 @@ class ParserSalavat : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "http://salavat-neftekhim.gazprom.ru/tenders"
+        const val BaseUrl = "http://umz-vrn.etc.ru/FKS/Home/PublicPurchaseList/PublishedRequest"
         const val timeoutB = 120L
-        const val CountPage = 5
+        const val CountPage = 30
     }
 
-    override fun parser() = parse { parserSalavat() }
+    class UrlTen {
+        val url: String? = null
+        val title: String? = null
+    }
 
-    fun parserSalavat() {
+    override fun parser() = parse { parserUmz() }
+
+    fun parserUmz() {
         var tr = 0
         while (true) {
             try {
@@ -50,7 +57,7 @@ class ParserSalavat : IParser, ParserAbstract() {
         }
     }
 
-    fun parserSelen() {
+    private fun parserSelen() {
         val options = ChromeOptions()
         options.addArguments("headless")
         options.addArguments("disable-gpu")
@@ -79,22 +86,39 @@ class ParserSalavat : IParser, ParserAbstract() {
         } finally {
             driver.quit()
         }
-
     }
 
     private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait, np: Int = 0) {
-        if (np != 0) {
-            try {
-                val js = driver as JavascriptExecutor
-                js.executeScript("document.querySelectorAll('div.dataTables_paginate span[data-href = \"$np\"]')[0].click()")
-            } catch (e: Exception) {
-            }
-        }
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'rowPerPage']/span")))
+        driver.keyboard.pressKey(Keys.END)
         Thread.sleep(5000)
         driver.switchTo().defaultContent()
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//section[@class = 'dataTables_wrapper']//table[contains(@class, 'text_data')]/tbody")))
+        if (np == 0) {
+            /*try {
+                val js = driver as JavascriptExecutor
+                js.executeScript("var d = document.querySelectorAll('div.rowPerPage span'); d[2].click()")
+                //driver.findElementByXPath("//div[@class = 'rowPerPage']/span[3]").click()
+            } catch (e: Exception) {
+                println(e)
+            }
+            Thread.sleep(5000)*/
+        }
+        if (np != 0) {
+            try {
+                /* val js = driver as JavascriptExecutor
+                 js.executeScript("document.querySelectorAll('div.dataPager div.paging span')[${np + 1}].click()")*/
+                //println("//div[@class = 'dataPager']/div/span[. = '${np + 1}']")
+                driver.findElementByXPath("//div[@class = 'dataPager']/div/span[. = '${np + 1}']").click()
+            } catch (e: Exception) {
+                logger(e)
+            }
+        }
+
+        Thread.sleep(5000)
         driver.switchTo().defaultContent()
-        val tenders = driver.findElements(By.xpath("//section[@class = 'dataTables_wrapper']//table[contains(@class, 'text_data')]/tbody/tr"))
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[contains(@class, 'datagrid')]/tbody")))
+        driver.switchTo().defaultContent()
+        val tenders = driver.findElements(By.xpath("//table[contains(@class, 'datagrid')]/tbody/tr"))
         tenders.forEach {
             try {
                 parserTender(it)
@@ -105,35 +129,48 @@ class ParserSalavat : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: WebElement) {
-        val purNum = el.findElementWithoutException(By.xpath("./td[2]/p/a/span"))?.text?.trim { it <= ' ' }
+        val purNum = el.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
                 ?: ""
         if (purNum == "") {
             logger("can not purNum in tender")
             return
         }
-        val urlT = el.findElementWithoutException(By.xpath("./td[2]/p/a"))?.getAttribute("href")?.trim { it <= ' ' }
+        val urlT = el.findElementWithoutException(By.xpath("."))?.getAttribute("data-load")?.trim { it <= ' ' }
                 ?: ""
         if (urlT == "") {
             logger("can not urlT in tender", purNum)
             return
         }
-        val purObj = el.findElementWithoutException(By.xpath("./td[2]/p[2]"))?.text?.trim { it <= ' ' }
+        val gson = Gson()
+        val doc = gson.fromJson<UrlTen>(urlT, UrlTen::class.java)
+        when {
+            doc.url == null || doc.url == "" -> {
+                logger("can not doc.url in tender", purNum)
+                return
+            }
+        }
+        val urlTender = "http://umz-vrn.etc.ru${doc.url}"
+        val purObj = el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val pwName = el.findElementWithoutException(By.xpath("./td[2]/p/span[@class = 'tender_type']"))?.text?.trim { it <= ' ' }
+        val pwName = el.findElementWithoutException(By.xpath("./td[6]"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val dateEndTmp = el.findElementWithoutException(By.xpath("./td[1]/p/span"))?.text?.trim()?.replace("в ", "")?.trim { it <= ' ' }
+        val datePubTmp = el.findElementWithoutException(By.xpath("./td[2]"))?.text?.trim()?.replace("в ", "")?.trim { it <= ' ' }
                 ?: ""
-        val dateEnd = dateEndTmp.getDateFromString(formatterGpn)
-        if (dateEnd == Date(0L)) {
-            logger("can not find dateEnd on page", urlT, purNum)
+        val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
+        if (datePub == Date(0L)) {
+            logger("can not find datePub on page", urlTender, purNum)
             return
         }
-        val cusName = el.findElementWithoutException(By.xpath("./td[3]/p"))?.text?.trim { it <= ' ' }
+        val cusName = el.findElementWithoutException(By.xpath("./td[8]"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val orgName = el.findElementWithoutException(By.xpath("./td[4]/p"))?.text?.trim { it <= ' ' }
+        val status = el.findElementWithoutException(By.xpath("./td[9]"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val tt = Salavat(purNum, urlT, purObj, dateEnd, pwName, cusName, orgName)
-        val t = TenderSalavat(tt)
+        val nmckT = el.findElementWithoutException(By.xpath("./td[7]"))?.text?.trim { it <= ' ' }
+                ?: ""
+        val nmck = nmckT.replace("&nbsp;", "").deleteAllWhiteSpace()
+        val tt = Umz(purNum, urlTender, purObj, datePub, pwName, cusName, nmck, status)
+        val t = TenderUmz(tt)
         ParserTender(t)
+
     }
 }

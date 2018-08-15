@@ -27,6 +27,13 @@ fun String.deleteDoubleWhiteSpace(): String {
     return ss
 }
 
+fun String.deleteAllWhiteSpace(): String {
+    val pattern: Pattern = Pattern.compile("""\s+""")
+    val matcher: Matcher = pattern.matcher(this)
+    var ss: String = matcher.replaceAll("")
+    ss = ss.trim { it <= ' ' }
+    return ss
+}
 fun String.getDateFromString(format: Format): Date {
     var d = Date(0L)
     if (this == "") return d
