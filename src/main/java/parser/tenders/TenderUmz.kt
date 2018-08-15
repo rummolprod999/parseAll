@@ -142,7 +142,7 @@ class TenderUmz(val tn: Umz) : TenderAbstract(), ITender {
             } else {
                 TenderAbstract.AddTender++
             }
-            val documents: Elements = htmlTen.select("table.data datagrid tbody tr td a")
+            val documents: Elements = htmlTen.select("div.DSFileContentView a")
             documents.forEach { doc ->
                 val hrefT = doc?.attr("href")?.trim { it <= ' ' } ?: ""
                 val href = "$etpUrl$hrefT"
