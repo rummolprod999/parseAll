@@ -285,7 +285,7 @@ abstract class TenderAbstract {
             s.contains("киров") -> "киров"
             s.contains("марий") -> "марий"
             s.contains("мордов") -> "мордов"
-            s.contains("нижерог") -> "нижерог"
+            s.contains("нижегор") -> "нижегор"
             s.contains("оренбур") -> "оренбур"
             s.contains("пензен") -> "пензен"
             s.contains("пермс") -> "пермс"
