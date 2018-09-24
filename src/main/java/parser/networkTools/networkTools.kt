@@ -74,6 +74,7 @@ fun downloadWaitWithRef(urls: String): String {
     val s = StringBuilder()
     val url = URL(urls)
     val uc = url.openConnection()
+    uc.connectTimeout = 30000
     uc.addRequestProperty("User-Agent", RandomUserAgent.randomUserAgent)
     uc.connect()
     val `is`: InputStream = uc.getInputStream()
@@ -135,6 +136,7 @@ fun downloadWaitWithRef1251(urls: String): String {
     val s = StringBuilder()
     val url = URL(urls)
     val uc = url.openConnection()
+    uc.connectTimeout = 30000
     uc.addRequestProperty("User-Agent", "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.6) Gecko/20070802 SeaMonkey/1.1.4")
     uc.connect()
     val `is`: InputStream = uc.getInputStream()
