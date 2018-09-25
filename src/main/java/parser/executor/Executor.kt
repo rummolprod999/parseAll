@@ -4,6 +4,7 @@ import parser.Arguments
 import parser.builderApp.BuilderApp
 import parser.logger.logger
 import parser.parsers.IParser
+import parser.parsers.ParserLsr
 import parser.parsers.ParserSalavat
 import parser.parsers.ParserUmz
 
@@ -13,6 +14,7 @@ class Executor {
         when (BuilderApp.arg) {
             Arguments.SALAVAT -> run { p = ParserSalavat(); executeParser(p) { parser() } }
             Arguments.UMZ -> run { p = ParserUmz(); executeParser(p) { parser() } }
+            Arguments.LSR -> run { p = ParserLsr(); executeParser(p) { parser() } }
         }
     }
 

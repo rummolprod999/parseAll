@@ -2,5 +2,6 @@ package parser
 
 enum class Arguments {
     SALAVAT,
-    UMZ
+    UMZ,
+    LSR
 }
