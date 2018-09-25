@@ -55,7 +55,7 @@ class ParserLsr : IParser, ParserAbstract() {
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         val driver = ChromeDriver(options)
-        val wait = WebDriverWait(driver, timeoutB)
+        //val wait = WebDriverWait(driver, timeoutB)
         driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         driver.manage().deleteAllCookies()
         try {
