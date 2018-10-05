@@ -12,16 +12,16 @@ import parser.extensions.findElementWithoutException
 import parser.extensions.getDateFromString
 import parser.logger.logger
 import parser.tenderClasses.ZmoKursk
-import parser.tenders.TenderZmo45
+import parser.tenders.TenderZmoKurgan
 import parser.tools.formatterGpn
 import parser.tools.formatterOnlyDate
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserZmo45 : IParser, ParserAbstract() {
+class ParserZmoKurgan : IParser, ParserAbstract() {
 
-    private val tendersS = mutableListOf<TenderZmo45>()
+    private val tendersS = mutableListOf<TenderZmoKurgan>()
 
     init {
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
@@ -29,8 +29,8 @@ class ParserZmo45 : IParser, ParserAbstract() {
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
-    override fun parser() = parse { parserZmo45() }
-    private fun parserZmo45() {
+    override fun parser() = parse { parserZmoKurgan() }
+    private fun parserZmoKurgan() {
         var tr = 0
         while (true) {
             try {
@@ -159,12 +159,12 @@ class ParserZmo45 : IParser, ParserAbstract() {
             return
         }
         val tt = ZmoKursk(status, purNum, purObj, nmck, datePub, dateEnd, urlT)
-        val t = TenderZmo45(tt)
+        val t = TenderZmoKurgan(tt)
         tendersS.add(t)
     }
 
     companion object WebCl {
-        const val BaseUrl = "https://zmo-g45.rts-tender.ru/"
+        const val BaseUrl = "https://kurgan-med-zmo.rts-tender.ru/"
         const val timeoutB = 30L
         const val CountPage = 10
     }

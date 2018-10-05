@@ -5,5 +5,6 @@ enum class Arguments {
     UMZ,
     LSR,
     ZMOKURSK,
-    ZMO45
+    ZMO45,
+    ZMOKURGAN
 }

@@ -7,6 +7,7 @@ import parser.parsers.*
 
 class Executor {
     lateinit var p: IParser
+
     init {
         when (BuilderApp.arg) {
             Arguments.SALAVAT -> run { p = ParserSalavat(); executeParser(p) { parser() } }
@@ -14,10 +15,11 @@ class Executor {
             Arguments.LSR -> run { p = ParserLsr(); executeParser(p) { parser() } }
             Arguments.ZMOKURSK -> run { p = ParserZmoKursk(); executeParser(p) { parser() } }
             Arguments.ZMO45 -> run { p = ParserZmo45(); executeParser(p) { parser() } }
+            Arguments.ZMOKURGAN -> run { p = ParserZmoKurgan(); executeParser(p) { parser() } }
         }
     }
 
-    fun executeParser(d: IParser, fn: IParser.() -> Unit) {
+    private fun executeParser(d: IParser, fn: IParser.() -> Unit) {
         try {
             d.fn()
         } catch (e: Exception) {

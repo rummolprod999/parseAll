@@ -16,11 +16,11 @@ import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
 
-class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
+class TenderZmoKurgan(val tn: ZmoKursk) : TenderAbstract(), ITender {
 
     init {
-        etpName = "ЭЛЕКТРОННЫЙ МАГАЗИН МУНИЦИПАЛЬНОГО ОБРАЗОВАНИЯ «ГОРОД КУРСК»"
-        etpUrl = "https://zmokursk.rts-tender.ru/"
+        etpName = "ЭЛЕКТРОННЫЙ МАГАЗИН ДЕПАРТАМЕНТА ЗДРАВООХРАНЕНИЯ КУРГАНСКОЙ ОБЛАСТИ"
+        etpUrl = "https://kurgan-med-zmo.rts-tender.ru/"
     }
 
     override fun parsing() {
@@ -253,6 +253,6 @@ class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
     }
 
     companion object TypeFz {
-        const val typeFz = 106
+        const val typeFz = 108
     }
 }

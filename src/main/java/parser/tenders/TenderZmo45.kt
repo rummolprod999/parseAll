@@ -5,6 +5,7 @@ import parser.builderApp.BuilderApp.PassDb
 import parser.builderApp.BuilderApp.Prefix
 import parser.builderApp.BuilderApp.UrlConnect
 import parser.builderApp.BuilderApp.UserDb
+import parser.extensions.deleteAllWhiteSpace
 import parser.extensions.getDataFromRegexp
 import parser.logger.logger
 import parser.networkTools.downloadFromUrl
@@ -150,7 +151,7 @@ class TenderZmo45(val tn: ZmoKursk) : TenderAbstract(), ITender {
             //val documents: Elements = htmlTen.select("h1:containsOwn(Документы закупки) + div ")
             var idLot = 0
             val lotNumber = 1
-            val currency = ""
+            val currency = "руб."
             val insertLot = con.prepareStatement("INSERT INTO ${Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?", Statement.RETURN_GENERATED_KEYS).apply {
                 setInt(1, idTender)
                 setInt(2, lotNumber)
@@ -213,9 +214,9 @@ class TenderZmo45(val tn: ZmoKursk) : TenderAbstract(), ITender {
                         ?: ""
                 val quantity = element.selectFirst("td:eq(4)")?.ownText()?.replace(',', '.')?.trim { it <= ' ' }
                         ?: ""
-                val price = element.selectFirst("td:eq(5)")?.ownText()?.replace(',', '.')?.trim { it <= ' ' }
+                val price = element.selectFirst("td:eq(5) > p")?.ownText()?.replace("&nbsp;", "")?.deleteAllWhiteSpace()?.replace(',', '.')?.trim { it <= ' ' }
                         ?: ""
-                val sum = element.selectFirst("td:eq(6)")?.ownText()?.replace(',', '.')?.trim { it <= ' ' }
+                val sum = element.selectFirst("td:eq(6) > p")?.ownText()?.replace("&nbsp;", "")?.deleteAllWhiteSpace()?.replace(',', '.')?.trim { it <= ' ' }
                         ?: ""
                 val fullOkpd = element.selectFirst("td:eq(2)")?.ownText()?.replace(',', '.')?.trim { it <= ' ' }
                         ?: ""
