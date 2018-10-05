@@ -3,5 +3,7 @@ package parser
 enum class Arguments {
     SALAVAT,
     UMZ,
-    LSR
+    LSR,
+    ZMOKURSK,
+    ZMO45
 }

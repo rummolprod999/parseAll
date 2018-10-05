@@ -3,10 +3,7 @@ package parser.executor
 import parser.Arguments
 import parser.builderApp.BuilderApp
 import parser.logger.logger
-import parser.parsers.IParser
-import parser.parsers.ParserLsr
-import parser.parsers.ParserSalavat
-import parser.parsers.ParserUmz
+import parser.parsers.*
 
 class Executor {
     lateinit var p: IParser
@@ -15,6 +12,8 @@ class Executor {
             Arguments.SALAVAT -> run { p = ParserSalavat(); executeParser(p) { parser() } }
             Arguments.UMZ -> run { p = ParserUmz(); executeParser(p) { parser() } }
             Arguments.LSR -> run { p = ParserLsr(); executeParser(p) { parser() } }
+            Arguments.ZMOKURSK -> run { p = ParserZmoKursk(); executeParser(p) { parser() } }
+            Arguments.ZMO45 -> run { p = ParserZmo45(); executeParser(p) { parser() } }
         }
     }
 
