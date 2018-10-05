@@ -117,7 +117,7 @@ class TenderZmoChel(val tn: ZmoKursk) : TenderAbstract(), ITender {
             val idEtp = getEtp(con)
             val idPlacingWay = 0
             var idTender = 0
-            val idRegion = 0
+            val idRegion = getIdRegion(con, "челяб")
             val insertTender = con.prepareStatement("INSERT INTO ${Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?", Statement.RETURN_GENERATED_KEYS)
             insertTender.setString(1, purNum)
             insertTender.setString(2, purNum)
