@@ -7,5 +7,6 @@ enum class Arguments {
     ZMOKURSK,
     ZMO45,
     ZMOKURGAN,
-    ZMOCHEL
+    ZMOCHEL,
+    TRANSAST
 }
