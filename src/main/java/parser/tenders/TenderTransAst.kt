@@ -237,13 +237,13 @@ class TenderTransAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
         var idCustomer = 0
         val customers = el.findElements(By.xpath("//td[contains(., 'Заказчики')]/following-sibling::td//tbody/tr"))
         if (!customers.isEmpty()) {
-            val CusName = customers[0].findElementWithoutException(By.xpath("./td[2]/span"))?.text?.trim()?.trim { it <= ' ' }
+            val cusName = customers[0].findElementWithoutException(By.xpath("./td[2]/span"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
-            val CusInn = customers[0].findElementWithoutException(By.xpath("./td[3]/span"))?.text?.trim()?.trim { it <= ' ' }
+            val cusInn = customers[0].findElementWithoutException(By.xpath("./td[3]/span"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
-            if (CusName != "") {
+            if (cusName != "") {
                 val stmtoc = con.prepareStatement("SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1")
-                stmtoc.setString(1, CusName)
+                stmtoc.setString(1, cusName)
                 val rsoc = stmtoc.executeQuery()
                 if (rsoc.next()) {
                     idCustomer = rsoc.getInt(1)
@@ -253,9 +253,9 @@ class TenderTransAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                     rsoc.close()
                     stmtoc.close()
                     val stmtins = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}customer SET full_name = ?, is223=1, reg_num = ?, inn = ?", Statement.RETURN_GENERATED_KEYS)
-                    stmtins.setString(1, CusName)
+                    stmtins.setString(1, cusName)
                     stmtins.setString(2, java.util.UUID.randomUUID().toString())
-                    stmtins.setString(3, CusInn)
+                    stmtins.setString(3, cusInn)
                     stmtins.executeUpdate()
                     val rsoi = stmtins.generatedKeys
                     if (rsoi.next()) {
