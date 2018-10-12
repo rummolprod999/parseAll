@@ -161,10 +161,15 @@ class ParserAlrosa : IParser, ParserAbstract() {
                 ?: ""
         val cusName = el.findElementWithoutException(By.xpath("./td[20]/span/span"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val prod = getProducts(el, driver)
+        val prod = try {
+            getProducts(el, driver)
+        } catch (e: Exception) {
+            mutableListOf<AlrosaProduct>()
+        }
         val tt = Alrosa(purNum, BaseUrl, purObj, datePub, dateEnd, status, pwName, cusName, nmck, currency, orgName, contactPerson, phone, email, prod)
         val tender = TenderAlrosa(tt)
         tendersList.add(tender)
+        Thread.sleep(1000)
     }
 
     private fun getProducts(el: WebElement, driver: ChromeDriver): MutableList<AlrosaProduct> {
@@ -193,6 +198,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
         try {
             val js = driver as JavascriptExecutor
             js.executeScript("document.querySelector('a[action = \"close\"]').click()")
+            js.executeScript("var d = document.querySelectorAll('a[action = \"close\"]'); if(d.length>0){d[0].click()};")
         } catch (e: Exception) {
             logger(e)
         }
