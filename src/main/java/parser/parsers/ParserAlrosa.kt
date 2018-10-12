@@ -179,6 +179,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
         for (prod in products) {
             val pName = prod.findElementWithoutException(By.xpath("./td[3]/span/span"))?.text?.trim { it <= ' ' }
                     ?: ""
+            if (pName == "") continue
             val quantT = prod.findElementWithoutException(By.xpath("./td[4]/span/span"))?.text?.trim { it <= ' ' }
                     ?: ""
             val quant = quantT.replace(".", "").replace(",", ".").deleteAllWhiteSpace()
