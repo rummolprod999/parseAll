@@ -18,6 +18,7 @@ class Executor {
             Arguments.ZMOKURGAN -> run { p = ParserZmoKurgan(); executeParser(p) { parser() } }
             Arguments.ZMOCHEL -> run { p = ParserZmoChel(); executeParser(p) { parser() } }
             Arguments.TRANSAST -> run { p = ParserTransAst(); executeParser(p) { parser() } }
+            Arguments.ALROSA -> run { p = ParserAlrosa(); executeParser(p) { parser() } }
         }
     }
 

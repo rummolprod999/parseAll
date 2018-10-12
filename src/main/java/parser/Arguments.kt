@@ -8,5 +8,6 @@ enum class Arguments {
     ZMO45,
     ZMOKURGAN,
     ZMOCHEL,
-    TRANSAST
+    TRANSAST,
+    ALROSA
 }
