@@ -51,10 +51,7 @@ class ParserAgEat : IParser, ParserAbstract() {
     }
 
     private fun parserSelen() {
-        val options = ChromeOptions()
-        options.addArguments("headless")
-        options.addArguments("disable-gpu")
-        options.addArguments("no-sandbox")
+        val options = getchromeOptions()
         driver = ChromeDriver(options)
         try {
             driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
@@ -92,6 +89,14 @@ class ParserAgEat : IParser, ParserAbstract() {
         } finally {
             driver.quit()
         }
+    }
+
+    private fun getchromeOptions(): ChromeOptions {
+        val options = ChromeOptions()
+        options.addArguments("headless")
+        options.addArguments("disable-gpu")
+        options.addArguments("no-sandbox")
+        return options
     }
 
     private fun getNextPage(num: Int) {
