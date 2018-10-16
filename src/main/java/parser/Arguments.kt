@@ -9,5 +9,6 @@ enum class Arguments {
     ZMOKURGAN,
     ZMOCHEL,
     TRANSAST,
-    ALROSA
+    ALROSA,
+    AGEAT
 }
