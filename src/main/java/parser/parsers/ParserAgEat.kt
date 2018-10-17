@@ -15,15 +15,14 @@ import java.util.logging.Level
 
 class ParserAgEat : IParser, ParserAbstract() {
     private val tendersList = mutableListOf<TenderAgEat>()
-    var driver: ChromeDriver
+    lateinit var driver: ChromeDriver
     lateinit var wait: WebDriverWait
-    var options: ChromeOptions
+    lateinit var options: ChromeOptions
+
     init {
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
-        options = getchromeOptions()
-        driver = ChromeDriver(options)
     }
 
     companion object WebCl {
@@ -38,6 +37,8 @@ class ParserAgEat : IParser, ParserAbstract() {
         var tr = 0
         while (true) {
             try {
+                options = getchromeOptions()
+                driver = ChromeDriver(options)
                 parserSelen()
                 break
             } catch (e: Exception) {
@@ -48,6 +49,8 @@ class ParserAgEat : IParser, ParserAbstract() {
                 }
                 logger("Error in parserSelen function", e.stackTrace, e)
                 e.printStackTrace()
+            } finally {
+                driver.quit()
             }
         }
     }
@@ -59,8 +62,7 @@ class ParserAgEat : IParser, ParserAbstract() {
 
         } catch (e: Exception) {
             logger("Error in parser function", e.stackTrace, e)
-        } finally {
-            driver.quit()
+            throw e
         }
     }
 

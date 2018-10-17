@@ -229,10 +229,12 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
             }
             val purName = driver.findElementWithoutException(By.xpath("//div[contains(., 'Наименование ТРУ')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
-            val okei = driver.findElementWithoutException(By.xpath("//div[contains(., 'Единица измерения:')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
+            var okei = driver.findElementWithoutException(By.xpath("//div[contains(., 'Единица измерения:')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
-            val okpd2 = driver.findElementWithoutException(By.xpath("//div[contains(., 'Код по ОКПД2')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
+            okei = okei.let { if (it.contains("Скачать")) "" else it }
+            var okpd2 = driver.findElementWithoutException(By.xpath("//div[contains(., 'Код по ОКПД2')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
+            okpd2 = okpd2.let { if (it.contains("Скачать")) "" else it }
             val price = driver.findElementWithoutException(By.xpath("//div[contains(., 'Цена за единицу, руб.')]/following-sibling::div"))?.text?.deleteAllWhiteSpace()?.replace(",", ".")?.trim()?.trim { it <= ' ' }
                     ?: ""
             con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, price = ?, sum = ?, okpd2_code = ?").apply {
