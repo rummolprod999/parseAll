@@ -50,7 +50,8 @@ class ParserAgEat : IParser, ParserAbstract() {
                 logger("Error in parserSelen function", e.stackTrace, e)
                 e.printStackTrace()
             } finally {
-                driver.quit()
+                if (this::driver.isInitialized)
+                    driver.quit()
             }
         }
     }

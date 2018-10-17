@@ -218,7 +218,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
             val delivTerm = driver.findElementWithoutException(By.xpath("//div[contains(., 'График поставки')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
             if (delivPlace != "" || delivTerm != "") {
-                val insertCusRec = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?").apply {
+                con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?").apply {
                     setInt(1, idLot)
                     setInt(2, idCustomer)
                     setString(3, delivPlace)
@@ -270,7 +270,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
     private fun getDocs(documents: MutableList<WebElement>, con: Connection, idTender: Int) {
         documents.forEach {
             val href = it.getAttribute("href")
-            val nameDoc = it?.text?.trim()?.trim { rr -> rr <= ' ' }
+            val nameDoc = it.text.trim().trim { rr -> rr <= ' ' }
             if (href != "") {
                 val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
                 insertDoc.setInt(1, idTender)
