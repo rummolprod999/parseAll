@@ -15,13 +15,15 @@ import java.util.logging.Level
 
 class ParserAgEat : IParser, ParserAbstract() {
     private val tendersList = mutableListOf<TenderAgEat>()
-    lateinit var driver: ChromeDriver
+    var driver: ChromeDriver
     lateinit var wait: WebDriverWait
-
+    var options: ChromeOptions
     init {
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
+        options = getchromeOptions()
+        driver = ChromeDriver(options)
     }
 
     companion object WebCl {
@@ -51,43 +53,50 @@ class ParserAgEat : IParser, ParserAbstract() {
     }
 
     private fun parserSelen() {
-        val options = getchromeOptions()
-        driver = ChromeDriver(options)
         try {
-            driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
-            driver.manage().deleteAllCookies()
-            driver.get(BaseUrl)
-            driver.switchTo().defaultContent()
-            wait = WebDriverWait(driver, timeoutB)
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'tabs-panel__link']/span[. = 'Все']")))
-            try {
-                val clickAll = driver.findElementByXPath("//div[@class = 'tabs-panel__link']/span[. = 'Все']")
-                clickAll.click()
-            } catch (e: Exception) {
-                logger(e)
-                return
-            }
-            getListTenders()
-            (2..CountPage).forEach {
-                try {
-                    getNextPage(it)
-                } catch (e: Exception) {
-                    logger("Error in getNextPage function", e.stackTrace, e)
-                }
-            }
-            tendersList.forEach {
-                try {
-                    //println(it)
-                    ParserTender(it)
-                } catch (e: Exception) {
-                    logger("error in TenderAgEat.parsing()", e.stackTrace, e)
-                }
-            }
+            if (createTenderList()) return
+            parserTenderList()
 
         } catch (e: Exception) {
             logger("Error in parser function", e.stackTrace, e)
         } finally {
             driver.quit()
+        }
+    }
+
+    fun createTenderList(): Boolean {
+        driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
+        driver.manage().deleteAllCookies()
+        driver.get(BaseUrl)
+        driver.switchTo().defaultContent()
+        wait = WebDriverWait(driver, timeoutB)
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'tabs-panel__link']/span[. = 'Все']")))
+        try {
+            val clickAll = driver.findElementByXPath("//div[@class = 'tabs-panel__link']/span[. = 'Все']")
+            clickAll.click()
+        } catch (e: Exception) {
+            logger(e)
+            return true
+        }
+        getListTenders()
+        (2..CountPage).forEach {
+            try {
+                getNextPage(it)
+            } catch (e: Exception) {
+                logger("Error in getNextPage function", e.stackTrace, e)
+            }
+        }
+        return false
+    }
+
+    fun parserTenderList() {
+        tendersList.forEach {
+            try {
+                //println(it)
+                ParserTender(it)
+            } catch (e: Exception) {
+                logger("error in TenderAgEat.parsing()", e.stackTrace, e)
+            }
         }
     }
 
@@ -141,7 +150,7 @@ class ParserAgEat : IParser, ParserAbstract() {
             return
         }
         val tt = AgEat(purNum, urlT, purObj, status)
-        val t = TenderAgEat(tt)
+        val t = TenderAgEat(tt, driver)
         tendersList.add(t)
     }
 }
