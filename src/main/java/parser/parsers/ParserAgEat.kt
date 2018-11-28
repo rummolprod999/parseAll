@@ -1,11 +1,13 @@
 package parser.parsers
 
 import org.openqa.selenium.By
+import org.openqa.selenium.Dimension
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
+import parser.extensions.clickerExp
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenderClasses.AgEat
@@ -31,7 +33,13 @@ class ParserAgEat : IParser, ParserAbstract() {
         const val CountPage = 5
     }
 
-    override fun parser() = parse { parserAgEat() }
+    override fun parser() = parse {
+        try {
+            parserAgEat()
+        } catch (e: Exception) {
+            logger("Error in parserSelen function", e.stackTrace, e)
+        }
+    }
 
     private fun parserAgEat() {
         var tr = 0
@@ -39,6 +47,8 @@ class ParserAgEat : IParser, ParserAbstract() {
             try {
                 options = getchromeOptions()
                 driver = ChromeDriver(options)
+                driver.manage().window().size = Dimension(1280, 1024)
+                driver.manage().window().fullscreen()
                 parserSelen()
                 break
             } catch (e: Exception) {
@@ -75,10 +85,9 @@ class ParserAgEat : IParser, ParserAbstract() {
         wait = WebDriverWait(driver, timeoutB)
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'tabs-panel__link']/span[. = 'Все']")))
         try {
-            val clickAll = driver.findElementByXPath("//div[@class = 'tabs-panel__link']/span[. = 'Все']")
-            clickAll.click()
+            driver.clickerExp("//div[@class = 'tabs-panel__link']/span[. = 'Все']")
         } catch (e: Exception) {
-            logger(e)
+            logger("Error in clickAll function", e.stackTrace, e)
             return true
         }
         getListTenders()
@@ -113,9 +122,13 @@ class ParserAgEat : IParser, ParserAbstract() {
 
     private fun getNextPage(num: Int) {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'cursor-pointer') and .= '$num']")))
-        val paginator = driver.findElementByXPath("//div[contains(@class, 'cursor-pointer') and .= '$num']")
-        paginator.click()
-        getListTenders()
+        try {
+            val paginator = driver.findElementByXPath("//div[contains(@class, 'cursor-pointer') and .= '$num']")
+            paginator.click()
+            getListTenders()
+        } catch (e: Exception) {
+            logger("Bad clicker", e.stackTrace, e)
+        }
     }
 
     private fun getListTenders() {

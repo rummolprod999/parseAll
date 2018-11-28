@@ -32,7 +32,11 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
         driver.get(url)
         driver.switchTo().defaultContent()
         val wait = WebDriverWait(driver, ParserAgEat.timeoutB)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(., 'Дата и время начала процедуры дисконтирования')]")))
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(., 'Дата и время начала процедуры дисконтирования')]")))
+        } catch (e: Exception) {
+            logger("date end not found", tn.href)
+        }
         val datePubTmp = driver.findElementWithoutException(By.xpath("//div[contains(., 'Дата и время начала процедуры дисконтирования')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
         val pubDate = datePubTmp.getDateFromString(formatterGpn)
