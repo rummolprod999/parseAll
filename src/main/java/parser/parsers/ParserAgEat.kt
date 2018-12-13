@@ -83,9 +83,9 @@ class ParserAgEat : IParser, ParserAbstract() {
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
         wait = WebDriverWait(driver, timeoutB)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'tabs-panel__link']/span[. = 'Все']")))
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'tabs-panel__link']/a[span[. = 'Все']]")))
         try {
-            driver.clickerExp("//div[@class = 'tabs-panel__link']/span[. = 'Все']")
+            driver.clickerExp("//div[@class = 'tabs-panel__link']/a[span[. = 'Все']]")
         } catch (e: Exception) {
             logger("Error in clickAll function", e.stackTrace, e)
             return true
