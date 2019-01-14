@@ -3,6 +3,7 @@ package parser.parsers
 import com.google.gson.Gson
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
+import org.openqa.selenium.TimeoutException
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -28,7 +29,7 @@ class ParserUmz : IParser, ParserAbstract() {
 
     companion object WebCl {
         const val BaseUrl = "http://umz-vrn.etc.ru/FKS/Home/PublicPurchaseList/PublishedRequest"
-        const val timeoutB = 120L
+        const val timeoutB = 30L
         const val CountPage = 15
     }
 
@@ -70,13 +71,33 @@ class ParserUmz : IParser, ParserAbstract() {
             driver.get(BaseUrl)
             try {
                 parserPageN(driver, wait)
+            } catch (e: TimeoutException) {
+                logger("next page not found")
+                return
+            } catch (e: NoSuchElementException) {
+                logger("next page not exist")
+                return
             } catch (e: Exception) {
+                if (e.message!!.contains("no such element")) {
+                    logger("next page not exist")
+                    return
+                }
                 logger("Error in parserPageN function", e.stackTrace, e)
             }
-            (1..CountPage).forEach {
+            (1..CountPage).forEach { pp ->
                 try {
-                    parserPageN(driver, wait, it)
+                    parserPageN(driver, wait, pp)
+                } catch (e: TimeoutException) {
+                    logger("next page not found")
+                    return
+                } catch (e: NoSuchElementException) {
+                    logger("next page not exist")
+                    return
                 } catch (e: Exception) {
+                    if (e.message!!.contains("no such element")) {
+                        logger("next page not exist")
+                        return
+                    }
                     logger("Error in parserPageN function", e.stackTrace, e)
                 }
             }
@@ -89,7 +110,7 @@ class ParserUmz : IParser, ParserAbstract() {
     }
 
     private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait, np: Int = 0) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'rowPerPage']/span")))
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'paging']/i[contains(., 'Всего записей:')]")))
         driver.keyboard.pressKey(Keys.END)
         Thread.sleep(5000)
         driver.switchTo().defaultContent()
@@ -109,8 +130,8 @@ class ParserUmz : IParser, ParserAbstract() {
                  js.executeScript("document.querySelectorAll('div.dataPager div.paging span')[${np + 1}].click()")*/
                 //println("//div[@class = 'dataPager']/div/span[. = '${np + 1}']")
                 driver.findElementByXPath("//div[@class = 'dataPager']/div/span[. = '${np + 1}']").click()
-            } catch (e: Exception) {
-                logger(e)
+            } catch (e: NoSuchElementException) {
+                throw e
             }
         }
 
