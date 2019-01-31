@@ -10,5 +10,7 @@ enum class Arguments {
     ZMOCHEL,
     TRANSAST,
     ALROSA,
-    AGEAT
+    AGEAT,
+    RZN,
+    BRN
 }

@@ -20,6 +20,8 @@ class Executor {
             Arguments.TRANSAST -> run { p = ParserTransAst(); executeParser(p) { parser() } }
             Arguments.ALROSA -> run { p = ParserAlrosa(); executeParser(p) { parser() } }
             Arguments.AGEAT -> run { p = ParserAgEat(); executeParser(p) { parser() } }
+            Arguments.RZN -> run { p = ParserRzn(); executeParser(p) { parser() } }
+            Arguments.BRN -> run { p = ParserBrn(); executeParser(p) { parser() } }
         }
     }
 
