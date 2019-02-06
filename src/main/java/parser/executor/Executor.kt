@@ -22,6 +22,8 @@ class Executor {
             Arguments.AGEAT -> run { p = ParserAgEat(); executeParser(p) { parser() } }
             Arguments.RZN -> run { p = ParserRzn(); executeParser(p) { parser() } }
             Arguments.BRN -> run { p = ParserBrn(); executeParser(p) { parser() } }
+            Arguments.IVAN -> run { p = ParserZmoIvan(); executeParser(p) { parser() } }
+            Arguments.OREL -> run { p = ParserZmoOrel(); executeParser(p) { parser() } }
         }
     }
 

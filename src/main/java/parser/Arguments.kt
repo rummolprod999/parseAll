@@ -12,5 +12,7 @@ enum class Arguments {
     ALROSA,
     AGEAT,
     RZN,
-    BRN
+    BRN,
+    IVAN,
+    OREL
 }
