@@ -15,5 +15,6 @@ enum class Arguments {
     BRN,
     IVAN,
     OREL,
-    NOV
+    NOV,
+    KOMI
 }
