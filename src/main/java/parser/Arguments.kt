@@ -16,5 +16,6 @@ enum class Arguments {
     IVAN,
     OREL,
     NOV,
-    KOMI
+    KOMI,
+    KALIN
 }

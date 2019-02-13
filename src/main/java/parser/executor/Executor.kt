@@ -26,6 +26,7 @@ class Executor {
             Arguments.OREL -> run { p = ParserZmoOrel(); executeParser(p) { parser() } }
             Arguments.NOV -> run { p = ParserZmoNov(); executeParser(p) { parser() } }
             Arguments.KOMI -> run { p = ParserZmoKomi(); executeParser(p) { parser() } }
+            Arguments.KALIN -> run { p = ParserZmoKalin(); executeParser(p) { parser() } }
         }
     }
 
