@@ -34,9 +34,9 @@ class ParserZmoDag : IParser, ParserAbstract() {
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
-    override fun parser() = parse { parserNen() }
+    override fun parser() = parse { parserDag() }
 
-    private fun parserNen() {
+    private fun parserDag() {
         var tr = 0
         while (true) {
             try {

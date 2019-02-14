@@ -34,9 +34,9 @@ class ParserZmoYalta : IParser, ParserAbstract() {
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
-    override fun parser() = parse { parserNen() }
+    override fun parser() = parse { parserYalta() }
 
-    private fun parserNen() {
+    private fun parserYalta() {
         var tr = 0
         while (true) {
             try {
