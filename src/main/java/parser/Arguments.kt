@@ -17,5 +17,8 @@ enum class Arguments {
     OREL,
     NOV,
     KOMI,
-    KALIN
+    KALIN,
+    NEN,
+    YALTA,
+    DAG
 }
