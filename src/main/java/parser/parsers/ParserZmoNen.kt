@@ -34,9 +34,9 @@ class ParserZmoNen : IParser, ParserAbstract() {
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
-    override fun parser() = parse { parserKomi() }
+    override fun parser() = parse { parserNen() }
 
-    private fun parserKomi() {
+    private fun parserNen() {
         var tr = 0
         while (true) {
             try {
