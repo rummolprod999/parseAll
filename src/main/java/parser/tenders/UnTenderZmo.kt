@@ -13,7 +13,7 @@ import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
 
-class UnTenderZmo(val tn: ZmoKursk, val typeFz: Int, _etpName: String, _etpUrl: String, val _regName: String) : TenderAbstract(), ITender {
+class UnTenderZmo(val tn: ZmoKursk, val typeFz: Int, _etpName: String, _etpUrl: String, private val _regName: String) : TenderAbstract(), ITender {
     init {
         etpName = _etpName
         etpUrl = _etpUrl
