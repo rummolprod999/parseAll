@@ -30,6 +30,8 @@ class Executor {
             Arguments.NEN -> run { p = ParserZmoNen(); executeParser(p) { parser() } }
             Arguments.YALTA -> run { p = ParserZmoYalta(); executeParser(p) { parser() } }
             Arguments.DAG -> run { p = ParserZmoDag(); executeParser(p) { parser() } }
+            Arguments.STAV -> run { p = UnParserZmo(156, "Закупки малого объема города Ставрополя", "https://stavzmo.rts-tender.ru/", "ставроп"); executeParser(p) { parser() } }
+            Arguments.CHUV -> run { p = UnParserZmo(157, "Закупки малого объема Чувашской Республики", "https://zmo21.rts-tender.ru/", "чуваш"); executeParser(p) { parser() } }
         }
     }
 

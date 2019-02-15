@@ -20,5 +20,7 @@ enum class Arguments {
     KALIN,
     NEN,
     YALTA,
-    DAG
+    DAG,
+    STAV,
+    CHUV
 }
