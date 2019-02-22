@@ -22,5 +22,8 @@ enum class Arguments {
     YALTA,
     DAG,
     STAV,
-    CHUV
+    CHUV,
+    CHEB,
+    HANT,
+    NEFT
 }

@@ -32,6 +32,9 @@ class Executor {
             Arguments.DAG -> run { p = ParserZmoDag(); executeParser(p) { parser() } }
             Arguments.STAV -> run { p = UnParserZmo(156, "Закупки малого объема города Ставрополя", "https://stavzmo.rts-tender.ru/", "ставроп"); executeParser(p) { parser() } }
             Arguments.CHUV -> run { p = UnParserZmo(157, "Закупки малого объема Чувашской Республики", "https://zmo21.rts-tender.ru/", "чуваш"); executeParser(p) { parser() } }
+            Arguments.CHEB -> run { p = UnParserZmo(158, "Электронный магазин города Чебоксары", "https://chebzmo.rts-tender.ru/", "чуваш"); executeParser(p) { parser() } }
+            Arguments.HANT -> run { p = UnParserZmo(159, "Электронный магазин Ханты-мансийского автономного округа", "https://ozhmao-zmo.rts-tender.ru/", "ханты"); executeParser(p) { parser() } }
+            Arguments.NEFT -> run { p = UnParserZmo(160, "Закупки малого объема администрации города Нефтеюганска", "https://uganskzmo.rts-tender.ru/", "ханты"); executeParser(p) { parser() } }
         }
     }
 
