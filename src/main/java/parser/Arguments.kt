@@ -25,5 +25,10 @@ enum class Arguments {
     CHUV,
     CHEB,
     HANT,
-    NEFT
+    NEFT,
+    OMSKOBL,
+    OMSK,
+    PPP,
+    MAGNIT,
+    SURGUT
 }
