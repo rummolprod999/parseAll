@@ -30,5 +30,10 @@ enum class Arguments {
     OMSK,
     PPP,
     MAGNIT,
-    SURGUT
+    SURGUT,
+    IRKOBL,
+    ALTAY,
+    HAKAS,
+    ZABAY,
+    NOVOSIB
 }

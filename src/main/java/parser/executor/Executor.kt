@@ -40,6 +40,11 @@ class Executor {
             Arguments.PPP -> run { p = UnParserZmo(163, "ЭЛЕКТРОННЫЙ МАГАЗИН ФГУП «ППП»", "https://pppmarket.rts-tender.ru/", ""); executeParser(p) { parser() } }
             Arguments.OMSK -> run { p = UnParserZmo(164, "ЭЛЕКТРОННЫЙ МАГАЗИН ГОРОДА ОМСКА", "https://zmo-omsk.rts-tender.ru/", "омск"); executeParser(p) { parser() } }
             Arguments.OMSKOBL -> run { p = UnParserZmo(165, "ЭЛЕКТРОННЫЙ МАГАЗИН ОМСКОЙ ОБЛАСТИ", "https://zmo-omskobl.rts-tender.ru/", "омск"); executeParser(p) { parser() } }
+            Arguments.IRKOBL -> run { p = UnParserZmo(166, "ЭЛЕКТРОННЫЙ МАГАЗИН ИРКУТСКОЙ ОБЛАСТИ ДЛЯ ЗАКУПОК МАЛОГО ОБЪЕМА (РТС-МАРКЕТ)", "https://irkoblmarket.rts-tender.ru/", "иркут"); executeParser(p) { parser() } }
+            Arguments.ALTAY -> run { p = UnParserZmo(167, "ЭЛЕКТРОННЫЙ МАГАЗИН МИНИСТЕРСТВА ЭКОНОМИЧЕСКОГО РАЗВИТИЯ И ТУРИЗМА РЕСПУБЛИКИ АЛТАЙ", "https://zmo04.rts-tender.ru/", "алтай"); executeParser(p) { parser() } }
+            Arguments.HAKAS -> run { p = UnParserZmo(168, "ЭЛЕКТРОННЫЙ МАРКЕТ ГОСУДАРСТВЕННОГО КОМИТЕТА ПО РЕГУЛИРОВАНИЮ КОНТРАКТНОЙ СИСТЕМЫ В СФЕРЕ ЗАКУПОК РЕСПУБЛИКИ ХАКАСИЯ", "https://zmo19.rts-tender.ru/", "хакас"); executeParser(p) { parser() } }
+            Arguments.ZABAY -> run { p = UnParserZmo(169, "ЭЛЕКТРОННЫЙ МАГАЗИН ЗАБАЙКАЛЬСКОГО КРАЯ", "https://zmo-zab.rts-tender.ru/", "забайк"); executeParser(p) { parser() } }
+            Arguments.NOVOSIB -> run { p = UnParserZmo(170, "ЭЛЕКТРОННЫЙ МАГАЗИН НОВОСИБИРСКОЙ ОБЛАСТИ", "https://novobl-zmo.rts-tender.ru/", "новосиб"); executeParser(p) { parser() } }
 
         }
     }
