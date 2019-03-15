@@ -35,5 +35,10 @@ enum class Arguments {
     ALTAY,
     HAKAS,
     ZABAY,
-    NOVOSIB
+    NOVOSIB,
+    TPU,
+    GORTOMSK,
+    TSU,
+    TUSUR,
+    TGASU
 }

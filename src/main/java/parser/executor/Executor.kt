@@ -45,6 +45,11 @@ class Executor {
             Arguments.HAKAS -> run { p = UnParserZmo(168, "ЭЛЕКТРОННЫЙ МАРКЕТ ГОСУДАРСТВЕННОГО КОМИТЕТА ПО РЕГУЛИРОВАНИЮ КОНТРАКТНОЙ СИСТЕМЫ В СФЕРЕ ЗАКУПОК РЕСПУБЛИКИ ХАКАСИЯ", "https://zmo19.rts-tender.ru/", "хакас"); executeParser(p) { parser() } }
             Arguments.ZABAY -> run { p = UnParserZmo(169, "ЭЛЕКТРОННЫЙ МАГАЗИН ЗАБАЙКАЛЬСКОГО КРАЯ", "https://zmo-zab.rts-tender.ru/", "забайк"); executeParser(p) { parser() } }
             Arguments.NOVOSIB -> run { p = UnParserZmo(170, "ЭЛЕКТРОННЫЙ МАГАЗИН НОВОСИБИРСКОЙ ОБЛАСТИ", "https://novobl-zmo.rts-tender.ru/", "новосиб"); executeParser(p) { parser() } }
+            Arguments.TPU -> run { p = UnParserZmo(171, "ЗАКУПКИ У ЕДИНСТВЕННОГО ПОСТАВЩИКА (ПОДРЯДЧИКА , ИСПОЛНИТЕЛЯ). ЭЛЕКТРОННЫЙ МАГАЗИН ТПУ", "https://tpu.rts-tender.ru/", "томск"); executeParser(p) { parser() } }
+            Arguments.GORTOMSK -> run { p = UnParserZmo(172, "ЭЛЕКТРОННЫЙ МАГАЗИН ГОРОДА ТОМСКА", "https://tomsk.rts-tender.ru/", "томск"); executeParser(p) { parser() } }
+            Arguments.TSU -> run { p = UnParserZmo(173, "ЗАКУПКИ МАЛОГО ОБЪЕМА ТГУ", "https://tsu.rts-tender.ru/", "томск"); executeParser(p) { parser() } }
+            Arguments.TUSUR -> run { p = UnParserZmo(174, "ЗАКУПКИ МАЛОГО ОБЪЕМА ТУСУР", "https://tusur.rts-tender.ru/", "томск"); executeParser(p) { parser() } }
+            Arguments.TGASU -> run { p = UnParserZmo(175, "ЗАКУПКИ МАЛОГО ОБЪЕМА ТГАСУ", "https://tgasu.rts-tender.ru/", "томск"); executeParser(p) { parser() } }
 
         }
     }

@@ -23,7 +23,7 @@ object BuilderApp {
     lateinit var UrlConnect: String
 }
 
-const val arguments = "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib"
+const val arguments = "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu"
 
 class Builder(args: Array<String>) {
     lateinit var arg: Arguments
@@ -79,6 +79,11 @@ class Builder(args: Array<String>) {
             "hakas" -> arg = Arguments.HAKAS
             "zabay" -> arg = Arguments.ZABAY
             "novosib" -> arg = Arguments.NOVOSIB
+            "tpu" -> arg = Arguments.TPU
+            "gortomsk" -> arg = Arguments.GORTOMSK
+            "tsu" -> arg = Arguments.TSU
+            "tusur" -> arg = Arguments.TUSUR
+            "tgasu" -> arg = Arguments.TGASU
             else -> run { println("Неверно указаны аргументы, используйте $arguments, выходим из программы"); System.exit(0) }
         }
         setSettings()
