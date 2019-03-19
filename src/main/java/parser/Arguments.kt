@@ -40,5 +40,9 @@ enum class Arguments {
     GORTOMSK,
     TSU,
     TUSUR,
-    TGASU
+    TGASU,
+    TUVA,
+    GZALT,
+    AMUROBL,
+    DVRT
 }

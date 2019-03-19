@@ -50,6 +50,12 @@ class Executor {
             Arguments.TSU -> run { p = UnParserZmo(173, "ЗАКУПКИ МАЛОГО ОБЪЕМА ТГУ", "https://tsu.rts-tender.ru/", "томск"); executeParser(p) { parser() } }
             Arguments.TUSUR -> run { p = UnParserZmo(174, "ЗАКУПКИ МАЛОГО ОБЪЕМА ТУСУР", "https://tusur.rts-tender.ru/", "томск"); executeParser(p) { parser() } }
             Arguments.TGASU -> run { p = UnParserZmo(175, "ЗАКУПКИ МАЛОГО ОБЪЕМА ТГАСУ", "https://tgasu.rts-tender.ru/", "томск"); executeParser(p) { parser() } }
+            Arguments.TUVA -> run { p = UnParserZmo(176, "ЗАКУПКИ МАЛОГО ОБЪЕМА РЕСПУБЛИКИ ТЫВА", "https://tuva-zmo.rts-tender.ru/", "тыва"); executeParser(p) { parser() } }
+            Arguments.GZALT -> run { p = UnParserZmo(177, "ПОРТАЛ ПОСТАВЩИКОВ АЛТАЙСКОГО КРАЯ", "https://gzalt.rts-tender.ru/", "алтайск"); executeParser(p) { parser() } }
+            Arguments.AMUROBL -> run { p = UnParserZmo(178, "ЭЛЕКТРОННЫЙ МАГАЗИН АМУРСКОЙ ОБЛАСТИ", "https://zmo-amurobl.rts-tender.ru/", "амурск"); executeParser(p) { parser() } }
+            Arguments.DVRT -> run {
+                p = UnParserZmo(179, "ЗАКУПКИ МАЛОГО ОБЪЕМА МАКРОРЕГИОНАЛЬНОГО ФИЛИАЛА \"ДАЛЬНИЙ ВОСТОК\" ПАО \"РОСТЕЛЕКОМ\"", "https://zmodvrt.rts-tender.ru/", ""); executeParser(p) { parser() }
+            }
 
         }
     }
