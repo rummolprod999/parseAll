@@ -139,6 +139,6 @@ class ParserAfkAst : IParser, ParserAbstract() {
     companion object WebCl {
         const val BaseUrl = "http://utp.sberbank-ast.ru/AFK/List/PurchaseList/"
         const val timeoutB = 120L
-        const val CountPage = 20
+        const val CountPage = 10
     }
 }
