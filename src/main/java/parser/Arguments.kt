@@ -44,5 +44,6 @@ enum class Arguments {
     TUVA,
     GZALT,
     AMUROBL,
-    DVRT
+    DVRT,
+    AFKAST
 }
