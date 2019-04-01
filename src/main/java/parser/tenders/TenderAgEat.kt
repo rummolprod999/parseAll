@@ -8,12 +8,11 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import parser.builderApp.BuilderApp
 import parser.extensions.deleteAllWhiteSpace
 import parser.extensions.findElementWithoutException
-import parser.extensions.getDataFromRegexp
 import parser.extensions.getDateFromString
 import parser.logger.logger
 import parser.parsers.ParserAgEat
 import parser.tenderClasses.AgEat
-import parser.tools.formatterGpn
+import parser.tools.formatter
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
@@ -33,20 +32,20 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
         driver.switchTo().defaultContent()
         val wait = WebDriverWait(driver, ParserAgEat.timeoutB)
         try {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(., 'Дата и время начала закупочной сессии') and contains(@class, 'opacity5')]")))
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(., 'Дата и время размещения закупки') and contains(@class, 'opacity5')]")))
         } catch (e: Exception) {
             logger("date pub not found", tn.href)
         }
-        val datePubTmp = driver.findElementWithoutException(By.xpath("//div[contains(., 'Дата и время начала закупочной сессии') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
+        val datePubTmp = driver.findElementWithoutException(By.xpath("//div[contains(., 'Дата и время размещения закупки') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
-        val pubDate = datePubTmp.getDateFromString(formatterGpn)
+        val pubDate = datePubTmp.getDateFromString(formatter)
         if (pubDate == Date(0L)) {
             logger("can not find pubDate on page", datePubTmp, url)
             return
         }
-        val dateEndTmp = driver.findElementWithoutException(By.xpath("//div[contains(., 'Дата и время окончания закупочной сессии') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
+        val dateEndTmp = driver.findElementWithoutException(By.xpath("//div[contains(., 'Дата и время окончания подачи предложений') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
-        val endDate = dateEndTmp.getDateFromString(formatterGpn)
+        val endDate = dateEndTmp.getDateFromString(formatter)
         if (endDate == Date(0L)) {
             logger("can not find dateEnd on page", dateEndTmp, url)
             return
@@ -92,9 +91,9 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
             rs.close()
             stmt.close()
             var idOrganizer = 0
-            var orgName = driver.findElementWithoutException(By.xpath("//div[contains(., 'Наименование / ФИО') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim { it <= ' ' }
+            val orgName = driver.findElementWithoutException(By.xpath("//div[contains(., 'Наименование') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim { it <= ' ' }
                     ?: ""
-            val fullnameOrg = orgName.getDataFromRegexp("(.+)/")
+            val fullnameOrg = orgName
             if (fullnameOrg != "") {
                 val stmto = con.prepareStatement("SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?")
                 stmto.setString(1, fullnameOrg)
@@ -174,7 +173,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
             addCounts(updated)
             val documents = driver.findElements(By.xpath("//div[contains(., 'Документы') and contains(@class, 'opacity5')]/following-sibling::div/a"))
             getDocs(documents, con, idTender)
-            val nmck = driver.findElementWithoutException(By.xpath("//div[contains(., 'Стартовая цена, руб.') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.deleteAllWhiteSpace()?.replace(",", ".")?.trim()?.trim { it <= ' ' }
+            val nmck = driver.findElementWithoutException(By.xpath("//div[contains(., 'Стартовая цена') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.deleteAllWhiteSpace()?.replace(",", ".")?.trim()?.trim { it <= ' ' }
                     ?: ""
             var idLot = 0
             val lotNumber = 1
@@ -231,26 +230,25 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                     close()
                 }
             }
-            val purName = driver.findElementWithoutException(By.xpath("//div[contains(., 'Наименование ТРУ') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
-                    ?: ""
-            var okei = driver.findElementWithoutException(By.xpath("//div[contains(., 'Единица измерения:') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
-                    ?: ""
-            okei = okei.let { if (it.contains("Скачать")) "" else it }
-            var okpd2 = driver.findElementWithoutException(By.xpath("//div[contains(., 'Код по ОКПД2') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
-                    ?: ""
-            okpd2 = okpd2.let { if (it.contains("Скачать")) "" else it }
-            val price = driver.findElementWithoutException(By.xpath("//div[contains(., 'Цена за единицу, руб.') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.deleteAllWhiteSpace()?.replace(",", ".")?.trim()?.trim { it <= ' ' }
-                    ?: ""
-            con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, price = ?, sum = ?, okpd2_code = ?").apply {
-                setInt(1, idLot)
-                setInt(2, idCustomer)
-                setString(3, purName)
-                setString(4, okei)
-                setString(5, price)
-                setString(6, nmck)
-                setString(7, okpd2)
-                executeUpdate()
-                close()
+            val purObjts = driver.findElements(By.xpath("//table[@id = 'specification']/tbody/tr"))
+            purObjts.forEach { element ->
+                val purName = element.findElementWithoutException(By.xpath(".//td[2]/span"))?.text?.trim()?.trim { it <= ' ' }
+                        ?: ""
+                val okei = element.findElementWithoutException(By.xpath(".//td[4]"))?.text?.trim()?.trim { it <= ' ' }
+                        ?: ""
+                val quant = element.findElementWithoutException(By.xpath(".//td[3]"))?.text?.trim()?.trim { it <= ' ' }
+                        ?: ""
+                con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?").apply {
+                    setInt(1, idLot)
+                    setInt(2, idCustomer)
+                    setString(3, purName)
+                    setString(4, okei)
+                    setString(5, quant)
+                    setString(6, quant)
+                    executeUpdate()
+                    close()
+                }
+
             }
             afterParsing(idTender, con, purNum)
         })

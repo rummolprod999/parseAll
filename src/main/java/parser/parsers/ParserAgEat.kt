@@ -28,7 +28,7 @@ class ParserAgEat : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "https://agregatoreat.ru/purchases"
+        const val BaseUrl = "https://agregatoreat.ru/purchases/all"
         const val timeoutB = 30L
         const val CountPage = 40
     }
@@ -104,7 +104,6 @@ class ParserAgEat : IParser, ParserAbstract() {
     fun parserTenderList() {
         tendersList.forEach {
             try {
-                //println(it)
                 ParserTender(it)
             } catch (e: Exception) {
                 logger("error in TenderAgEat.parsing()", e.stackTrace, e)
@@ -136,7 +135,7 @@ class ParserAgEat : IParser, ParserAbstract() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[contains(., 'Статус закупки:')]")))
         driver.switchTo().defaultContent()
         val tenders = driver.findElements(By.xpath("//div[@class = 'row']//div[contains(@class, 'purchase') and contains(@class, 'between-xs')]"))
-        tenders.forEach { it ->
+        tenders.forEach {
             try {
                 parserTender(it)
             } catch (e: Exception) {
@@ -159,7 +158,7 @@ class ParserAgEat : IParser, ParserAbstract() {
                 ?: ""
         val status = el.findElementWithoutException(By.xpath(".//label[contains(., 'Статус закупки:')]/following-sibling::strong[1]"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val urlT = el.findElementWithoutException(By.xpath(".//a[starts-with(@href, '/purchase/')][1]"))?.getAttribute("href")?.trim { it <= ' ' }
+        val urlT = el.findElementWithoutException(By.xpath(".//div[contains(@class, 'group-buttons')]/a[starts-with(@href, '/purchase/')][1]"))?.getAttribute("href")?.trim { it <= ' ' }
                 ?: ""
         if (urlT == "") {
             logger("can not urlT in tender", purNum)
