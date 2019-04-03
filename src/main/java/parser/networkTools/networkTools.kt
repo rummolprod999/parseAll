@@ -11,6 +11,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
+private const val timeoutD = 3000L
 
 fun downloadFromUrl(urls: String, i: Int = 5, wt: Long = 3000): String {
     var count = 0
@@ -130,7 +131,7 @@ fun downloadFromUrl1251(urls: String, i: Int = 5): String {
         } catch (e: Exception) {
             logger(e, e.stackTrace)
             count++
-            sleep(5000)
+            sleep(timeoutD)
         }
 
     }
