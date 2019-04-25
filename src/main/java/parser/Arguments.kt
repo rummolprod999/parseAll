@@ -45,5 +45,6 @@ enum class Arguments {
     GZALT,
     AMUROBL,
     DVRT,
-    AFKAST
+    AFKAST,
+    TMK
 }

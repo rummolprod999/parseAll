@@ -57,6 +57,7 @@ class Executor {
                 p = UnParserZmo(179, "ЗАКУПКИ МАЛОГО ОБЪЕМА МАКРОРЕГИОНАЛЬНОГО ФИЛИАЛА \"ДАЛЬНИЙ ВОСТОК\" ПАО \"РОСТЕЛЕКОМ\"", "https://zmodvrt.rts-tender.ru/", ""); executeParser(p) { parser() }
             }
             Arguments.AFKAST -> run { p = ParserAfkAst(); executeParser(p) { parser() } }
+            Arguments.TMK -> run { p = ParserTmk(); executeParser(p) { parser() } }
         }
     }
 
