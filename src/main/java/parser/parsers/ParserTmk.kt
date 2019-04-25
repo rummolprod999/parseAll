@@ -33,7 +33,7 @@ class ParserTmk : IParser, ParserAbstract() {
     companion object WebCl {
         const val BaseUrl = "https://zakupki.tmk-group.com/#com/procedure/index"
         const val timeoutB = 30L
-        const val CountPage = 3
+        const val CountPage = 10
     }
 
     override fun parser() = parse {
