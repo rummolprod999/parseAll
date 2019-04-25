@@ -68,6 +68,8 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
             rs.close()
             stmt.close()
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[contains(., 'Тип процедуры:')]/following-sibling::td")))
+            Thread.sleep(2000)
+            driver.switchTo().defaultContent()
             var idOrganizer = 0
             val fullnameOrg = tn.nameOrg
             if (fullnameOrg != "") {
@@ -170,7 +172,7 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                 rl.close()
                 insertLot.close()
                 var idCustomer = 0
-                val cusName = lot.findElementWithoutException(By.xpath(".//td[contains(., 'Валюта:')]/following-sibling::td"))?.text?.trim()?.trim { it <= ' ' }
+                val cusName = lot.findElementWithoutException(By.xpath(".//td[contains(., 'Наименование заказчика:')]/following-sibling::td"))?.text?.trim()?.trim { it <= ' ' }
                         ?: ""
                 if (cusName != "") {
 
@@ -215,6 +217,7 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                 for (po in purObjects) {
                     val poName = po.findElementWithoutException(By.xpath(".//td[contains(., 'Наименование:')]/following-sibling::td"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
+                    if (poName == "") continue
                     val quant = po.findElementWithoutException(By.xpath(".//td[contains(., 'Количество:')]/following-sibling::td"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
                     val okei = po.findElementWithoutException(By.xpath(".//td[contains(., 'Единица измерения:')]/following-sibling::td"))?.text?.trim()?.trim { it <= ' ' }
