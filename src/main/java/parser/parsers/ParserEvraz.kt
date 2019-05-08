@@ -1,13 +1,13 @@
 package parser.parsers
 
 import org.openqa.selenium.By
-import org.openqa.selenium.Dimension
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import parser.logger.logger
+import parser.tenderClasses.Evraz
 import parser.tenders.TenderEvraz
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
@@ -51,8 +51,6 @@ class ParserEvraz : IParser, ParserAbstract() {
             try {
                 options = getchromeOptions()
                 driver = ChromeDriver(options)
-                driver.manage().window().size = Dimension(1280, 1024)
-                driver.manage().window().fullscreen()
                 try {
                     createTenderList()
                 } catch (e: Exception) {
@@ -85,13 +83,18 @@ class ParserEvraz : IParser, ParserAbstract() {
         }
     }
 
-    fun createTenderList() {
+    private fun createTenderList() {
         driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         driver.manage().deleteAllCookies()
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
         wait = WebDriverWait(driver, timeoutB)
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@role = 'button' and @data-toggle = 'collapse']")))
+        val collapsed = driver.findElementsByXPath("//a[@role = 'button' and @data-toggle = 'collapse']")
+        collapsed.forEach {
+            it.click()
+            Thread.sleep(1000)
+        }
         getListTenders()
     }
 
@@ -111,6 +114,22 @@ class ParserEvraz : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: WebElement) {
-        println(el.text)
+        val purName = el.text.trim { it <= ' ' }
+        if (purName == "") {
+            logger("can not purName in tender")
+            return
+        }
+        val urlT = el.getAttribute("url") ?: run {
+            logger("can not urlT in tender $purName")
+            return
+        }
+        val href = "http://supply.evraz.com$urlT"
+        val purNum = el.getAttribute("idelement") ?: run {
+            logger("can not purNum in tender $href")
+            return
+        }
+        val tt = Evraz(purNum, href, purName)
+        val t = TenderEvraz(tt, driver)
+        tendersList.add(t)
     }
 }

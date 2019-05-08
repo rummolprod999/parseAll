@@ -14,6 +14,6 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
     }
 
     override fun parsing() {
-
+        println(tn)
     }
 }
