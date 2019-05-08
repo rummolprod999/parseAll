@@ -46,5 +46,6 @@ enum class Arguments {
     AMUROBL,
     DVRT,
     AFKAST,
-    TMK
+    TMK,
+    EVRAZ
 }

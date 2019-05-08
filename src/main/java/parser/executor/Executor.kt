@@ -58,6 +58,7 @@ class Executor {
             }
             Arguments.AFKAST -> run { p = ParserAfkAst(); executeParser(p) { parser() } }
             Arguments.TMK -> run { p = ParserTmk(); executeParser(p) { parser() } }
+            Arguments.EVRAZ -> run { p = ParserEvraz(); executeParser(p) { parser() } }
         }
     }
 
