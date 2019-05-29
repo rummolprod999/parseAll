@@ -47,5 +47,6 @@ enum class Arguments {
     DVRT,
     AFKAST,
     TMK,
-    EVRAZ
+    EVRAZ,
+    ROSLES
 }

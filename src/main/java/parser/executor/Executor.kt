@@ -59,6 +59,9 @@ class Executor {
             Arguments.AFKAST -> run { p = ParserAfkAst(); executeParser(p) { parser() } }
             Arguments.TMK -> run { p = ParserTmk(); executeParser(p) { parser() } }
             Arguments.EVRAZ -> run { p = ParserEvraz(); executeParser(p) { parser() } }
+            Arguments.ROSLES -> run {
+                p = UnParserZmo(192, "МАГАЗИН ЗАКУПОК МАЛОГО ОБЪЕМА РОСЛЕСИНФОРГ", "https://roslesinforg-market.rts-tender.ru/", ""); executeParser(p) { parser() }
+            }
         }
     }
 
