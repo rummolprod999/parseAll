@@ -211,6 +211,7 @@ class TenderAfkAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 logger("Ошибка добавления версий", e.stackTrace, e)
             }
         })
+        return Unit
     }
 
     private fun parserLot(el: WebElement, con: Connection, href: String, lotNum: Int) {
@@ -326,7 +327,7 @@ class TenderAfkAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             try {
                 parserLot(el, con, href, ind + 1)
             } catch (e: Exception) {
-                logger("Error in parserLot", href)
+                logger("Error in parserLot", href, e)
             }
         }
 

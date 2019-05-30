@@ -10,7 +10,10 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenders.TenderAfkAst
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import java.util.logging.Level
 
 class ParserAfkAst : IParser, ParserAbstract() {
@@ -52,6 +55,7 @@ class ParserAfkAst : IParser, ParserAbstract() {
         options.addArguments("no-sandbox")
         drv = ChromeDriver(options)
         drv.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
+        drv.manage().timeouts().setScriptTimeout(timeoutB, TimeUnit.SECONDS)
         drv.manage().deleteAllCookies()
         drv.get(BaseUrl)
         try {
@@ -116,21 +120,40 @@ class ParserAfkAst : IParser, ParserAbstract() {
     private fun parserPageS() {
         val windowHandlers = drv.windowHandles
         windowHandlers.removeAll(windowsSet)
-        windowHandlers.forEach {
+        val executor = Executors.newCachedThreadPool()
+        windowHandlers.forEach { t ->
             try {
-                parserPage(it)
+                val future = executor.submit { parserPage(t) }
+                try {
+                    val s = future.get(60, TimeUnit.SECONDS)
+                } catch (ex: TimeoutException) {
+                    throw ex
+                } catch (ex: InterruptedException) {
+                    throw ex
+                } catch (ex: ExecutionException) {
+                    throw ex
+                } catch (ex: Exception) {
+                    throw ex
+                } finally {
+                    future.cancel(true)
+                }
+
             } catch (e: Exception) {
                 logger(e)
             }
         }
+        executor.shutdown()
     }
 
     private fun parserPage(window: String) {
         drv.switchTo().window(window)
         val tnd = TenderAfkAst(drv)
         try {
-            //println(it)
             ParserTender(tnd)
+            /*try {
+                drv.close()
+            } catch (e: Exception) {
+            }*/
         } catch (e: Exception) {
             logger("error in ParserTender", e.stackTrace, e)
         }
@@ -138,7 +161,7 @@ class ParserAfkAst : IParser, ParserAbstract() {
 
     companion object WebCl {
         const val BaseUrl = "http://utp.sberbank-ast.ru/AFK/List/PurchaseList/"
-        const val timeoutB = 120L
+        const val timeoutB = 60L
         const val CountPage = 10
     }
 }
