@@ -10,7 +10,6 @@ import parser.extensions.deleteAllWhiteSpace
 import parser.extensions.findElementWithoutException
 import parser.extensions.getDateFromString
 import parser.logger.logger
-import parser.parsers.ParserTransAst
 import parser.tools.formatterGpn
 import java.sql.Connection
 import java.sql.DriverManager
@@ -28,7 +27,7 @@ class TenderAfkAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
     }
 
     override fun parsing() {
-        val wait = WebDriverWait(drv, ParserTransAst.timeoutB)
+        val wait = WebDriverWait(drv, 10)
         val href = drv.currentUrl
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[contains(., 'Номер процедуры')]/following-sibling::td/span")))
@@ -109,7 +108,7 @@ class TenderAfkAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             rs.close()
             stmt.close()
             var idOrganizer = 0
-            val fullnameOrg = drv.findElementWithoutException(By.xpath("//td[contains(., 'Наименование Организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+            val fullnameOrg = drv.findElementWithoutException(By.xpath("//td[contains(., 'Наименование организатора')]/following-sibling::td"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
             if (fullnameOrg != "") {
                 val stmto = con.prepareStatement("SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?")
@@ -122,13 +121,13 @@ class TenderAfkAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 } else {
                     rso.close()
                     stmto.close()
-                    val postalAdr = drv.findElementWithoutException(By.xpath("//td[contains(., 'Почтовый адрес')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    val postalAdr = drv.findElementWithoutException(By.xpath("//td[contains(., 'Фактический адрес (почтовый)')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
-                    val factAdr = drv.findElementWithoutException(By.xpath("//td[contains(., 'Место нахождения')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    val factAdr = drv.findElementWithoutException(By.xpath("//td[contains(., 'Юридический адрес')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
-                    val inn = drv.findElementWithoutException(By.xpath("//td[contains(., 'ИНН Организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    val inn = drv.findElementWithoutException(By.xpath("//td[contains(., 'ИНН организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
-                    val kpp = drv.findElementWithoutException(By.xpath("//td[contains(., 'КПП Организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    val kpp = drv.findElementWithoutException(By.xpath("//td[contains(., 'КПП организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
                     val email = drv.findElementWithoutException(By.xpath("//td[contains(., 'Адрес электронной почты')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""

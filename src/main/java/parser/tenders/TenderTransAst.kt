@@ -109,7 +109,7 @@ class TenderTransAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             rs.close()
             stmt.close()
             var idOrganizer = 0
-            val fullnameOrg = drv.findElementWithoutException(By.xpath("//td[contains(., 'Наименование Организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+            val fullnameOrg = drv.findElementWithoutException(By.xpath("//td[contains(., 'Наименование организатора')]/following-sibling::td"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
             if (fullnameOrg != "") {
                 val stmto = con.prepareStatement("SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?")
@@ -122,13 +122,13 @@ class TenderTransAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 } else {
                     rso.close()
                     stmto.close()
-                    val postalAdr = drv.findElementWithoutException(By.xpath("//td[contains(., 'Почтовый адрес')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    val postalAdr = drv.findElementWithoutException(By.xpath("//td[contains(., 'Фактический адрес (почтовый)')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
-                    val factAdr = drv.findElementWithoutException(By.xpath("//td[contains(., 'Место нахождения')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    val factAdr = drv.findElementWithoutException(By.xpath("//td[contains(., 'Юридический адрес')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
-                    val inn = drv.findElementWithoutException(By.xpath("//td[contains(., 'ИНН Организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    val inn = drv.findElementWithoutException(By.xpath("//td[contains(., 'ИНН организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
-                    val kpp = drv.findElementWithoutException(By.xpath("//td[contains(., 'КПП Организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    val kpp = drv.findElementWithoutException(By.xpath("//td[contains(., 'КПП организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
                     val email = drv.findElementWithoutException(By.xpath("//td[contains(., 'Адрес электронной почты')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""

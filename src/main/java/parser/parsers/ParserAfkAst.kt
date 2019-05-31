@@ -10,10 +10,8 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenders.TenderAfkAst
-import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 import java.util.logging.Level
 
 class ParserAfkAst : IParser, ParserAbstract() {
@@ -125,13 +123,7 @@ class ParserAfkAst : IParser, ParserAbstract() {
             try {
                 val future = executor.submit { parserPage(t) }
                 try {
-                    val s = future.get(60, TimeUnit.SECONDS)
-                } catch (ex: TimeoutException) {
-                    throw ex
-                } catch (ex: InterruptedException) {
-                    throw ex
-                } catch (ex: ExecutionException) {
-                    throw ex
+                    val s = future.get(90, TimeUnit.SECONDS)
                 } catch (ex: Exception) {
                     throw ex
                 } finally {
