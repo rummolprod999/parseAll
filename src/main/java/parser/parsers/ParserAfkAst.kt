@@ -123,7 +123,7 @@ class ParserAfkAst : IParser, ParserAbstract() {
             try {
                 val future = executor.submit { parserPage(t) }
                 try {
-                    val s = future.get(90, TimeUnit.SECONDS)
+                    val s = future.get(120, TimeUnit.SECONDS)
                 } catch (ex: Exception) {
                     throw ex
                 } finally {
