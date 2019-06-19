@@ -146,7 +146,7 @@ class TenderRusNano(val tn: RusNano) : TenderAbstract(), ITender {
             val documents: Elements = htmlTen.select("td:contains(Закупочная документация:) + td a")
             documents.forEach { doc ->
                 val hrefT = doc?.attr("href")?.trim { it <= ' ' } ?: ""
-                val href = "$etpUrl$hrefT"
+                val href = hrefT
                 val nameDoc = doc?.text()?.trim { it <= ' ' } ?: ""
                 if (href != "") {
                     val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
