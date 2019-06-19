@@ -62,6 +62,7 @@ class Executor {
             Arguments.ROSLES -> run {
                 p = UnParserZmo(192, "МАГАЗИН ЗАКУПОК МАЛОГО ОБЪЕМА РОСЛЕСИНФОРГ", "https://roslesinforg-market.rts-tender.ru/", ""); executeParser(p) { parser() }
             }
+            Arguments.RUSNANO -> run { p = ParserRusNano(); executeParser(p) { parser() } }
         }
     }
 
