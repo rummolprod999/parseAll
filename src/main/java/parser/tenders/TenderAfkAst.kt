@@ -326,7 +326,7 @@ class TenderAfkAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             try {
                 parserLot(el, con, href, ind + 1)
             } catch (e: Exception) {
-                logger("Error in parserLot", href, e)
+                logger("Error in parserLot", href, e, e.stackTrace)
             }
         }
 
