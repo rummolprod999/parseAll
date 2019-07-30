@@ -49,5 +49,6 @@ enum class Arguments {
     TMK,
     EVRAZ,
     ROSLES,
-    RUSNANO
+    RUSNANO,
+    UZEX
 }

@@ -7,6 +7,7 @@ import java.io.File
 import java.io.FileReader
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.system.exitProcess
 
 
 object BuilderApp {
@@ -23,7 +24,7 @@ object BuilderApp {
     lateinit var UrlConnect: String
 }
 
-const val arguments = "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu, tuva, gzalt, amurobl, dvrt, afkast, tmk, evraz, rosles, rusnano"
+const val arguments = "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu, tuva, gzalt, amurobl, dvrt, afkast, tmk, evraz, rosles, rusnano, uzex"
 
 class Builder(args: Array<String>) {
     lateinit var arg: Arguments
@@ -93,7 +94,8 @@ class Builder(args: Array<String>) {
             "evraz" -> arg = Arguments.EVRAZ
             "rosles" -> arg = Arguments.ROSLES
             "rusnano" -> arg = Arguments.RUSNANO
-            else -> run { println("Неверно указаны аргументы, используйте $arguments, выходим из программы"); System.exit(0) }
+            "uzex" -> arg = Arguments.UZEX
+            else -> run { println("Неверно указаны аргументы, используйте $arguments, выходим из программы"); exitProcess(0) }
         }
         setSettings()
         createDirs()
