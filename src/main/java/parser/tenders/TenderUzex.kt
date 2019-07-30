@@ -2,7 +2,9 @@ package parser.tenders
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import parser.builderApp.BuilderApp
+import parser.extensions.extractNum
 import parser.extensions.getDateFromString
 import parser.logger.logger
 import parser.networkTools.downloadFromUrl
@@ -201,18 +203,62 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
                 }
             }
             val requirements = htmlTen.select("ul.conditionsList li")
-            for (rec in requirements) {
-                val recName = rec?.text()?.trim { it <= ' ' } ?: ""
-                if (recName != "") {
-                    val insertRec = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}requirement SET id_lot = ?, name = ?").apply {
-                        setInt(1, idLot)
-                        setString(2, recName)
-                        executeUpdate()
-                        close()
-                    }
-                }
+            insertRequirements(requirements, con, idLot)
+            val purchaseObjects = htmlTen.select("div.full_block.content")
+            insertPurObjs(purchaseObjects, con, idLot, idCustomer)
+            try {
+                tenderKwords(idTender, con)
+            } catch (e: Exception) {
+                logger("Ошибка добавления ключевых слов", e.stackTrace, e)
+            }
+
+            try {
+                addVNum(con, tn.purNum, typeFz)
+            } catch (e: Exception) {
+                logger("Ошибка добавления версий", e.stackTrace, e)
             }
         })
+    }
+
+    private fun insertPurObjs(purchaseObjects: Elements, con: Connection, idLot: Int, idCustomer: Int) {
+        for (po in purchaseObjects) {
+            val name = po.selectFirst("p:eq(0)")?.ownText()?.trim { it <= ' ' } ?: ""
+            val quantity = po.selectFirst("tbody tr td:eq(0)")?.ownText()?.trim { it <= ' ' } ?: ""
+            val okei = po.selectFirst("tbody tr td:eq(1)")?.ownText()?.trim { it <= ' ' } ?: ""
+            val priceT = po.selectFirst("tbody tr td:eq(2)")?.ownText()?.trim { it <= ' ' } ?: ""
+            val price = priceT.extractNum()
+            if (name != "") {
+                con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?").apply {
+                    setInt(1, idLot)
+                    setInt(2, idCustomer)
+                    setString(3, name)
+                    setString(4, okei)
+                    setString(5, quantity)
+                    setString(6, quantity)
+                    setString(7, price)
+                    setString(8, "")
+                    setString(9, "")
+                    setString(10, "")
+                    executeUpdate()
+                    close()
+                }
+            }
+
+        }
+    }
+
+    private fun insertRequirements(requirements: Elements, con: Connection, idLot: Int) {
+        for (rec in requirements) {
+            val recName = rec?.text()?.trim { it <= ' ' } ?: ""
+            if (recName != "") {
+                val insertRec = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}requirement SET id_lot = ?, name = ?").apply {
+                    setInt(1, idLot)
+                    setString(2, recName)
+                    executeUpdate()
+                    close()
+                }
+            }
+        }
     }
 
     private fun insertDocs(htmlTen: Document, con: Connection, idTender: Int) {
