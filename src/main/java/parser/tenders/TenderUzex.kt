@@ -1,6 +1,7 @@
 package parser.tenders
 
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import parser.builderApp.BuilderApp
 import parser.extensions.getDateFromString
 import parser.logger.logger
@@ -133,13 +134,104 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
             rt.close()
             insertTender.close()
             if (updated) {
-                TenderAbstract.UpdateTender++
+                UpdateTender++
             } else {
-                TenderAbstract.AddTender++
+                AddTender++
             }
-            
-
+            var idLot = 0
+            val lotNumber = 1
+            val insertLot = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?", Statement.RETURN_GENERATED_KEYS).apply {
+                setInt(1, idTender)
+                setInt(2, lotNumber)
+                setString(3, tn.currency)
+                setString(4, tn.nmck)
+                executeUpdate()
+            }
+            val rl = insertLot.generatedKeys
+            if (rl.next()) {
+                idLot = rl.getInt(1)
+            }
+            rl.close()
+            insertLot.close()
+            try {
+                insertDocs(htmlTen, con, idTender)
+            } catch (e: Exception) {
+                logger(e, e.stackTrace)
+            }
+            var idCustomer = 0
+            if (fullnameOrg != "") {
+                val stmtoc = con.prepareStatement("SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1")
+                stmtoc.setString(1, fullnameOrg)
+                val rsoc = stmtoc.executeQuery()
+                if (rsoc.next()) {
+                    idCustomer = rsoc.getInt(1)
+                    rsoc.close()
+                    stmtoc.close()
+                } else {
+                    rsoc.close()
+                    stmtoc.close()
+                    val stmtins = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}customer SET full_name = ?, is223=1, reg_num = ?, inn = ?", Statement.RETURN_GENERATED_KEYS)
+                    stmtins.setString(1, fullnameOrg)
+                    stmtins.setString(2, java.util.UUID.randomUUID().toString())
+                    stmtins.setString(3, inn)
+                    stmtins.executeUpdate()
+                    val rsoi = stmtins.generatedKeys
+                    if (rsoi.next()) {
+                        idCustomer = rsoi.getInt(1)
+                    }
+                    rsoi.close()
+                    stmtins.close()
+                }
+            }
+            val delivPlace = htmlTen.selectFirst("div.left_element:contains(Место поставки:) + div")?.text()?.trim { it <= ' ' }
+                    ?: ""
+            val delivTerm1 = htmlTen.selectFirst("div.left_element:contains(Срок поставки) + div")?.text()?.trim { it <= ' ' }
+                    ?: ""
+            val delivTerm2 = htmlTen.selectFirst("div.left_element:contains(Условия поставки) + div")?.text()?.trim { it <= ' ' }
+                    ?: ""
+            val delivTerm = "$delivTerm1 $delivTerm2".trim { it <= ' ' }
+            if (delivPlace != "" || delivTerm != "") {
+                val insertCusRec = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?").apply {
+                    setInt(1, idLot)
+                    setInt(2, idCustomer)
+                    setString(3, delivPlace)
+                    setString(4, delivTerm)
+                    executeUpdate()
+                    close()
+                }
+            }
+            val requirements = htmlTen.select("ul.conditionsList li")
+            for (rec in requirements) {
+                val recName = rec?.text()?.trim { it <= ' ' } ?: ""
+                if (recName != "") {
+                    val insertRec = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}requirement SET id_lot = ?, name = ?").apply {
+                        setInt(1, idLot)
+                        setString(2, recName)
+                        executeUpdate()
+                        close()
+                    }
+                }
+            }
         })
+    }
+
+    private fun insertDocs(htmlTen: Document, con: Connection, idTender: Int) {
+        val documents = htmlTen.select("a.product_photo")
+        documents.addAll(htmlTen.select("a.product_file"))
+        for (doc in documents) {
+            val urlT = doc?.attr("href")?.trim { it <= ' ' } ?: ""
+            val url = "https://dxarid.uzex.uz$urlT"
+            var docName = doc?.text()?.trim { it <= ' ' } ?: ""
+            if (docName == "") {
+                docName = url
+            }
+            val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
+            insertDoc.setInt(1, idTender)
+            insertDoc.setString(2, docName)
+            insertDoc.setString(3, url)
+            insertDoc.executeUpdate()
+            insertDoc.close()
+        }
     }
 
     private fun updateVersion(con: Connection, dateVer: Date): Result {
