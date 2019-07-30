@@ -269,7 +269,7 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
             val url = "https://dxarid.uzex.uz$urlT"
             var docName = doc?.text()?.trim { it <= ' ' } ?: ""
             if (docName == "") {
-                docName = url
+                docName = urlT
             }
             val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
             insertDoc.setInt(1, idTender)
