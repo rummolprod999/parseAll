@@ -1,7 +1,12 @@
 package parser.parsers
 
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
+import parser.extensions.getDataFromRegexp
 import parser.logger.logger
 import parser.networkTools.downloadFromUrl
+import parser.tenderClasses.Achi
+import parser.tenders.TenderAchi
 
 class ParserAchi : IParser, ParserAbstract() {
     companion object WebCl {
@@ -36,6 +41,32 @@ class ParserAchi : IParser, ParserAbstract() {
             logger("Gets empty string ${this::class.simpleName}", url)
             return
         }
-        println(pageTen)
+        val html = Jsoup.parse(pageTen)
+        val tenders = html.select("div.tender__list__items > div.tender__list__item")
+        if (tenders.isEmpty()) {
+            logger("Gets empty list tenders", url)
+        }
+        tenders.forEach {
+            try {
+                parserTend(it)
+            } catch (e: Exception) {
+                logger(e, e.stackTrace)
+            }
+        }
+    }
+
+    private fun parserTend(el: Element) {
+        val urlT = el.selectFirst("h2 > a")?.attr("href")?.trim { it <= ' ' }
+                ?: throw Exception("urlT was not found")
+        val urlTend = "https://achizitii.md$urlT"
+        val purNum = urlT.getDataFromRegexp("/(\\d+)/$")
+        if (purNum == "") {
+            logger("empty purNum", urlTend)
+            return
+        }
+        val purName = el.selectFirst("h2 > a")?.ownText()?.trim { it <= ' ' }
+                ?: throw Exception("purName was not found")
+        val t = TenderAchi(Achi(urlTend, purNum, purName))
+        ParserTender(t)
     }
 }
