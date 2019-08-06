@@ -8,6 +8,7 @@ import parser.extensions.getDateFromString
 import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.Uzex
+import parser.tenders.TenderUzex
 import parser.tools.formatter
 import java.util.*
 
