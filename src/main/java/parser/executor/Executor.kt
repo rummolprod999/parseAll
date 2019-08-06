@@ -4,7 +4,6 @@ import parser.Arguments
 import parser.builderApp.BuilderApp
 import parser.logger.logger
 import parser.parsers.*
-import parser.tenders.ParserUzex
 
 class Executor {
     lateinit var p: IParser
@@ -65,6 +64,7 @@ class Executor {
             }
             Arguments.RUSNANO -> run { p = ParserRusNano(); executeParser(p) { parser() } }
             Arguments.UZEX -> run { p = ParserUzex(); executeParser(p) { parser() } }
+            Arguments.ACHI -> run { p = ParserAchi(); executeParser(p) { parser() } }
         }
     }
 

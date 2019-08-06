@@ -1,4 +1,4 @@
-package parser.tenders
+package parser.parsers
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -7,8 +7,6 @@ import parser.extensions.getDataFromRegexp
 import parser.extensions.getDateFromString
 import parser.logger.logger
 import parser.networkTools.downloadFromUrl
-import parser.parsers.IParser
-import parser.parsers.ParserAbstract
 import parser.tenderClasses.Uzex
 import parser.tools.formatter
 import java.util.*

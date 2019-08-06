@@ -50,5 +50,6 @@ enum class Arguments {
     EVRAZ,
     ROSLES,
     RUSNANO,
-    UZEX
+    UZEX,
+    ACHI
 }
