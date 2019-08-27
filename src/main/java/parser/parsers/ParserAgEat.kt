@@ -30,7 +30,7 @@ class ParserAgEat : IParser, ParserAbstract() {
     companion object WebCl {
         const val BaseUrl = "https://agregatoreat.ru/purchases/all"
         const val timeoutB = 30L
-        const val CountPage = 100
+        const val CountPage = 125
     }
 
     override fun parser() = parse {
