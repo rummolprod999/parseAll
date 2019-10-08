@@ -69,9 +69,12 @@ class ParserAlrosa : IParser, ParserAbstract() {
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tbody[@id = 'WD0120-contentTBody']/tr[@rr and @sst and @rt]")))
             try {
                 val js = driver as JavascriptExecutor
+                js.executeScript("document.querySelector('#WD24').click()")
+                Thread.sleep(10000)
                 js.executeScript("document.querySelector('div[title = \"Дата начала приема предложений\"]').click()")
                 Thread.sleep(5000)
                 js.executeScript("document.querySelector('div[title = \"Дата начала приема предложений\"]').click()")
+                Thread.sleep(5000)
             } catch (e: Exception) {
                 logger(e)
             }
