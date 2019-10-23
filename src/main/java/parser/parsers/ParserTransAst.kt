@@ -30,7 +30,8 @@ class ParserTransAst : IParser, ParserAbstract() {
         var tr = 0
         while (true) {
             try {
-                parserSelen()
+
+                BaseUrl.forEach { parserSelen(it) }
                 break
             } catch (e: Exception) {
                 tr++
@@ -45,7 +46,7 @@ class ParserTransAst : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserSelen() {
+    private fun parserSelen(urlPage: String) {
         val options = ChromeOptions()
         options.addArguments("headless")
         options.addArguments("disable-gpu")
@@ -53,10 +54,10 @@ class ParserTransAst : IParser, ParserAbstract() {
         drv = ChromeDriver(options)
         drv.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         drv.manage().deleteAllCookies()
-        drv.get(BaseUrl)
+        drv.get(urlPage)
         try {
             for (i in 1..CountPage) {
-                parserList()
+                parserList(urlPage)
             }
             parserPageS()
         } catch (e: Exception) {
@@ -66,7 +67,7 @@ class ParserTransAst : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserList() {
+    private fun parserList(urlPage: String) {
         Thread.sleep(5000)
         drv.switchTo().defaultContent()
         val wait = WebDriverWait(drv, timeoutB)
@@ -81,7 +82,7 @@ class ParserTransAst : IParser, ParserAbstract() {
             try {
                 parserTender(value, index)
             } catch (e: Exception) {
-                logger("error in parserTender", e.stackTrace, e, BaseUrl)
+                logger("error in parserTender", e.stackTrace, e, urlPage)
             }
         }
         try {
@@ -137,7 +138,7 @@ class ParserTransAst : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "http://utp.sberbank-ast.ru/Transneft/List/PurchaseList"
+        val BaseUrl = listOf("http://utp.sberbank-ast.ru/Transneft/List/PurchaseList", "http://utp.sberbank-ast.ru/Transneft/List/PurchaseListSMiSP")
         const val timeoutB = 120L
         const val CountPage = 10
     }

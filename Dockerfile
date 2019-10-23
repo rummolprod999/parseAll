@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:18.04
 RUN apt-get update && apt-get full-upgrade -y
 RUN yes | apt-get install openjdk-8-jdk
 RUN yes | apt-get install wget
