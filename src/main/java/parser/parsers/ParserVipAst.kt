@@ -9,12 +9,12 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
-import parser.tenders.TenderAfkAst
+import parser.tenders.TenderVipAst
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserAfkAst : IParser, ParserAbstract() {
+class ParserVipAst : IParser, ParserAbstract() {
 
     lateinit var drv: ChromeDriver
     var firstPage = true
@@ -26,8 +26,8 @@ class ParserAfkAst : IParser, ParserAbstract() {
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
-    override fun parser() = parse { parserAfkAst() }
-    private fun parserAfkAst() {
+    override fun parser() = parse { parserVipAst() }
+    private fun parserVipAst() {
         var tr = 0
         while (true) {
             try {
@@ -139,7 +139,7 @@ class ParserAfkAst : IParser, ParserAbstract() {
 
     private fun parserPage(window: String) {
         drv.switchTo().window(window)
-        val tnd = TenderAfkAst(drv)
+        val tnd = TenderVipAst(drv)
         try {
             ParserTender(tnd)
             /*try {
@@ -152,7 +152,7 @@ class ParserAfkAst : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "http://utp.sberbank-ast.ru/AFK/List/PurchaseList/"
+        const val BaseUrl = "http://utp.sberbank-ast.ru/VIP/List/PurchaseList"
         const val timeoutB = 60L
         const val CountPage = 10
     }
