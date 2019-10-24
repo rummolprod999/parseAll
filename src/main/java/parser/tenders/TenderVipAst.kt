@@ -282,7 +282,7 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 close()
             }
         }
-        val purObjects = el.findElements(By.xpath("//td[contains(., 'Позиции лота')]/following-sibling::td//tbody/tr"))
+        val purObjects = el.findElements(By.xpath(".//td[contains(., 'Позиции лота')]/following-sibling::td//tbody/tr"))
         if (!purObjects.isEmpty()) {
             for (po in purObjects) {
                 val name = po.findElementWithoutException(By.xpath("./td[contains(@id, 'PositionName')]/span"))?.text?.trim()?.trim { it <= ' ' }

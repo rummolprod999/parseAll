@@ -282,8 +282,8 @@ class TenderRetailAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 close()
             }
         }
-        val purObjects = el.findElements(By.xpath("//td[contains(., 'Позиции лота')]/following-sibling::td//tbody/tr"))
-        if (!purObjects.isEmpty()) {
+        val purObjects = el.findElements(By.xpath(".//td[contains(., 'Позиции лота')]/following-sibling::td//tbody/tr"))
+        if (purObjects.isNotEmpty()) {
             for (po in purObjects) {
                 val name = po.findElementWithoutException(By.xpath("./td[contains(@id, 'PositionName')]/span"))?.text?.trim()?.trim { it <= ' ' }
                         ?: ""
