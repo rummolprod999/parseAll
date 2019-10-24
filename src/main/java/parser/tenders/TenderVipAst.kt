@@ -27,6 +27,7 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
     }
 
     override fun parsing() {
+        //drv.switchTo().defaultContent()
         val wait = WebDriverWait(drv, 10)
         val href = drv.currentUrl
         try {
@@ -320,6 +321,7 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
     }
 
     private fun parserLots(drv: ChromeDriver, con: Connection, href: String) {
+        //drv.switchTo().defaultContent()
         val lots = drv.findElements(By.xpath("//thead[.//th[ contains(.,'Лоты')]]/following-sibling::tbody/tr"))
         if (lots.isEmpty()) {
             logger("Can not find lots in tender", href)
@@ -329,7 +331,7 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             try {
                 parserLot(el, con, href, ind + 1, drv)
             } catch (e: Exception) {
-                logger("Error in parserLot", href, e, e.stackTrace)
+                logger("Error in parserLot", href, e)
             }
         }
 

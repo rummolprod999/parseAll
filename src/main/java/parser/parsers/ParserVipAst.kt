@@ -19,6 +19,7 @@ class ParserVipAst : IParser, ParserAbstract() {
     lateinit var drv: ChromeDriver
     var firstPage = true
     private lateinit var windowsSet: Set<String?>
+    val executor = Executors.newSingleThreadExecutor()
 
     init {
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
@@ -44,6 +45,7 @@ class ParserVipAst : IParser, ParserAbstract() {
 
             }
         }
+        executor.shutdown()
     }
 
     private fun parserSelen() {
@@ -59,8 +61,8 @@ class ParserVipAst : IParser, ParserAbstract() {
         try {
             for (i in 1..CountPage) {
                 parserList()
+                parserPageS()
             }
-            parserPageS()
         } catch (e: Exception) {
             logger("Error in parser function", e.stackTrace, e)
         } finally {
@@ -70,7 +72,11 @@ class ParserVipAst : IParser, ParserAbstract() {
 
     private fun parserList() {
         Thread.sleep(5000)
-        drv.switchTo().defaultContent()
+        if (!firstPage) {
+            drv.switchTo().window(windowsSet.elementAt(0))
+        } else {
+            drv.switchTo().defaultContent()
+        }
         val wait = WebDriverWait(drv, timeoutB)
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]")))
         drv.switchTo().defaultContent()
@@ -117,38 +123,43 @@ class ParserVipAst : IParser, ParserAbstract() {
 
     private fun parserPageS() {
         val windowHandlers = drv.windowHandles
-        windowHandlers.removeAll(windowsSet)
-        val executor = Executors.newCachedThreadPool()
+        //windowHandlers.removeAll(windowsSet)
         windowHandlers.forEach { t ->
+            if (t == windowsSet.elementAt(0)) {
+                return@forEach
+            }
             try {
-                val future = executor.submit { parserPage(t) }
+                /*val future: Future<Boolean> = executor.submit(Callable<Boolean> { parserPage(t) }) as Future<Boolean>
                 try {
-                    val s = future.get(120, TimeUnit.SECONDS)
+                    val s: Boolean = future.get(30, TimeUnit.SECONDS)
                 } catch (ex: Exception) {
+                    future.cancel(true)
                     throw ex
                 } finally {
                     future.cancel(true)
-                }
+                }*/
+                parserPage(t)
 
             } catch (e: Exception) {
                 logger(e)
             }
         }
-        executor.shutdown()
     }
 
-    private fun parserPage(window: String) {
+    private fun parserPage(window: String): Boolean {
         drv.switchTo().window(window)
         val tnd = TenderVipAst(drv)
         try {
             ParserTender(tnd)
-            /*try {
-                drv.close()
-            } catch (e: Exception) {
-            }*/
         } catch (e: Exception) {
             logger("error in ParserTender", e.stackTrace, e)
         }
+        try {
+            drv.close()
+        } catch (e: Exception) {
+            logger(e)
+        }
+        return true
     }
 
     companion object WebCl {
