@@ -66,6 +66,7 @@ class Executor {
             Arguments.UZEX -> run { p = ParserUzex(); executeParser(p) { parser() } }
             Arguments.ACHI -> run { p = ParserAchi(); executeParser(p) { parser() } }
             Arguments.VIPAST -> run { p = ParserVipAst(); executeParser(p) { parser() } }
+            Arguments.RETAILAST -> run { p = ParserRetailAst(); executeParser(p) { parser() } }
         }
     }
 
