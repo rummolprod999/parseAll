@@ -67,6 +67,7 @@ class Executor {
             Arguments.ACHI -> run { p = ParserAchi(); executeParser(p) { parser() } }
             Arguments.VIPAST -> run { p = ParserVipAst(); executeParser(p) { parser() } }
             Arguments.RETAILAST -> run { p = ParserRetailAst(); executeParser(p) { parser() } }
+            Arguments.NEFTAST -> run { p = ParserNeftAst(); executeParser(p) { parser() } }
         }
     }
 

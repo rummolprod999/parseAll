@@ -58,6 +58,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserNeftAst.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserRetailAst.kt">
           <value>
             <set />
@@ -104,6 +109,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderEvraz.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderNeftAst.kt">
           <value>
             <set />
           </value>

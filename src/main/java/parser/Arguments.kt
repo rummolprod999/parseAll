@@ -53,5 +53,6 @@ enum class Arguments {
     UZEX,
     ACHI,
     VIPAST,
-    RETAILAST
+    RETAILAST,
+    NEFTAST
 }
