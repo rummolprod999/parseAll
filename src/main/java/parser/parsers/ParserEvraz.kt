@@ -25,7 +25,7 @@ class ParserEvraz : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "http://supply.evraz.com/?w=1"
+        const val BaseUrl = "https://supply.evraz.com/?hello_token=0"
         const val timeoutB = 30L
     }
 
@@ -84,24 +84,31 @@ class ParserEvraz : IParser, ParserAbstract() {
     }
 
     private fun createTenderList() {
+        //return //TODO change next week
         driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         driver.manage().deleteAllCookies()
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
         wait = WebDriverWait(driver, timeoutB)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@role = 'button' and @data-toggle = 'collapse']")))
-        val collapsed = driver.findElementsByXPath("//a[@role = 'button' and @data-toggle = 'collapse']")
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'company-name')]")))
+        val collapsed = driver.findElementsByXPath("//div[contains(@class, 'company-name')]")
         collapsed.forEach {
             it.click()
-            Thread.sleep(1000)
+            Thread.sleep(10000)
         }
+        val collapsed1 = driver.findElementsByXPath("//div[contains(@class, 'plot-name')]")
+        collapsed1.forEach {
+            it.click()
+            Thread.sleep(10000)
+        }
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(@class, 'open_lot')]")))
         getListTenders()
     }
 
     private fun getListTenders() {
         Thread.sleep(2000)
         driver.switchTo().defaultContent()
-        val tenders = driver.findElements(By.xpath("//a[@class = 'open_lot']"))
+        val tenders = driver.findElements(By.xpath("//a[contains(@class, 'open_lot')]"))
         tenders.forEach {
             try {
                 parserTender(it)
@@ -123,11 +130,19 @@ class ParserEvraz : IParser, ParserAbstract() {
             logger("can not urlT in tender $purName")
             return
         }
-        val href = "http://supply.evraz.com$urlT"
-        val purNum = el.getAttribute("idelement") ?: run {
-            logger("can not purNum in tender $href")
+        val idiblock = el.getAttribute("idiblock") ?: run {
+            logger("can not idiblock in tender $purName")
             return
         }
+        val iblock_applick = el.getAttribute("iblock-applick") ?: run {
+            logger("can not iblock_applick in tender $purName")
+            return
+        }
+        val purNum = el.getAttribute("idelement") ?: run {
+            logger("can not purNum in tender $urlT")
+            return
+        }
+        val href = "https://supply.evraz.com/lot/index.php?ID=${purNum}&IBLOCK_ID=${idiblock}&IBLOCK_ID_APPLIK=${iblock_applick}&HISTORY_APPLIK=Y&modalWindow=Y"
         val tt = Evraz(purNum, href, purName)
         val t = TenderEvraz(tt, driver)
         tendersList.add(t)
