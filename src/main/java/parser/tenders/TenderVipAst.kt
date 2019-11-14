@@ -17,6 +17,7 @@ import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
 
+
 class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
 
     var idTender = 0
@@ -199,6 +200,7 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 TenderAbstract.AddTender++
             }
             parserLots(drv, con, href)
+            getDocsAst(drv, con, "VIP", idTender)
             try {
                 tenderKwords(idTender, con)
             } catch (e: Exception) {

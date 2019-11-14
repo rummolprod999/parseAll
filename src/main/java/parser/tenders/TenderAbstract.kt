@@ -1,7 +1,12 @@
 package parser.tenders
 
+import com.google.gson.GsonBuilder
+import org.json.XML
+import org.openqa.selenium.By
+import org.openqa.selenium.chrome.ChromeDriver
 import parser.builderApp.BuilderApp
 import java.sql.*
+import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -340,6 +345,48 @@ abstract class TenderAbstract {
             s.contains("предложен") -> 3
             s.contains("единств") -> 4
             else -> 6
+        }
+    }
+
+    class FileAst {
+        var filename: String? = null
+        var fileid: String? = null
+    }
+
+    class Docs {
+        var file: ArrayList<FileAst>? = null
+    }
+
+    class DocsDiv {
+        var Docs: Docs? = null
+    }
+
+    class PurchaseView {
+        var DocsDiv: DocsDiv? = null
+    }
+
+    class J {
+        var PurchaseView: PurchaseView? = null
+    }
+
+    protected fun getDocsAst(drv: ChromeDriver, con: Connection, section: String, idTender: Int) {
+
+
+        val docXml = drv.findElement(By.xpath("//input[@id='xmlData']"))?.getAttribute("value") ?: return
+        val jsonObj = XML.toJSONObject(docXml, true) ?: return
+        val jsonString = jsonObj.toString()
+        val gson = GsonBuilder().serializeNulls().create()
+        val files = gson.fromJson(jsonString, J::class.java)
+        files?.PurchaseView?.DocsDiv?.Docs?.file?.forEach {
+            if (it.fileid != "" && it.filename != "") {
+                val url = "http://utp.sberbank-ast.ru/$section/File/DownloadFile?fid=${it.fileid}"
+                val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
+                insertDoc.setInt(1, idTender)
+                insertDoc.setString(2, it.filename)
+                insertDoc.setString(3, url)
+                insertDoc.executeUpdate()
+                insertDoc.close()
+            }
         }
     }
 }
