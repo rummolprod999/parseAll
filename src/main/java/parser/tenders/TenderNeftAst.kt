@@ -199,6 +199,7 @@ class TenderNeftAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 TenderAbstract.AddTender++
             }
             parserLots(drv, con, href)
+            getDocsAst(drv, con, "Neft", idTender)
             try {
                 tenderKwords(idTender, con)
             } catch (e: Exception) {

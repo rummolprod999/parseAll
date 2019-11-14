@@ -199,6 +199,7 @@ class TenderRetailAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 TenderAbstract.AddTender++
             }
             parserLots(drv, con, href)
+            getDocsAst(drv, con, "Retail", idTender)
             try {
                 tenderKwords(idTender, con)
             } catch (e: Exception) {

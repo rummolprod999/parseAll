@@ -199,6 +199,7 @@ class TenderTransAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 TenderAbstract.AddTender++
             }
             parserLots(drv, con, href)
+            getDocsAst(drv, con, "Transneft", idTender)
             try {
                 tenderKwords(idTender, con)
             } catch (e: Exception) {
