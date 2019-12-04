@@ -68,6 +68,7 @@ class Executor {
             Arguments.VIPAST -> run { p = ParserVipAst(); executeParser(p) { parser() } }
             Arguments.RETAILAST -> run { p = ParserRetailAst(); executeParser(p) { parser() } }
             Arguments.NEFTAST -> run { p = ParserNeftAst(); executeParser(p) { parser() } }
+            Arguments.EXUSEX -> run { p = ParserExUzex(); executeParser(p) { parser() } }
         }
     }
 
