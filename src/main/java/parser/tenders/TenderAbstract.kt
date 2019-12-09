@@ -365,11 +365,27 @@ abstract class TenderAbstract {
         var DocsDiv: DocsDiv? = null
     }
 
+    class Purchase {
+        var PurchaseDocumentationInfo: PurchaseDocumentationInfo? = null
+    }
+
     class J {
         var PurchaseView: PurchaseView? = null
     }
 
-    protected fun getDocsAst(drv: ChromeDriver, con: Connection, section: String, idTender: Int) {
+    class P {
+        var Purchase: Purchase? = null
+    }
+
+    class PurchaseDocumentationInfo {
+        var PurchaseDocumentationDocsInfo: PurchaseDocumentationDocsInfo? = null
+    }
+
+    class PurchaseDocumentationDocsInfo {
+        var Docs: Docs? = null
+    }
+
+    protected open fun getDocsAst(drv: ChromeDriver, con: Connection, section: String, idTender: Int) {
 
 
         val docXml = drv.findElement(By.xpath("//input[@id='xmlData']"))?.getAttribute("value") ?: return

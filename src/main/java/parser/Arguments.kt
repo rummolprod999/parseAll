@@ -55,5 +55,6 @@ enum class Arguments {
     VIPAST,
     RETAILAST,
     NEFTAST,
-    EXUSEX
+    EXUSEX,
+    POSTAST
 }
