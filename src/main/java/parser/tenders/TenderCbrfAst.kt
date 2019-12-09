@@ -53,10 +53,10 @@ class TenderCbrfAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
         var datePubTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Дата и время начала срока подачи предложений')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
         if (datePubTmp == "") {
-            datePubTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Дата и время начала срока подачи заявок на участие')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+            datePubTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Дата и время начала подачи заявок на участие')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
         }
-        var dateEndTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Дата и время окончания срока подачи предложений')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+        var dateEndTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Дата и время окончание подачи заявок на участие')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
         if (dateEndTmp == "") {
             dateEndTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Дата и время окончания срока подачи заявок на участие')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
@@ -207,7 +207,11 @@ class TenderCbrfAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 TenderAbstract.AddTender++
             }
             parserLots(drv, con, href)
-            getDocsAst(drv, con, "CBRF", idTender)
+            try {
+                getDocsAst(drv, con, "CBRF", idTender)
+            } catch (e: Exception) {
+                logger(e, e.stackTrace)
+            }
             try {
                 tenderKwords(idTender, con)
             } catch (e: Exception) {
