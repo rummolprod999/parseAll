@@ -9,12 +9,12 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
-import parser.tenders.TenderRussianPostAst
+import parser.tenders.TenderCbrfAst
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserRussianPostAst : IParser, ParserAbstract() {
+class ParserCbrfAst : IParser, ParserAbstract() {
 
     lateinit var drv: ChromeDriver
     var firstPage = true
@@ -148,7 +148,7 @@ class ParserRussianPostAst : IParser, ParserAbstract() {
 
     private fun parserPage(window: String): Boolean {
         drv.switchTo().window(window)
-        val tnd = TenderRussianPostAst(drv)
+        val tnd = TenderCbrfAst(drv)
         try {
             ParserTender(tnd)
         } catch (e: Exception) {
@@ -163,9 +163,9 @@ class ParserRussianPostAst : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "http://utp.sberbank-ast.ru/RussianPost/List/PurchaseList"
+        const val BaseUrl = "http://utp.sberbank-ast.ru/CBRF/List/PurchaseList"
         const val timeoutB = 60L
-        const val CountPage = 10
+        const val CountPage = 1
         val executor = Executors.newSingleThreadExecutor()
     }
 }

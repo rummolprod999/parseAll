@@ -24,7 +24,7 @@ object BuilderApp {
     lateinit var UrlConnect: String
 }
 
-const val arguments = "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu, tuva, gzalt, amurobl, dvrt, afkast, tmk, evraz, rosles, rusnano, uzex, achi, vipast, retailast, neftast, exusex, postast"
+const val arguments = "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu, tuva, gzalt, amurobl, dvrt, afkast, tmk, evraz, rosles, rusnano, uzex, achi, vipast, retailast, neftast, exusex, postast, cbrfast"
 
 class Builder(args: Array<String>) {
     lateinit var arg: Arguments
@@ -101,6 +101,7 @@ class Builder(args: Array<String>) {
             "neftast" -> arg = Arguments.NEFTAST
             "exusex" -> arg = Arguments.EXUSEX
             "postast" -> arg = Arguments.POSTAST
+            "cbrfast" -> arg = Arguments.CBRFAST
             else -> run { println("Неверно указаны аргументы, используйте $arguments, выходим из программы"); exitProcess(0) }
         }
         setSettings()

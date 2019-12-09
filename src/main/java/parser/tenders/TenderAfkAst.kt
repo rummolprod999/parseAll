@@ -215,11 +215,11 @@ class TenderAfkAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
     }
 
     private fun parserLot(el: WebElement, con: Connection, href: String, lotNum: Int) {
-        val nmck = el.findElementWithoutException(By.xpath(".//td[contains(., 'Начальная (максимальная) цена договора (лота)')]/following-sibling::td/span"))?.text?.replace(',', '.')?.deleteAllWhiteSpace()?.trim { it <= ' ' }
+        val nmck = el.findElementWithoutException(By.xpath(".//td[contains(., 'Начальная (максимальная) цена')]/following-sibling::td/span"))?.text?.replace(',', '.')?.deleteAllWhiteSpace()?.trim { it <= ' ' }
                 ?: ""
         val lotName = el.findElementWithoutException(By.xpath(".//td[contains(., 'Наименование лота')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
-        val currency = el.findElementWithoutException(By.xpath(".//td[contains(., 'Сведения о валюте')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+        val currency = el.findElementWithoutException(By.xpath(".//td[contains(., 'Валюта')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
         var idLot = 0
         val insertLot = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?", Statement.RETURN_GENERATED_KEYS).apply {

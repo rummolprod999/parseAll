@@ -1,7 +1,5 @@
 package parser.tenders
 
-import com.google.gson.GsonBuilder
-import org.json.XML
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
@@ -19,13 +17,13 @@ import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
 
-class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
+class TenderCbrfAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
 
     var idTender = 0
 
     init {
-        etpName = "«Сбербанк - Автоматизированная система торгов» - АО \"Почта России\""
-        etpUrl = "http://utp.sberbank-ast.ru/RussianPost/List/PurchaseList"
+        etpName = "«Сбербанк - Автоматизированная система торгов» - \"Закупки Центрального банка Российской Федерации\""
+        etpUrl = "http://utp.sberbank-ast.ru/CBRF/List/PurchaseList"
     }
 
     override fun parsing() {
@@ -119,7 +117,7 @@ class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             rs.close()
             stmt.close()
             var idOrganizer = 0
-            val fullnameOrg = drv.findElementWithoutException(By.xpath("//td[contains(., 'Наименование Организатора')]/following-sibling::td"))?.text?.trim()?.trim { it <= ' ' }
+            val fullnameOrg = drv.findElementWithoutException(By.xpath("//td[contains(., 'Наименование организатора')]/following-sibling::td"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
             if (fullnameOrg != "") {
                 val stmto = con.prepareStatement("SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?")
@@ -132,13 +130,13 @@ class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 } else {
                     rso.close()
                     stmto.close()
-                    val postalAdr = drv.findElementWithoutException(By.xpath("//td[contains(., 'Почтовый адрес (фактический адрес)')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    val postalAdr = drv.findElementWithoutException(By.xpath("//td[contains(., 'Фактический адрес (почтовый)')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
                     val factAdr = drv.findElementWithoutException(By.xpath("//td[contains(., 'Место нахождения (юридический адрес)')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
-                    val inn = drv.findElementWithoutException(By.xpath("//td[contains(., 'ИНН Организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    val inn = drv.findElementWithoutException(By.xpath("//td[contains(., 'ИНН организатора)]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
-                    val kpp = drv.findElementWithoutException(By.xpath("//td[contains(., 'КПП Организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    val kpp = drv.findElementWithoutException(By.xpath("//td[contains(., 'КПП организатора')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
                     val email = drv.findElementWithoutException(By.xpath("//td[contains(., 'Адрес электронной почты')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                             ?: ""
@@ -209,7 +207,7 @@ class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 TenderAbstract.AddTender++
             }
             parserLots(drv, con, href)
-            getDocsAst(drv, con, "RussianPost", idTender)
+            getDocsAst(drv, con, "CBRF", idTender)
             try {
                 tenderKwords(idTender, con)
             } catch (e: Exception) {
@@ -225,20 +223,19 @@ class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
         return Unit
     }
 
-    private fun parserLot(el: WebElement, con: Connection, href: String, lotNum: Int, drv: ChromeDriver): Boolean {
-        val nmck = el.findElementWithoutException(By.xpath(".//td[contains(., 'Начальная цена')]/following-sibling::td/span"))?.text?.replace(',', '.')?.deleteAllWhiteSpace()?.trim { it <= ' ' }
+    private fun parserLot(el: WebElement, con: Connection, href: String, lotNum: Int) {
+        val nmck = el.findElementWithoutException(By.xpath(".//td[contains(., 'Начальная (максимальная) цена')]/following-sibling::td/span"))?.text?.replace(',', '.')?.deleteAllWhiteSpace()?.trim { it <= ' ' }
                 ?: ""
         val lotName = el.findElementWithoutException(By.xpath(".//td[contains(., 'Наименование лота')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
         val currency = el.findElementWithoutException(By.xpath(".//td[contains(., 'Валюта')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
         var idLot = 0
-        val insertLot = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?, lot_name = ?", Statement.RETURN_GENERATED_KEYS).apply {
+        val insertLot = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?", Statement.RETURN_GENERATED_KEYS).apply {
             setInt(1, idTender)
             setInt(2, lotNum)
             setString(3, currency)
             setString(4, nmck)
-            setString(5, lotName)
             executeUpdate()
         }
         val rl = insertLot.generatedKeys
@@ -248,65 +245,61 @@ class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
         rl.close()
         insertLot.close()
         var idCustomer = 0
-        val cusName = drv.findElementWithoutException(By.xpath("//td[contains(., 'Наименование заказчика')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
-                ?: ""
-        val cusInn = drv.findElementWithoutException(By.xpath("//td[contains(., 'ИНН')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
-                ?: ""
-        if (cusName != "") {
-            val stmtoc = con.prepareStatement("SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1")
-            stmtoc.setString(1, cusName)
-            val rsoc = stmtoc.executeQuery()
-            if (rsoc.next()) {
-                idCustomer = rsoc.getInt(1)
-                rsoc.close()
-                stmtoc.close()
-            } else {
-                rsoc.close()
-                stmtoc.close()
-                val stmtins = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}customer SET full_name = ?, is223=1, reg_num = ?, inn = ?", Statement.RETURN_GENERATED_KEYS)
-                stmtins.setString(1, cusName)
-                stmtins.setString(2, java.util.UUID.randomUUID().toString())
-                stmtins.setString(3, cusInn)
-                stmtins.executeUpdate()
-                val rsoi = stmtins.generatedKeys
-                if (rsoi.next()) {
-                    idCustomer = rsoi.getInt(1)
+        val customers = el.findElements(By.xpath("//td[contains(., 'Заказчики')]/following-sibling::td//tbody/tr"))
+        if (!customers.isEmpty()) {
+            val cusName = customers[0].findElementWithoutException(By.xpath("./td[2]/span"))?.text?.trim()?.trim { it <= ' ' }
+                    ?: ""
+            val cusInn = customers[0].findElementWithoutException(By.xpath("./td[3]/span"))?.text?.trim()?.trim { it <= ' ' }
+                    ?: ""
+            if (cusName != "") {
+                val stmtoc = con.prepareStatement("SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1")
+                stmtoc.setString(1, cusName)
+                val rsoc = stmtoc.executeQuery()
+                if (rsoc.next()) {
+                    idCustomer = rsoc.getInt(1)
+                    rsoc.close()
+                    stmtoc.close()
+                } else {
+                    rsoc.close()
+                    stmtoc.close()
+                    val stmtins = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}customer SET full_name = ?, is223=1, reg_num = ?, inn = ?", Statement.RETURN_GENERATED_KEYS)
+                    stmtins.setString(1, cusName)
+                    stmtins.setString(2, java.util.UUID.randomUUID().toString())
+                    stmtins.setString(3, cusInn)
+                    stmtins.executeUpdate()
+                    val rsoi = stmtins.generatedKeys
+                    if (rsoi.next()) {
+                        idCustomer = rsoi.getInt(1)
+                    }
+                    rsoi.close()
+                    stmtins.close()
                 }
-                rsoi.close()
-                stmtins.close()
             }
         }
         val delivPlace = el.findElementWithoutException(By.xpath(".//td[contains(., 'Место поставки товара, выполнения работ, оказания услуг')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
         val delivTerm = el.findElementWithoutException(By.xpath(".//td[contains(., 'Сроки поставки товара, выполнения работ, оказания услуг')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
-        val appGuarantAmount = el.findElementWithoutException(By.xpath(".//td[contains(., 'Размер обеспечения заявки (задатка) на площадке, руб')]/following-sibling::td/span"))?.text?.replace(',', '.')?.deleteAllWhiteSpace()?.trim { it <= ' ' }
-                ?: ""
-        if (delivPlace != "" || delivTerm != "" || appGuarantAmount != "") {
-            con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?, application_guarantee_amount = ?").apply {
+        if (delivPlace != "" || delivTerm != "") {
+            con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?").apply {
                 setInt(1, idLot)
                 setInt(2, idCustomer)
                 setString(3, delivPlace)
                 setString(4, delivTerm)
-                setString(5, appGuarantAmount)
                 executeUpdate()
                 close()
             }
         }
-        val purObjects = el.findElements(By.xpath(".//tr[@content = 'node:BidPosition']"))
+        val purObjects = el.findElements(By.xpath(".//td[contains(., 'Позиции лота')]/following-sibling::td//tbody/tr"))
         if (purObjects.isNotEmpty()) {
             for (po in purObjects) {
-                val name = po.findElementWithoutException(By.xpath(".//span[@content = 'leaf:BidPositionName']"))?.text?.trim()?.trim { it <= ' ' }
+                val name = po.findElementWithoutException(By.xpath("./td[3]/span"))?.text?.trim()?.trim { it <= ' ' }
                         ?: ""
-                val quantity = po.findElementWithoutException(By.xpath(".//span[@content = 'leaf:BidPositionQuantity']"))?.text?.trim()?.deleteAllWhiteSpace()?.trim { it <= ' ' }
+                val quantity = po.findElementWithoutException(By.xpath("./td[4]/span"))?.text?.trim()?.deleteAllWhiteSpace()?.trim { it <= ' ' }
                         ?: ""
-                val okpd2 = po.findElementWithoutException(By.xpath(".//span[@content = 'leaf:BidPositionOKPD2Name']"))?.text?.trim()?.trim { it <= ' ' }
-                        ?: ""
-                val okei = po.findElementWithoutException(By.xpath(".//span[@content = 'leaf:BidPositionOKEIName']"))?.text?.trim()?.trim { it <= ' ' }
-                        ?: ""
-                val price = po.findElementWithoutException(By.xpath(".//span[@content = 'leaf:BidPositionPrice']"))?.text?.trim()?.replace(',', '.')?.deleteAllWhiteSpace()?.trim { it <= ' ' }
-                        ?: ""
-                con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, okpd2_code = ?, price = ?").apply {
+                val okpd2 = ""
+                val okei = ""
+                con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, okpd2_code = ?").apply {
                     setInt(1, idLot)
                     setInt(2, idCustomer)
                     setString(3, name)
@@ -314,7 +307,6 @@ class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                     setString(5, quantity)
                     setString(6, quantity)
                     setString(7, okpd2)
-                    setString(8, price)
                     executeUpdate()
                     close()
                 }
@@ -330,60 +322,29 @@ class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 close()
             }
         }
-        return true
     }
 
     private fun parserLots(drv: ChromeDriver, con: Connection, href: String) {
-        //drv.switchTo().defaultContent()
-        val lots = drv.findElements(By.xpath("//div[@content = 'other:BidInfoTotalBody']"))
+        val lots = drv.findElements(By.xpath("//thead[.//th[ contains(.,'Лоты')]]/following-sibling::tbody/tr"))
         if (lots.isEmpty()) {
             logger("Can not find lots in tender", href)
             return
         }
         for ((ind, el) in lots.withIndex()) {
             try {
-
-                /*val future: Future<Boolean> = ParserRetailAst.executor.submit(Callable<Boolean> { parserLot(el, con, href, ind + 1, drv) }) as Future<Boolean>
-                try {
-                    val s: Boolean = future.get(30, TimeUnit.SECONDS)
-                } catch (ex: Exception) {
-                    future.cancel(true)
-                    throw ex
-                } finally {
-                    future.cancel(true)
-                }*/
-                parserLot(el, con, href, ind + 1, drv)
+                parserLot(el, con, href, ind + 1)
             } catch (e: Exception) {
-                logger("Error in parserLot", href, e)
+                logger("Error in parserLot", href, e, e.stackTrace)
             }
         }
 
     }
 
     companion object TypeFz {
-        val typeFz = 225
-    }
-
-    override fun getDocsAst(drv: ChromeDriver, con: Connection, section: String, idTender: Int) {
-
-        val docXml = drv.findElement(By.xpath("//input[@id='xmlData']"))?.getAttribute("value") ?: return
-        val jsonObj = XML.toJSONObject(docXml, true) ?: return
-        val jsonString = jsonObj.toString()
-        val gson = GsonBuilder().serializeNulls().create()
-        val files = gson.fromJson(jsonString, P::class.java)
-        files?.Purchase?.PurchaseDocumentationInfo?.PurchaseDocumentationDocsInfo?.Docs?.file?.forEach {
-            if (it.fileid != "" && it.filename != "") {
-                val url = "http://utp.sberbank-ast.ru/$section/File/DownloadFile?fid=${it.fileid}"
-                val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
-                insertDoc.setInt(1, idTender)
-                insertDoc.setString(2, it.filename)
-                insertDoc.setString(3, url)
-                insertDoc.executeUpdate()
-                insertDoc.close()
-            }
-        }
+        val typeFz = 226
     }
 }
+
 
 
 

@@ -56,5 +56,6 @@ enum class Arguments {
     RETAILAST,
     NEFTAST,
     EXUSEX,
-    POSTAST
+    POSTAST,
+    CBRFAST
 }

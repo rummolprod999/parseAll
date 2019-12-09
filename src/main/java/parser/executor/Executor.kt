@@ -70,6 +70,7 @@ class Executor {
             Arguments.NEFTAST -> run { p = ParserNeftAst(); executeParser(p) { parser() } }
             Arguments.EXUSEX -> run { p = ParserExUzex(); executeParser(p) { parser() } }
             Arguments.POSTAST -> run { p = ParserRussianPostAst(); executeParser(p) { parser() } }
+            Arguments.CBRFAST -> run { p = ParserCbrfAst(); executeParser(p) { parser() } }
         }
     }
 
