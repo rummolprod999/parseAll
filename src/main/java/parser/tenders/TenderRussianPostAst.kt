@@ -366,21 +366,25 @@ class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
 
     override fun getDocsAst(drv: ChromeDriver, con: Connection, section: String, idTender: Int) {
 
-        val docXml = drv.findElement(By.xpath("//input[@id='xmlData']"))?.getAttribute("value") ?: return
-        val jsonObj = XML.toJSONObject(docXml, true) ?: return
-        val jsonString = jsonObj.toString()
-        val gson = GsonBuilder().serializeNulls().create()
-        val files = gson.fromJson(jsonString, P::class.java)
-        files?.Purchase?.PurchaseDocumentationInfo?.PurchaseDocumentationDocsInfo?.Docs?.file?.forEach {
-            if (it.fileid != "" && it.filename != "") {
-                val url = "http://utp.sberbank-ast.ru/$section/File/DownloadFile?fid=${it.fileid}"
-                val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
-                insertDoc.setInt(1, idTender)
-                insertDoc.setString(2, it.filename)
-                insertDoc.setString(3, url)
-                insertDoc.executeUpdate()
-                insertDoc.close()
+        try {
+            val docXml = drv.findElement(By.xpath("//input[@id='xmlData']"))?.getAttribute("value") ?: return
+            val jsonObj = XML.toJSONObject(docXml, true) ?: return
+            val jsonString = jsonObj.toString()
+            val gson = GsonBuilder().serializeNulls().create()
+            val files = gson.fromJson(jsonString, P::class.java)
+            files?.Purchase?.PurchaseDocumentationInfo?.PurchaseDocumentationDocsInfo?.Docs?.file?.forEach {
+                if (it.fileid != "" && it.filename != "") {
+                    val url = "http://utp.sberbank-ast.ru/$section/File/DownloadFile?fid=${it.fileid}"
+                    val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
+                    insertDoc.setInt(1, idTender)
+                    insertDoc.setString(2, it.filename)
+                    insertDoc.setString(3, url)
+                    insertDoc.executeUpdate()
+                    insertDoc.close()
+                }
             }
+        } catch (e: Exception) {
+            logger(e)
         }
     }
 }
