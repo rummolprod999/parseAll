@@ -13,6 +13,7 @@ import parser.parsers.ParserEvraz
 import parser.tenderClasses.Evraz
 import parser.tools.formatter
 import parser.tools.formatterOnlyDate
+import java.lang.Thread.sleep
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
@@ -34,18 +35,13 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
         driver.get(url)
         driver.switchTo().defaultContent()
         val wait = WebDriverWait(driver, ParserEvraz.timeoutB)
-        try {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//p[contains(., 'Дата публикации:')]/strong")))
-        } catch (e: Exception) {
-            logger("date pub not found", tn.href)
-            return
-        }
+        sleep(2000)
+        driver.switchTo().defaultContent()
         val datePubTmp = driver.findElementWithoutException(By.xpath("//p[contains(., 'Дата публикации:')]/strong"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
-        val pubDate = datePubTmp.getDateFromString(formatterOnlyDate)
+        var pubDate = datePubTmp.getDateFromString(formatterOnlyDate)
         if (pubDate == Date(0L)) {
-            logger("can not find pubDate on page", datePubTmp, url)
-            return
+            pubDate = Date()
         }
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//p[contains(., 'Дата принятия Технической части:')]/strong")))
