@@ -65,11 +65,10 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
         }
         val dateVer = Date()
         DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb).use(fun(con: Connection) {
-            val stmt0 = con.prepareStatement("SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ?").apply {
+            val stmt0 = con.prepareStatement("SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?").apply {
                 setString(1, purNum)
-                setTimestamp(2, Timestamp(pubDate.time))
-                setInt(3, typeFz)
-                setTimestamp(4, Timestamp(endDate.time))
+                setInt(2, typeFz)
+                setTimestamp(3, Timestamp(endDate.time))
             }
             val r = stmt0.executeQuery()
             if (r.next()) {
