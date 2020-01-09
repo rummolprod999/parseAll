@@ -356,6 +356,11 @@ abstract class TenderAbstract {
 
     class Docs {
         var file: ArrayList<FileAst>? = null
+        var AuctionDocs: AuctionDocs? = null
+    }
+
+    class AuctionDocs {
+        var file: ArrayList<FileAst>? = null
     }
 
     class DocsDiv {
@@ -368,10 +373,12 @@ abstract class TenderAbstract {
 
     class Purchase {
         var PurchaseDocumentationInfo: PurchaseDocumentationInfo? = null
+        var Docs: Docs? = null
     }
 
     class J {
         var PurchaseView: PurchaseView? = null
+        var Purchase: Purchase? = null
     }
 
     class P {
@@ -394,6 +401,17 @@ abstract class TenderAbstract {
             val gson = GsonBuilder().serializeNulls().create()
             val files = gson.fromJson(jsonString, J::class.java)
             files?.PurchaseView?.DocsDiv?.Docs?.file?.forEach {
+                if (it.fileid != "" && it.filename != "") {
+                    val url = "http://utp.sberbank-ast.ru/$section/File/DownloadFile?fid=${it.fileid}"
+                    val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
+                    insertDoc.setInt(1, idTender)
+                    insertDoc.setString(2, it.filename)
+                    insertDoc.setString(3, url)
+                    insertDoc.executeUpdate()
+                    insertDoc.close()
+                }
+            }
+            files?.Purchase?.Docs?.AuctionDocs?.file?.forEach {
                 if (it.fileid != "" && it.filename != "") {
                     val url = "http://utp.sberbank-ast.ru/$section/File/DownloadFile?fid=${it.fileid}"
                     val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
