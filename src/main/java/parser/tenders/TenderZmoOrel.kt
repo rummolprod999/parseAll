@@ -145,6 +145,11 @@ class TenderZmoOrel(val tn: ZmoKursk) : TenderAbstract(), ITender {
                 TenderAbstract.AddTender++
             }
             //val documents: Elements = htmlTen.select("h1:containsOwn(Документы закупки) + div ")
+            try {
+                getAttachmentsZmo(idTender, con, purNum)
+            } catch (e: Exception) {
+                logger("Ошибка добавления документации", e.stackTrace, e)
+            }
             var idLot = 0
             val lotNumber = 1
             val currency = "руб."

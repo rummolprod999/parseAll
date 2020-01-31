@@ -1,11 +1,15 @@
 package parser.tenders
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import org.json.XML
 import org.openqa.selenium.By
 import org.openqa.selenium.chrome.ChromeDriver
 import parser.builderApp.BuilderApp
 import parser.logger.logger
+import parser.networkTools.downloadFromUrl
+import java.lang.reflect.Type
 import java.sql.*
 import java.util.*
 import java.util.regex.Matcher
@@ -426,4 +430,27 @@ abstract class TenderAbstract {
             logger(e)
         }
     }
+
+    protected fun getAttachmentsZmo(idTender: Int, con: Connection, purNum: String) {
+        val page = downloadFromUrl("https://zmo-new-webapi.rts-tender.ru/api/Trade/$purNum/GetTradeDocuments")
+        if (page == "") {
+            return
+        }
+        val gson = Gson()
+        val listType: Type = object : TypeToken<List<UnTenderZmo.RtsAtt?>?>() {}.type
+        val docs: List<UnTenderZmo.RtsAtt> = gson.fromJson(page, listType)
+        docs.forEach {
+            if (it.FileName != null && it.Url != null) {
+                con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?").apply {
+                    setInt(1, idTender)
+                    setString(2, it.FileName)
+                    setString(3, it.Url)
+                    executeUpdate()
+                    close()
+                }
+            }
+        }
+
+    }
+
 }

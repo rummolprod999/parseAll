@@ -1,7 +1,5 @@
 package parser.tenders
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import org.jsoup.Jsoup
 import parser.builderApp.BuilderApp
 import parser.extensions.deleteAllWhiteSpace
@@ -9,7 +7,6 @@ import parser.extensions.getDataFromRegexp
 import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.ZmoKursk
-import java.lang.reflect.Type
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
@@ -150,7 +147,7 @@ class UnTenderZmo(val tn: ZmoKursk, val typeFz: Int, _etpName: String, _etpUrl: 
             }
             //val documents: Elements = htmlTen.select("h1:containsOwn(Документы закупки) + div ")
             try {
-                getAttachments(idTender, con, purNum)
+                getAttachmentsZmo(idTender, con, purNum)
             } catch (e: Exception) {
                 logger("Ошибка добавления документации", e.stackTrace, e)
             }
@@ -254,28 +251,6 @@ class UnTenderZmo(val tn: ZmoKursk, val typeFz: Int, _etpName: String, _etpUrl: 
                 logger("Ошибка добавления версий", e.stackTrace, e)
             }
         })
-
-    }
-
-    private fun getAttachments(idTender: Int, con: Connection, purNum: String) {
-        val page = downloadFromUrl("https://zmo-new-webapi.rts-tender.ru/api/Trade/$purNum/GetTradeDocuments")
-        if (page == "") {
-            return
-        }
-        val gson = Gson()
-        val listType: Type = object : TypeToken<List<RtsAtt?>?>() {}.type
-        val docs: List<RtsAtt> = gson.fromJson(page, listType)
-        docs.forEach {
-            if (it.FileName != null && it.Url != null) {
-                con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?").apply {
-                    setInt(1, idTender)
-                    setString(2, it.FileName)
-                    setString(3, it.Url)
-                    executeUpdate()
-                    close()
-                }
-            }
-        }
 
     }
 
