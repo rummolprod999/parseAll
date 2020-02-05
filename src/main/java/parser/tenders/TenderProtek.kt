@@ -133,7 +133,7 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
                 AddTender++
             }
             try {
-                getAttachments(idTender, con, tn.purNum)
+                getAttachments(idTender, con)
             } catch (e: Exception) {
                 logger("Ошибка добавления документации", e.stackTrace, e)
             }
@@ -206,7 +206,7 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
         })
     }
 
-    private fun getAttachments(idTender: Int, con: Connection, purNum: String) {
+    private fun getAttachments(idTender: Int, con: Connection) {
 
         tn.attachments.forEach {
             con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?").apply {
