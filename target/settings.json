@@ -1,0 +1,8 @@
+{
+  "database": "tender",
+  "prefix": "",
+  "userdb": "root",
+  "passdb": "1234",
+  "server": "localhost",
+  "port": "3306"
+}
