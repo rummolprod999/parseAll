@@ -1,5 +1,6 @@
 package parser.executor
 
+import ParserProtek
 import parser.Arguments
 import parser.builderApp.BuilderApp
 import parser.logger.logger
@@ -71,6 +72,7 @@ class Executor {
             Arguments.EXUSEX -> run { p = ParserExUzex(); executeParser(p) { parser() } }
             Arguments.POSTAST -> run { p = ParserRussianPostAst(); executeParser(p) { parser() } }
             Arguments.CBRFAST -> run { p = ParserCbrfAst(); executeParser(p) { parser() } }
+            Arguments.PROTEK -> run { p = ParserProtek(); executeParser(p) { parser() } }
         }
     }
 

@@ -57,5 +57,6 @@ enum class Arguments {
     NEFTAST,
     EXUSEX,
     POSTAST,
-    CBRFAST
+    CBRFAST,
+    PROTEK
 }

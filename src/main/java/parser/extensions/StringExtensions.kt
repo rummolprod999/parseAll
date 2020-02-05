@@ -1,10 +1,12 @@
 package parser.extensions
 
+import org.apache.commons.codec.digest.DigestUtils
 import java.text.Format
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+
 
 fun String.getDataFromRegexp(reg: String): String {
     var st = ""
@@ -130,4 +132,8 @@ fun String.replaceDateAchi(): String {
         this.contains("дек") -> return this.replace("дек", "12")
     }
     return this
+}
+
+fun String.md5(): String {
+    return DigestUtils.md5Hex(this).toUpperCase()
 }
