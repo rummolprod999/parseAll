@@ -61,7 +61,6 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
             var idOrganizer = 0
             var inn = ""
             val fullnameOrg = etpName
-                    ?: ""
             if (fullnameOrg != "") {
                 val stmto = con.prepareStatement("SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?")
                 stmto.setString(1, fullnameOrg)
