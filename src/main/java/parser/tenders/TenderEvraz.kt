@@ -44,7 +44,7 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
             pubDate = Date()
         }
         try {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//p[contains(., 'Дата принятия Технической части:')]/strong")))
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//p[contains(., 'Дата принятия Технической части:')]")))
         } catch (e: Exception) {
             logger("date pub not found", tn.href)
             return
@@ -53,6 +53,10 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                 ?: ""
         if (dateEndTmp == "") {
             dateEndTmp = driver.findElementWithoutException(By.xpath("//p[contains(., 'Дата принятия Технической части:')]/strong"))?.text?.trim()?.trim { it <= ' ' }
+                    ?: ""
+        }
+        if (dateEndTmp == "") {
+            dateEndTmp = driver.findElementWithoutException(By.xpath("//p[contains(., 'Дата принятия Коммерческой части:')]/strong"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
         }
         var endDate = dateEndTmp.getDateFromString(formatter)

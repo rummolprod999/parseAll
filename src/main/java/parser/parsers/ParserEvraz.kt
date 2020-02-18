@@ -98,8 +98,12 @@ class ParserEvraz : IParser, ParserAbstract() {
         }
         val collapsed1 = driver.findElementsByXPath("//div[contains(@class, 'plot-name')]")
         collapsed1.forEach {
-            it.click()
-            Thread.sleep(10000)
+            try {
+                it.click()
+                Thread.sleep(10000)
+            } catch (e: Exception) {
+                logger(e)
+            }
         }
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(@class, 'open_lot')]")))
         getListTenders()
