@@ -103,8 +103,7 @@ class ParserNeftAst : IParser, ParserAbstract() {
         val eis = el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim { it <= ' ' }
                 ?: ""
         if (eis != "") {
-            //logger("This tender exist on EIS, return")
-            return
+            logger("This tender exist on EIS")
         }
         val purNum = el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))?.text?.trim { it <= ' ' }
                 ?: ""
