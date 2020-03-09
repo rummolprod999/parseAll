@@ -73,6 +73,7 @@ class Executor {
             Arguments.POSTAST -> run { p = ParserRussianPostAst(); executeParser(p) { parser() } }
             Arguments.CBRFAST -> run { p = ParserCbrfAst(); executeParser(p) { parser() } }
             Arguments.PROTEK -> run { p = ParserProtek(); executeParser(p) { parser() } }
+            Arguments.DMTU -> run { p = ParserDmtu(); executeParser(p) { parser() } }
         }
     }
 

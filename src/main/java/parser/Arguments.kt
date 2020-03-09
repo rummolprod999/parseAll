@@ -58,5 +58,6 @@ enum class Arguments {
     EXUSEX,
     POSTAST,
     CBRFAST,
-    PROTEK
+    PROTEK,
+    DMTU
 }
