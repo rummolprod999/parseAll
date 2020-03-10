@@ -105,6 +105,7 @@ class Builder(args: Array<String>) {
             "protek" -> arg = Arguments.PROTEK
             "dmtu" -> arg = Arguments.DMTU
             "rencredit" -> arg = Arguments.RENCREDIT
+            "orpnz" -> arg = Arguments.ORPNZ
             else -> run { println("Неверно указаны аргументы, используйте $arguments, выходим из программы"); exitProcess(0) }
         }
         setSettings()

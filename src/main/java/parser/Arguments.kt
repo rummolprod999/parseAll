@@ -60,5 +60,6 @@ enum class Arguments {
     CBRFAST,
     PROTEK,
     DMTU,
-    RENCREDIT
+    RENCREDIT,
+    ORPNZ
 }
