@@ -78,6 +78,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserRenCredit.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserRetailAst.kt">
           <value>
             <set />
@@ -123,6 +128,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/tenderClasses/RenCredit.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/tenderClasses/RusNano.kt">
           <value>
             <set />
@@ -154,6 +164,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderProtek.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderRenCredit.kt">
           <value>
             <set />
           </value>

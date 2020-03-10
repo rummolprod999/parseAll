@@ -59,5 +59,6 @@ enum class Arguments {
     POSTAST,
     CBRFAST,
     PROTEK,
-    DMTU
+    DMTU,
+    RENCREDIT
 }
