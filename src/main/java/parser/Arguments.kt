@@ -61,5 +61,6 @@ enum class Arguments {
     PROTEK,
     DMTU,
     RENCREDIT,
-    ORPNZ
+    ORPNZ,
+    BEREL
 }
