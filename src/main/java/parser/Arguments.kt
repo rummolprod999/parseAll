@@ -63,5 +63,6 @@ enum class Arguments {
     RENCREDIT,
     ORPNZ,
     BEREL,
-    DELLIN
+    DELLIN,
+    VGTRK
 }

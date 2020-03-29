@@ -78,6 +78,7 @@ class Executor {
             Arguments.ORPNZ -> run { p = ParserOrPnz(); executeParser(p) { parser() } }
             Arguments.BEREL -> run { p = ParserBerel(); executeParser(p) { parser() } }
             Arguments.DELLIN -> run { p = ParserDellin(); executeParser(p) { parser() } }
+            Arguments.VGTRK -> run { p = ParserVgtrk(); executeParser(p) { parser() } }
         }
     }
 
