@@ -200,7 +200,7 @@ class TenderDmtu(val tn: Dmtu) : TenderAbstract(), ITender {
             }
 
             try {
-                addVNum(con, tn.purNum, TenderRusNano.typeFz)
+                addVNum(con, tn.purNum, typeFz)
             } catch (e: Exception) {
                 logger("Ошибка добавления версий", e.stackTrace, e)
             }

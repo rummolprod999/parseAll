@@ -64,5 +64,6 @@ enum class Arguments {
     ORPNZ,
     BEREL,
     DELLIN,
-    VGTRK
+    VGTRK,
+    AORTI
 }

@@ -37,7 +37,7 @@ class ParserOrPnz : IParser, ParserAbstract() {
         if (purNum == "") return
         val urlTender = e.selectFirst("td:eq(3) div a")?.attr("href")?.trim { it <= ' ' }
                 ?: run { logger("urlTender not found on $purName"); return }
-        val href = "https://www.ornpz.ru//$urlTender"
+        val href = "https://www.ornpz.ru/$urlTender"
         val pubDateT = e.selectFirst("td:eq(0) div")?.ownText()?.trim { it <= ' ' }
                 ?: run { logger("pubDateT not found"); return }
         val datePub = pubDateT.getDateFromString(formatterOnlyDate)
