@@ -65,5 +65,6 @@ enum class Arguments {
     BEREL,
     DELLIN,
     VGTRK,
-    AORTI
+    AORTI,
+    KURGANKHIM
 }
