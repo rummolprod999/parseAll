@@ -66,5 +66,6 @@ enum class Arguments {
     DELLIN,
     VGTRK,
     AORTI,
-    KURGANKHIM
+    KURGANKHIM,
+    OILB2B
 }

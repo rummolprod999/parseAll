@@ -81,6 +81,7 @@ class Executor {
             Arguments.VGTRK -> run { p = ParserVgtrk(); executeParser(p) { parser() } }
             Arguments.AORTI -> run { p = ParserAorti(); executeParser(p) { parser() } }
             Arguments.KURGANKHIM -> run { p = ParserKurganKhim(); executeParser(p) { parser() } }
+            Arguments.OILB2B -> run { p = ParserOilb2b(); executeParser(p) { parser() } }
         }
     }
 
