@@ -191,7 +191,7 @@ class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
                 }
             }
             tn.products.forEach {
-                val insertPurObj = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?, okpd_name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?,").apply {
+                val insertPurObj = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?, okpd_name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?").apply {
                     setInt(1, idLot)
                     setInt(2, idCustomer)
                     setString(3, "${it.prodName} ${it.extDef}")
