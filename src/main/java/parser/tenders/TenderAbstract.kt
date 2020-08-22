@@ -363,8 +363,17 @@ abstract class TenderAbstract {
         var AuctionDocs: AuctionDocs? = null
     }
 
+    class Docs1 {
+        var file: FileAst? = null
+        var AuctionDocs: AuctionDocs1? = null
+    }
+
     class AuctionDocs {
         var file: ArrayList<FileAst>? = null
+    }
+
+    class AuctionDocs1 {
+        var file: FileAst? = null
     }
 
     class DocsDiv {
@@ -380,6 +389,10 @@ abstract class TenderAbstract {
         var Docs: Docs? = null
     }
 
+    class Purchase1 {
+        var Docs: Docs1? = null
+    }
+
     class J {
         var PurchaseView: PurchaseView? = null
         var Purchase: Purchase? = null
@@ -387,6 +400,10 @@ abstract class TenderAbstract {
 
     class P {
         var Purchase: Purchase? = null
+    }
+
+    class D {
+        var Purchase: Purchase1? = null
     }
 
     class PurchaseDocumentationInfo {
@@ -427,7 +444,27 @@ abstract class TenderAbstract {
                 }
             }
         } catch (e: Exception) {
-            logger(e)
+            try {
+                val docXml = drv.findElement(By.xpath("//input[@id='xmlData']"))?.getAttribute("value") ?: return
+                val jsonObj = XML.toJSONObject(docXml, true) ?: return
+                val jsonString = jsonObj.toString()
+                val gson = GsonBuilder().serializeNulls().create()
+                val files = gson.fromJson(jsonString, D::class.java)
+                files?.Purchase?.Docs?.AuctionDocs?.file?.run {
+                    if (this.fileid != "" && this.filename != "") {
+                        val url = "http://utp.sberbank-ast.ru/$section/File/DownloadFile?fid=${this.fileid}"
+                        val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
+                        insertDoc.setInt(1, idTender)
+                        insertDoc.setString(2, this.filename)
+                        insertDoc.setString(3, url)
+                        insertDoc.executeUpdate()
+                        insertDoc.close()
+                    }
+                }
+            } catch (e: Exception) {
+                logger(e)
+            }
+
         }
     }
 
