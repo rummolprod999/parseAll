@@ -164,6 +164,6 @@ class ParserEnPlusAst : IParser, ParserAbstract() {
     companion object WebCl {
         const val BaseUrl = "https://utp.sberbank-ast.ru/Main/List/UnitedPurchaseListEnPlusGroup"
         const val timeoutB = 60L
-        const val CountPage = 2
+        const val CountPage = 10
     }
 }

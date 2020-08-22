@@ -32,6 +32,7 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
     override fun parsing() {
         val wait = WebDriverWait(drv, 10)
         val href = drv.currentUrl
+        if (href.contains("/VIP/")) return
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[contains(., 'Номер процедуры')]/following-sibling::td/span")))
         } catch (e: Exception) {
@@ -52,10 +53,18 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             logger("cannot purName in tender", href)
             return
         }
-        val datePubTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Дата и время начала срока подачи заявок на участие')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+        var datePubTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Дата и время начала срока подачи заявок на участие')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
-        val dateEndTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Дата и время окончания срока подачи заявок на участие')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+        if (datePubTmp == "") {
+            datePubTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Начало подачи заявок на участие')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    ?: ""
+        }
+        var dateEndTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Дата и время окончания срока подачи заявок на участие')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
+        if (dateEndTmp == "") {
+            dateEndTmp = drv.findElementWithoutException(By.xpath("//td[contains(., 'Окончание подачи заявок на участие')]/following-sibling::td/span"))?.text?.trim()?.trim { it <= ' ' }
+                    ?: ""
+        }
         val pubDate = datePubTmp.getDateFromString(formatterGpn)
         val endDate = dateEndTmp.getDateFromString(formatterGpn)
         if (pubDate == Date(0L) || endDate == Date(0L)) {
