@@ -324,7 +324,10 @@ class TenderDomRfAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
     }
 
     private fun parserLots(drv: ChromeDriver, con: Connection, href: String) {
-        val lots = drv.findElements(By.xpath("//thead[.//th[ contains(.,'Лоты')]]/following-sibling::tbody/tr"))
+        var lots = drv.findElements(By.xpath("//thead[.//th[ contains(.,'Лоты')]]/following-sibling::tbody/tr"))
+        if (lots.isEmpty()) {
+            lots = drv.findElements(By.xpath("//thead[.//th[ contains(.,'Сведения о лотах')]]/following-sibling::tbody/tr"))
+        }
         if (lots.isEmpty()) {
             logger("Cannot find lots in tender", href)
             return
