@@ -67,5 +67,6 @@ enum class Arguments {
     VGTRK,
     AORTI,
     KURGANKHIM,
-    OILB2B
+    OILB2B,
+    DOMRFAST
 }
