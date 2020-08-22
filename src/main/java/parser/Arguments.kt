@@ -68,5 +68,6 @@ enum class Arguments {
     AORTI,
     KURGANKHIM,
     OILB2B,
-    DOMRFAST
+    DOMRFAST,
+    ENPLUSAST
 }
