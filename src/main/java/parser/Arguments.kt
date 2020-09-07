@@ -69,5 +69,6 @@ enum class Arguments {
     KURGANKHIM,
     OILB2B,
     DOMRFAST,
-    ENPLUSAST
+    ENPLUSAST,
+    KAMAZ
 }
