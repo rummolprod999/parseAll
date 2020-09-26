@@ -150,6 +150,18 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
             rt.close()
             insertTender.close()
             addCounts(updated)
+            val docs = driver.findElements(By.xpath("//a[starts-with(@href, '/file/get/t/LotDocuments')]"))
+            docs.forEach {
+                val name = it?.text?.trim { it <= ' ' } ?: ""
+                val hatt = it?.getAttribute("href")?.trim { it <= ' ' } ?: ""
+                con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?").apply {
+                    setInt(1, idTender)
+                    setString(2, name)
+                    setString(3, hatt)
+                    executeUpdate()
+                    close()
+                }
+            }
             val lots = driver.findElements(By.xpath("//div[contains(@class, 'x-tab-panel-body')]/div[contains(@id, 'ext-comp-') and contains(@class, 'x-panel x-panel-noborder')]/div[@class = 'x-panel-bwrap']"))
             lots.forEachIndexed { index, lot ->
                 val lotNum = index + 1
