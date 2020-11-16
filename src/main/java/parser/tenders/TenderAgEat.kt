@@ -172,6 +172,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
             insertTender.close()
             addCounts(updated)
             val documents = driver.findElements(By.xpath("//div[contains(., 'Документы') and contains(@class, 'opacity5')]/following-sibling::div/a"))
+            documents.addAll(driver.findElements(By.xpath("//a[contains(@href, '/api/ext/documents-api/')]")))
             getDocs(documents, con, idTender)
             val nmck = driver.findElementWithoutException(By.xpath("//div[contains(., 'Стартовая цена') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.deleteAllWhiteSpace()?.replace(",", ".")?.trim()?.trim { it <= ' ' }
                     ?: ""
@@ -218,8 +219,15 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
             }
             val delivPlace = driver.findElementWithoutException(By.xpath("//div[contains(., 'Доставка товаров или') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
-            val delivTerm = driver.findElementWithoutException(By.xpath("//div[contains(., 'График поставки') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
+            var delivTerm = driver.findElementWithoutException(By.xpath("//div[contains(., 'График поставки') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
                     ?: ""
+            if (delivTerm == "") {
+                delivTerm = driver.findElementWithoutException(By.xpath("//div[contains(., 'Максимальный срок поставки') and contains(@class, 'opacity5')]/following-sibling::div"))?.text?.trim()?.trim { it <= ' ' }
+                        ?: ""
+                if (delivTerm != "") {
+                    delivTerm = "Максимальный срок поставки товаров (выполнения работ, оказания услуг): $delivTerm"
+                }
+            }
             if (delivPlace != "" || delivTerm != "") {
                 con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?").apply {
                     setInt(1, idLot)
