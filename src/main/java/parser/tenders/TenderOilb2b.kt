@@ -181,11 +181,11 @@ class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
                     close()
                 }
             }
-            tn.attachments.forEach { a ->
+            tn.attachments.forEach { (Url, Name) ->
                 val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?").also {
                     it.setInt(1, idTender)
-                    it.setString(2, a.Name)
-                    it.setString(3, a.Url)
+                    it.setString(2, Name)
+                    it.setString(3, Url)
                     it.executeUpdate()
                     it.close()
                 }
