@@ -20,14 +20,8 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
 class ParserOilb2b : IParser, ParserAbstract() {
-    private val tendersS = mutableListOf<TenderOilb2b>()
 
-    companion object WebCl {
-        const val BaseUrl = "https://oilb2bcs.ru/?pageTo=RegAgent&params=%5bType=1"
-        const val timeoutB = 30L
-        const val CountPage = 10
-        var i = 2
-    }
+    private val tendersS = mutableListOf<TenderOilb2b>()
 
     init {
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
@@ -36,7 +30,6 @@ class ParserOilb2b : IParser, ParserAbstract() {
     }
 
     override fun parser() = parse { parserOilb2b() }
-
     private fun parserOilb2b() {
         var tr = 0
         while (true) {
@@ -217,5 +210,12 @@ class ParserOilb2b : IParser, ParserAbstract() {
         val tt = Oilb2b(purNum, href, purName, status, cusName, datePub, dateEnd, tenderDate, endTenderDate, purObgs, attachments)
         val t = TenderOilb2b(tt)
         tendersS.add(t)
+    }
+
+    companion object WebCl {
+        const val BaseUrl = "https://oilb2bcs.ru/?pageTo=RegAgent&params=%5bType=1"
+        const val timeoutB = 30L
+        const val CountPage = 10
+        var i = 2
     }
 }

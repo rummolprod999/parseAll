@@ -10,13 +10,10 @@ import java.sql.Timestamp
 import java.util.*
 
 class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
+
     init {
         etpName = "«НЕФТЬ-B2B»"
         etpUrl = "https://oilb2bcs.ru/"
-    }
-
-    companion object TypeFz {
-        const val typeFz = 266
     }
 
     override fun parsing() {
@@ -224,5 +221,9 @@ class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
         } else {
             AddTender++
         }
+    }
+
+    companion object TypeFz {
+        const val typeFz = 266
     }
 }
