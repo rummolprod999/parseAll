@@ -18,12 +18,22 @@
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserAlrosa.kt">
+        <entry key="$PROJECT_DIR$/src/main/java/parser/Arguments.kt">
           <value>
             <set />
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserOilb2b.kt">
+        <entry key="$PROJECT_DIR$/src/main/java/parser/builderApp/Builder.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/executor/Executor.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserRb2B.kt">
           <value>
             <set />
           </value>
@@ -34,6 +44,16 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/ParserDellin.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderRb2B.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderRb2B.kt">
           <value>
             <set />
           </value>

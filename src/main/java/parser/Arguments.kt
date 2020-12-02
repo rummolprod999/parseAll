@@ -70,5 +70,6 @@ enum class Arguments {
     OILB2B,
     DOMRFAST,
     ENPLUSAST,
-    KAMAZ
+    KAMAZ,
+    RB2B,
 }
