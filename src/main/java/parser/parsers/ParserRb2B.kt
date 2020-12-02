@@ -8,13 +8,13 @@ import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import parser.logger.logger
-import parser.tenders.TenderOilb2b
+import parser.tenders.TenderRb2B
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
 class ParserRb2B : IParser, ParserAbstract() {
 
-    private val tendersS = mutableListOf<TenderOilb2b>()
+    private val tendersS = mutableListOf<TenderRb2B>()
 
     init {
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
