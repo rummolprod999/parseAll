@@ -27,7 +27,8 @@ class ParserRb2B : IParser, ParserAbstract() {
         var tr = 0
         while (true) {
             try {
-                parserSelen()
+                funs.forEach { parserSelen(it) }
+
                 break
             } catch (e: Exception) {
                 tr++
@@ -41,9 +42,9 @@ class ParserRb2B : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserSelen() {
+    private fun parserSelen(changeTab: (JavascriptExecutor) -> Any) {
         val options = ChromeOptions()
-        options.addArguments("headless")
+        //options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         val driver = ChromeDriver(options)
@@ -54,7 +55,7 @@ class ParserRb2B : IParser, ParserAbstract() {
             driver.switchTo().defaultContent()
             //driver.manage().window().maximize()
             val wait = WebDriverWait(driver, timeoutB)
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[. = 'Заявки на закупку']")))
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[. = 'Торговые процедуры ККЗ 1885']")))
             Thread.sleep(7000)
             driver.switchTo().defaultContent()
             val js = driver as JavascriptExecutor
@@ -62,20 +63,20 @@ class ParserRb2B : IParser, ParserAbstract() {
                 js.executeScript("document.querySelectorAll('#ext-gen76')[0].click()")
                 js.executeScript("document.querySelectorAll('button.sp-btn-close')[0].click()")
             } catch (e: Exception) {
-                logger("Error in parser function", e.stackTrace, e)
+                logger("Error in click function", e)
             }
             driver.switchTo().defaultContent()
-            js.executeScript("document.querySelectorAll('span.x-tab-strip-text.icon-information')[1].click()")
+            changeTab(js)
             Thread.sleep(2000)
             driver.switchTo().defaultContent()
-            driver.switchTo().frame("1505_IFrame")
+            driver.switchTo().frame("ctl59_IFrame")
             Thread.sleep(3000)
             getListTenders(driver, wait)
             run mt@{
                 (1..CountPage).forEach { _ ->
                     try {
-                        val res = parserPageN(driver, wait)
-                        if (!res) return@mt
+                        /*val res = parserPageN(driver, wait)
+                        if (!res) return@mt*/
                     } catch (e: Exception) {
                         logger("Error in parserPageN function", e.stackTrace, e)
                     }
@@ -86,7 +87,7 @@ class ParserRb2B : IParser, ParserAbstract() {
                     //println(it)
                     ParserTender(it)
                 } catch (e: Exception) {
-                    logger("error in TenderZmo.parsing()", e.stackTrace, e, it.tn.href)
+                    logger("error in parserPageN()", e.stackTrace, e, it.tn.href)
                 }
             }
         } catch (e: Exception) {
@@ -157,13 +158,19 @@ class ParserRb2B : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: WebElement) {
-
+        println(el.text)
     }
 
     companion object WebCl {
-        val BaseUrl = "https://oilb2bcs.ru/?pageTo=RegAgent&params=%5bType=1"
+        val BaseUrl = "https://zakupki.rb2b.ru/"
         const val timeoutB = 30L
         const val CountPage = 10
         var i = 2
+
+        val funs =
+            listOf(
+                { js: JavascriptExecutor -> js.executeScript("document.querySelectorAll('span.x-tab-strip-text.icon-information')[0].click()"); },
+                { js: JavascriptExecutor -> js.executeScript("document.querySelectorAll('span.x-tab-strip-text.icon-information')[1].click()"); },
+                { js: JavascriptExecutor -> js.executeScript("document.querySelectorAll('span.x-tab-strip-text.icon-information')[2].click()"); })
     }
 }
