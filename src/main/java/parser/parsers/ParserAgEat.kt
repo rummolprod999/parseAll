@@ -29,7 +29,7 @@ class ParserAgEat : IParser, ParserAbstract() {
 
     companion object WebCl {
         const val BaseUrl = "https://agregatoreat.ru/purchases/all"
-        const val timeoutB = 30L
+        const val timeoutB = 20L
         const val CountPage = 170
     }
 
@@ -134,7 +134,8 @@ class ParserAgEat : IParser, ParserAbstract() {
         Thread.sleep(5000)
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[contains(., 'Статус закупки:')]")))
         driver.switchTo().defaultContent()
-        val tenders = driver.findElements(By.xpath("//div[@class = 'row']//div[contains(@class, 'purchase') and contains(@class, 'between-xs')]"))
+        val tenders =
+            driver.findElements(By.xpath("//div[@class = 'row']//div[contains(@class, 'purchase') and contains(@class, 'between-xs')]"))
         tenders.forEach {
             try {
                 parserTender(it)
@@ -148,17 +149,22 @@ class ParserAgEat : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: WebElement) {
-        val purNum = el.findElementWithoutException(By.xpath(".//div[contains(@class, 'td-underline') and contains(@class, 'mb5')]"))?.text?.trim { it <= ' ' }
+        val purNum =
+            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'td-underline') and contains(@class, 'mb5')]"))?.text?.trim { it <= ' ' }
                 ?: ""
         if (purNum == "") {
             logger("can not purNum in tender")
             return
         }
-        val purObj = el.findElementWithoutException(By.xpath(".//label[. = 'Наименование']/following-sibling::div[1]"))?.text?.trim { it <= ' ' }
+        val purObj =
+            el.findElementWithoutException(By.xpath(".//label[. = 'Наименование']/following-sibling::div[1]"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val status = el.findElementWithoutException(By.xpath(".//label[contains(., 'Статус закупки:')]/following-sibling::strong[1]"))?.text?.trim { it <= ' ' }
+        val status =
+            el.findElementWithoutException(By.xpath(".//label[contains(., 'Статус закупки:')]/following-sibling::strong[1]"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val urlT = el.findElementWithoutException(By.xpath(".//div[contains(@class, 'group-buttons')]/a[starts-with(@href, '/purchase/')][1]"))?.getAttribute("href")?.trim { it <= ' ' }
+        val urlT =
+            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'group-buttons')]/a[starts-with(@href, '/purchase/')][1]"))
+                ?.getAttribute("href")?.trim { it <= ' ' }
                 ?: ""
         if (urlT == "") {
             logger("can not urlT in tender", purNum)
