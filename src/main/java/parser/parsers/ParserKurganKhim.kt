@@ -36,19 +36,19 @@ class ParserKurganKhim : IParser, ParserAbstract() {
 
     private fun parsingTender(e: Element) {
         val purName = e.selectFirst("td:eq(1) a b")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("purName not found"); return }
+            ?: run { logger("purName not found"); return }
         val urlTender = e.selectFirst("td:eq(1) a")?.attr("href")?.trim { it <= ' ' }
-                ?: run { logger("urlTender not found on $purName"); return }
+            ?: run { logger("urlTender not found on $purName"); return }
         val href = "https://kurgankhimmash-zaproscen.ru$urlTender"
         val purNum = e.selectFirst("td:eq(0) > div:eq(0) b")?.ownText()?.replace("№", "")?.trim { it <= ' ' }
-                ?: run { logger("purNum not found"); return }
+            ?: run { logger("purNum not found"); return }
         val orgName = e.selectFirst("td:eq(0) > div:eq(1)")?.ownText()?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val pubDateT = e.selectFirst("td:eq(2) > div:eq(0)")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("pubDateT not found"); return }
+            ?: run { logger("pubDateT not found"); return }
         val datePub = pubDateT.getDateFromString(formatterOnlyDate)
         val endDateT = e.selectFirst("td:eq(2) > div:eq(0) > div > div")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("endDateT not found"); return }
+            ?: run { logger("endDateT not found"); return }
         val dateEnd = endDateT.getDateFromString(formatterGpn)
         val attachments = mutableMapOf<String, String>()
         e.select("td:eq(1) a[href^='/lotdocs/']").forEach {

@@ -24,7 +24,8 @@ class ParserDellin : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "https://etp.dellin.ru/#{\"filter\":{\"state\":[\"GD\"]}, \"sort\":{\"placementDate\":false}}"
+        const val BaseUrl =
+            "https://etp.dellin.ru/#{\"filter\":{\"state\":[\"GD\"]}, \"sort\":{\"placementDate\":false}}"
         const val timeoutB = 30L
     }
 

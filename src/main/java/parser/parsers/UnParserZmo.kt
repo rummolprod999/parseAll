@@ -19,7 +19,12 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class UnParserZmo(val typeFz: Int, private val _etpName: String, private val _etpUrl: String, private val _regName: String) : IParser, ParserAbstract() {
+class UnParserZmo(
+    val typeFz: Int,
+    private val _etpName: String,
+    private val _etpUrl: String,
+    private val _regName: String
+) : IParser, ParserAbstract() {
     private val tendersS = mutableListOf<UnTenderZmo>()
 
     companion object WebCl {
@@ -144,28 +149,29 @@ class UnParserZmo(val typeFz: Int, private val _etpName: String, private val _et
     private fun parserTender(el: WebElement) {
         //driver.switchTo().defaultContent()
         val purNum = el.findElementWithoutException(By.xpath("./td[2]/p"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (purNum == "") {
             logger("can not purNum in tender")
             throw Exception("can not purNum in tender")
         }
         val urlT = el.findElementWithoutException(By.xpath("./td[4]/a"))?.getAttribute("href")?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (urlT == "") {
             logger("can not urlT in tender", purNum)
             throw Exception("can not urlT in tender")
         }
         val purObj = el.findElementWithoutException(By.xpath("./td[4]/a"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val datePubTmp = el.findElementWithoutException(By.xpath("./td[6]/span"))?.text?.trim()?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val dateEndTmp = el.findElementWithoutException(By.xpath("./td[7]/span"))?.text?.trim()?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
         val dateEnd = dateEndTmp.getDateFromString(formatterGpn)
         val status = el.findElementWithoutException(By.xpath("./td[9]"))?.text?.trim { it <= ' ' } ?: ""
-        val nmck = el.findElementWithoutException(By.xpath("./td[5]"))?.text?.replace(',', '.')?.deleteAllWhiteSpace()?.trim { it <= ' ' }
-                ?: ""
+        val nmck = el.findElementWithoutException(By.xpath("./td[5]"))?.text?.replace(',', '.')?.deleteAllWhiteSpace()
+            ?.trim { it <= ' ' }
+            ?: ""
         if (datePub == Date(0L) || dateEnd == Date(0L)) {
             logger("can not find pubDate or dateEnd on page", urlT, purNum)
             return

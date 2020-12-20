@@ -94,7 +94,8 @@ class ParserSalavat : IParser, ParserAbstract() {
         driver.switchTo().defaultContent()
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//section[@class = 'dataTables_wrapper']//table[contains(@class, 'text_data')]/tbody")))
         driver.switchTo().defaultContent()
-        val tenders = driver.findElements(By.xpath("//section[@class = 'dataTables_wrapper']//table[contains(@class, 'text_data')]/tbody/tr"))
+        val tenders =
+            driver.findElements(By.xpath("//section[@class = 'dataTables_wrapper']//table[contains(@class, 'text_data')]/tbody/tr"))
         tenders.forEach {
             try {
                 parserTender(it)
@@ -106,32 +107,34 @@ class ParserSalavat : IParser, ParserAbstract() {
 
     private fun parserTender(el: WebElement) {
         val purNum = el.findElementWithoutException(By.xpath("./td[2]/p/a/span"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (purNum == "") {
             logger("can not purNum in tender")
             return
         }
         val urlT = el.findElementWithoutException(By.xpath("./td[2]/p/a"))?.getAttribute("href")?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (urlT == "") {
             logger("can not urlT in tender", purNum)
             return
         }
         val purObj = el.findElementWithoutException(By.xpath("./td[2]/p[2]"))?.text?.trim { it <= ' ' }
+            ?: ""
+        val pwName =
+            el.findElementWithoutException(By.xpath("./td[2]/p/span[@class = 'tender_type']"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val pwName = el.findElementWithoutException(By.xpath("./td[2]/p/span[@class = 'tender_type']"))?.text?.trim { it <= ' ' }
-                ?: ""
-        val dateEndTmp = el.findElementWithoutException(By.xpath("./td[1]/p/span"))?.text?.trim()?.replace("в ", "")?.trim { it <= ' ' }
-                ?: ""
+        val dateEndTmp = el.findElementWithoutException(By.xpath("./td[1]/p/span"))?.text?.trim()?.replace("в ", "")
+            ?.trim { it <= ' ' }
+            ?: ""
         val dateEnd = dateEndTmp.getDateFromString(formatterGpn)
         if (dateEnd == Date(0L)) {
             logger("can not find dateEnd on page", urlT, purNum)
             return
         }
         val cusName = el.findElementWithoutException(By.xpath("./td[3]/p"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val orgName = el.findElementWithoutException(By.xpath("./td[4]/p"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val tt = Salavat(purNum, urlT, purObj, dateEnd, pwName, cusName, orgName)
         val t = TenderSalavat(tt)
         ParserTender(t)

@@ -130,7 +130,8 @@ class ParserTmk : IParser, ParserAbstract() {
     private fun getListTenders() {
         Thread.sleep(2000)
         driver.switchTo().defaultContent()
-        val tenders = driver.findElements(By.xpath("//div[@class = 'x-grid3-body']/div[contains(@class, 'x-grid3-row')]//tr[1]"))
+        val tenders =
+            driver.findElements(By.xpath("//div[@class = 'x-grid3-body']/div[contains(@class, 'x-grid3-row')]//tr[1]"))
         tenders.forEach {
             try {
                 parserTender(it)
@@ -143,37 +144,38 @@ class ParserTmk : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: WebElement) {
-        val href = el.findElementWithoutException(By.xpath(".//td[last()]/div/a[1]"))?.getAttribute("href")?.trim { it <= ' ' }
+        val href =
+            el.findElementWithoutException(By.xpath(".//td[last()]/div/a[1]"))?.getAttribute("href")?.trim { it <= ' ' }
                 ?: ""
         if (href == "") {
             logger("can not href in tender")
             return
         }
         val purNum = el.findElementWithoutException(By.xpath(".//td[3]/div"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (purNum == "") {
             logger("can not purNum in tender $href")
             return
         }
         val nameOrg = el.findElementWithoutException(By.xpath(".//td[6]/div"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val purName = el.findElementWithoutException(By.xpath(".//td[7]/div"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (purName == "") {
             logger("can not purName in tender $href")
             return
         }
         val status = el.findElementWithoutException(By.xpath(".//td[last()-1]/div"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val datePubTmp = el.findElementWithoutException(By.xpath(".//td[8]/div"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val datePub = datePubTmp.getDateFromString(formatterGpn)
         if (datePub == Date(0L)) {
             logger("can not find dateEnd on page", href, purNum)
             return
         }
         val dateEndTmp = el.findElementWithoutException(By.xpath(".//td[10]/div"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val dateEndR = dateEndTmp.getDataFromRegexp("""(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")
         val dateEnd = dateEndR.getDateFromString(formatterGpn)
         val tt = Tmk(purNum, href, purName, dateEnd, datePub, status, nameOrg)

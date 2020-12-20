@@ -29,11 +29,13 @@ class TenderSalavat(val tn: Salavat) : TenderAbstract(), ITender {
         val datePub = Date()
         val dateVer = datePub
         DriverManager.getConnection(UrlConnect, UserDb, PassDb).use(fun(con: Connection) {
-            val stmt0 = con.prepareStatement("SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?").apply {
-                setString(1, tn.purNum)
-                setInt(2, typeFz)
-                setTimestamp(3, Timestamp(tn.endDate.time))
-            }
+            val stmt0 =
+                con.prepareStatement("SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?")
+                    .apply {
+                        setString(1, tn.purNum)
+                        setInt(2, typeFz)
+                        setTimestamp(3, Timestamp(tn.endDate.time))
+                    }
             val r = stmt0.executeQuery()
             if (r.next()) {
                 r.close()
@@ -50,21 +52,25 @@ class TenderSalavat(val tn: Salavat) : TenderAbstract(), ITender {
             val htmlTen = Jsoup.parse(pageTen)
             var cancelstatus = 0
             var updated = false
-            val stmt = con.prepareStatement("SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?").apply {
-                setString(1, tn.purNum)
-                setInt(2, typeFz)
-            }
+            val stmt =
+                con.prepareStatement("SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?")
+                    .apply {
+                        setString(1, tn.purNum)
+                        setInt(2, typeFz)
+                    }
             val rs = stmt.executeQuery()
             while (rs.next()) {
                 updated = true
                 val idT = rs.getInt(1)
                 val dateB: Timestamp = rs.getTimestamp(2)
                 if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
-                    val preparedStatement = con.prepareStatement("UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?").apply {
-                        setInt(1, idT)
-                        execute()
-                        close()
-                    }
+                    val preparedStatement =
+                        con.prepareStatement("UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?")
+                            .apply {
+                                setInt(1, idT)
+                                execute()
+                                close()
+                            }
                 } else {
                     cancelstatus = 1
                 }
@@ -73,7 +79,8 @@ class TenderSalavat(val tn: Salavat) : TenderAbstract(), ITender {
             stmt.close()
             var IdOrganizer = 0
             if (tn.nameOrg != "") {
-                val stmto = con.prepareStatement("SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?")
+                val stmto =
+                    con.prepareStatement("SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?")
                 stmto.setString(1, tn.nameOrg)
                 val rso = stmto.executeQuery()
                 if (rso.next()) {
@@ -83,7 +90,8 @@ class TenderSalavat(val tn: Salavat) : TenderAbstract(), ITender {
                 } else {
                     rso.close()
                     stmto.close()
-                    val postalAdr = htmlTen.selectFirst("td:contains(Адрес места нахождения) + td")?.ownText()?.trim { it <= ' ' }
+                    val postalAdr =
+                        htmlTen.selectFirst("td:contains(Адрес места нахождения) + td")?.ownText()?.trim { it <= ' ' }
                             ?: ""
                     val factAdr = ""
                     val inn = ""
@@ -91,7 +99,10 @@ class TenderSalavat(val tn: Salavat) : TenderAbstract(), ITender {
                     val email = ""
                     val phone = ""
                     val contactPerson = ""
-                    val stmtins = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?", Statement.RETURN_GENERATED_KEYS).apply {
+                    val stmtins = con.prepareStatement(
+                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                        Statement.RETURN_GENERATED_KEYS
+                    ).apply {
                         setString(1, tn.nameOrg)
                         setString(2, postalAdr)
                         setString(3, email)
@@ -117,7 +128,10 @@ class TenderSalavat(val tn: Salavat) : TenderAbstract(), ITender {
             if (tn.placingWayName != "") {
                 idPlacingWay = getPlacingWay(con, tn.placingWayName)
             }
-            val insertTender = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?", Statement.RETURN_GENERATED_KEYS)
+            val insertTender = con.prepareStatement(
+                "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?",
+                Statement.RETURN_GENERATED_KEYS
+            )
             insertTender.setString(1, tn.purNum)
             insertTender.setString(2, tn.purNum)
             insertTender.setTimestamp(3, Timestamp(datePub.time))
@@ -153,7 +167,8 @@ class TenderSalavat(val tn: Salavat) : TenderAbstract(), ITender {
                 val href = "$etpUrl$hrefT"
                 val nameDoc = doc?.text()?.trim { it <= ' ' } ?: ""
                 if (href != "") {
-                    val insertDoc = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
+                    val insertDoc =
+                        con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
                     insertDoc.setInt(1, idTender)
                     insertDoc.setString(2, nameDoc)
                     insertDoc.setString(3, href)
@@ -165,7 +180,10 @@ class TenderSalavat(val tn: Salavat) : TenderAbstract(), ITender {
             val LotNumber = 1
             val currency = ""
             val maxPrice = ""
-            val insertLot = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?", Statement.RETURN_GENERATED_KEYS).apply {
+            val insertLot = con.prepareStatement(
+                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                Statement.RETURN_GENERATED_KEYS
+            ).apply {
                 setInt(1, idTender)
                 setInt(2, LotNumber)
                 setString(3, currency)
@@ -180,7 +198,8 @@ class TenderSalavat(val tn: Salavat) : TenderAbstract(), ITender {
             insertLot.close()
             var idCustomer = 0
             if (tn.nameCus != "") {
-                val stmtoc = con.prepareStatement("SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1")
+                val stmtoc =
+                    con.prepareStatement("SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1")
                 stmtoc.setString(1, tn.nameCus)
                 val rsoc = stmtoc.executeQuery()
                 if (rsoc.next()) {
@@ -190,7 +209,10 @@ class TenderSalavat(val tn: Salavat) : TenderAbstract(), ITender {
                 } else {
                     rsoc.close()
                     stmtoc.close()
-                    val stmtins = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}customer SET full_name = ?, is223=1, reg_num = ?, inn = ?", Statement.RETURN_GENERATED_KEYS)
+                    val stmtins = con.prepareStatement(
+                        "INSERT INTO ${BuilderApp.Prefix}customer SET full_name = ?, is223=1, reg_num = ?, inn = ?",
+                        Statement.RETURN_GENERATED_KEYS
+                    )
                     stmtins.setString(1, tn.nameCus)
                     stmtins.setString(2, java.util.UUID.randomUUID().toString())
                     stmtins.setString(3, "")
@@ -203,14 +225,16 @@ class TenderSalavat(val tn: Salavat) : TenderAbstract(), ITender {
                     stmtins.close()
                 }
             }
-            val insertPurObj = con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?").apply {
-                setInt(1, idLot)
-                setInt(2, idCustomer)
-                setString(3, tn.purName)
-                setString(4, maxPrice)
-                executeUpdate()
-                close()
-            }
+            val insertPurObj =
+                con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?")
+                    .apply {
+                        setInt(1, idLot)
+                        setInt(2, idCustomer)
+                        setString(3, tn.purName)
+                        setString(4, maxPrice)
+                        executeUpdate()
+                        close()
+                    }
             try {
                 tenderKwords(idTender, con)
             } catch (e: Exception) {

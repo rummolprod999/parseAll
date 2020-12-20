@@ -32,17 +32,17 @@ class ParserOrPnz : IParser, ParserAbstract() {
 
     private fun parsingTender(e: Element) {
         val purName = e.selectFirst("td:eq(2) div")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("purName not found"); return }
+            ?: run { logger("purName not found"); return }
         val purNum = purName.md5()
         if (purNum == "") return
         val urlTender = e.selectFirst("td:eq(3) div a")?.attr("href")?.trim { it <= ' ' }
-                ?: run { logger("urlTender not found on $purName"); return }
+            ?: run { logger("urlTender not found on $purName"); return }
         val href = "https://www.ornpz.ru/$urlTender"
         val pubDateT = e.selectFirst("td:eq(0) div")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("pubDateT not found"); return }
+            ?: run { logger("pubDateT not found"); return }
         val datePub = pubDateT.getDateFromString(formatterOnlyDate)
         val endDateT = e.selectFirst("td:eq(1) div")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("endDateT not found"); return }
+            ?: run { logger("endDateT not found"); return }
         val dateEnd = endDateT.getDateFromString(formatterOnlyDate)
         val tt = OrPnz(purNum, href, purName, datePub, dateEnd)
         val t = TenderOrPnz(tt)

@@ -32,18 +32,18 @@ class ParserRenCredit : IParser, ParserAbstract() {
 
     private fun parsingTender(e: Element) {
         val purName = e.selectFirst("td:eq(1) a")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("purName not found"); return }
+            ?: run { logger("purName not found"); return }
         val purNum = e.selectFirst("td:eq(0) span")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("purNum not found"); return }
+            ?: run { logger("purNum not found"); return }
         if (purNum == "") return
         val urlTender = e.selectFirst("td:eq(1) a")?.attr("href")?.trim { it <= ' ' }
-                ?: run { logger("urlTender not found on $purName"); return }
+            ?: run { logger("urlTender not found on $purName"); return }
         val href = "https://rencredit.ru$urlTender"
         val pubDateT = e.selectFirst("td:eq(2)")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("pubDateT not found"); return }
+            ?: run { logger("pubDateT not found"); return }
         val datePub = pubDateT.getDateFromString(formatterOnlyDate)
         val endDateT = e.selectFirst("td:eq(3)")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("endDateT not found"); return }
+            ?: run { logger("endDateT not found"); return }
         val dateEnd = endDateT.getDateFromString(formatter)
         val tt = RenCredit(purNum, href, purName, datePub, dateEnd)
         val t = TenderRenCredit(tt)

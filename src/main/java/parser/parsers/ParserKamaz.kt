@@ -36,14 +36,14 @@ public class ParserKamaz : IParser, ParserAbstract() {
 
     private fun parserTender(el: Element) {
         val purName = el.selectFirst("td:eq(1)")?.text()?.trim { it <= ' ' }
-                ?: run { logger("purName was not found", el.text()); throw Exception("purName was not found") }
+            ?: run { logger("purName was not found", el.text()); throw Exception("purName was not found") }
         val purNum = purName.md5()
         val pubDateT = el.selectFirst("td:eq(0)")?.text()?.trim { it <= ' ' }
-                ?: run { logger("pubDateT was not found", el.text()); throw Exception("pubDateT was not found") }
+            ?: run { logger("pubDateT was not found", el.text()); throw Exception("pubDateT was not found") }
         val datePub = pubDateT.getDateFromString(formatterOnlyDate)
         val dateEnd = Date(0L)
         val orgName = el.selectFirst("td:eq(2)")?.text()?.trim { it <= ' ' }
-                ?: run { logger("orgName was not found", el.text()); throw Exception("orgName was not found") }
+            ?: run { logger("orgName was not found", el.text()); throw Exception("orgName was not found") }
         val attachments = mutableMapOf<String, String>()
         el.select("td:eq(3) a").forEach {
             val urlAtt = "https://kamaz.ru${it.attr("href")}"

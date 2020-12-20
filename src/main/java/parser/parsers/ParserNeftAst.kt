@@ -101,11 +101,12 @@ class ParserNeftAst : IParser, ParserAbstract() {
 
     private fun parserTender(el: WebElement, ind: Int) {
         val eis = el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (eis != "") {
             logger("This tender exist on EIS")
         }
-        val purNum = el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))?.text?.trim { it <= ' ' }
+        val purNum =
+            el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))?.text?.trim { it <= ' ' }
                 ?: ""
         if (purNum == "") {
             logger("can not find purNum in tender", el.text)

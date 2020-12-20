@@ -165,49 +165,76 @@ class ParserOilb2b : IParser, ParserAbstract() {
 
     private fun parserTender(el: WebElement) {
 
-        val purNum = el.findElementWithoutException(By.xpath(".//div[@class = 'left-info']/div[@class = 'num']"))?.text?.replace("Заявка №", "")?.trim { it <= ' ' }
+        val purNum =
+            el.findElementWithoutException(By.xpath(".//div[@class = 'left-info']/div[@class = 'num']"))?.text?.replace(
+                "Заявка №",
+                ""
+            )?.trim { it <= ' ' }
                 ?: run { logger("purNum not found"); return }
         val purName = el.findElementWithoutException(By.xpath(".//h2/a"))?.text?.trim { it <= ' ' }
-                ?: run { logger("purName not found"); return }
+            ?: run { logger("purName not found"); return }
         val href = BaseUrl
-        val status = el.findElementWithoutException(By.xpath(".//div[@class = 'left-info']/div[@class = 'proc-type green']/span"))?.text?.trim { it <= ' ' }
+        val status =
+            el.findElementWithoutException(By.xpath(".//div[@class = 'left-info']/div[@class = 'proc-type green']/span"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val cusName = el.findElementWithoutException(By.xpath(".//span[. = 'Заказчик:']/following-sibling::span"))?.text?.trim { it <= ' ' }
+        val cusName =
+            el.findElementWithoutException(By.xpath(".//span[. = 'Заказчик:']/following-sibling::span"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val pubDateT = el.findElementWithoutException(By.xpath(".//div[. = 'Сформирована:']/following-sibling::div"))?.text?.trim { it <= ' ' }
+        val pubDateT =
+            el.findElementWithoutException(By.xpath(".//div[. = 'Сформирована:']/following-sibling::div"))?.text?.trim { it <= ' ' }
                 ?: run { logger("pubDateT not found"); return }
         val datePub = pubDateT.getDateFromString(formatterGpn)
-        val endDateT = el.findElementWithoutException(By.xpath(".//div[contains(., 'Окончание приема предложений ')]/p"))?.text?.trim { it <= ' ' }
+        val endDateT =
+            el.findElementWithoutException(By.xpath(".//div[contains(., 'Окончание приема предложений ')]/p"))?.text?.trim { it <= ' ' }
                 ?: run { logger("endDateT not found"); return }
         val dateEnd = endDateT.getDateFromString(formatterGpn)
-        val tenderDate = el.findElementWithoutException(By.xpath(".//span[. = 'Срок закупки:']/following-sibling::span"))?.text?.trim { it <= ' ' }
+        val tenderDate =
+            el.findElementWithoutException(By.xpath(".//span[. = 'Срок закупки:']/following-sibling::span"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val endTenderDate = el.findElementWithoutException(By.xpath(".//span[. = 'Срок исполнения договора (поставки):']/following-sibling::span"))?.text?.trim { it <= ' ' }
+        val endTenderDate =
+            el.findElementWithoutException(By.xpath(".//span[. = 'Срок исполнения договора (поставки):']/following-sibling::span"))?.text?.trim { it <= ' ' }
                 ?: ""
         val attachments = mutableListOf<AttachOilb2b>()
         el.findElements(By.xpath(".//div/a[contains(@href, '/PlanClaimFiles')]")).forEach { at ->
             val hrefAtt = at.getAttribute("href") ?: return@forEach
             val nameAtt = at.text?.trim { it <= ' ' } ?: return@forEach
-            attachments.add(AttachOilb2b(hrefAtt, if (nameAtt == "") {
-                "Документация"
-            } else {
-                nameAtt
-            }))
+            attachments.add(
+                AttachOilb2b(
+                    hrefAtt, if (nameAtt == "") {
+                        "Документация"
+                    } else {
+                        nameAtt
+                    }
+                )
+            )
         }
         val purObgs = mutableListOf<Oilb2bProduct>()
-        el.findElements(By.xpath(".//h4[. = 'Спецификация заявки']/following-sibling::table/tbody/tr")).forEach { prod ->
-            val prodName = prod.findElementWithoutException(By.xpath("./td[2]"))?.text?.trim { it <= ' ' }
+        el.findElements(By.xpath(".//h4[. = 'Спецификация заявки']/following-sibling::table/tbody/tr"))
+            .forEach { prod ->
+                val prodName = prod.findElementWithoutException(By.xpath("./td[2]"))?.text?.trim { it <= ' ' }
                     ?: return@forEach
-            val quant = prod.findElementWithoutException(By.xpath("./td[3]"))?.text?.trim { it <= ' ' }
+                val quant = prod.findElementWithoutException(By.xpath("./td[3]"))?.text?.trim { it <= ' ' }
                     ?: ""
-            val okei = prod.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
+                val okei = prod.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
                     ?: ""
-            val extDef = prod.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
+                val extDef = prod.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
                     ?: ""
-            if (prodName != "")
-                purObgs.add(Oilb2bProduct(prodName, quant, okei, extDef))
-        }
-        val tt = Oilb2b(purNum, href, purName, status, cusName, datePub, dateEnd, tenderDate, endTenderDate, purObgs, attachments)
+                if (prodName != "")
+                    purObgs.add(Oilb2bProduct(prodName, quant, okei, extDef))
+            }
+        val tt = Oilb2b(
+            purNum,
+            href,
+            purName,
+            status,
+            cusName,
+            datePub,
+            dateEnd,
+            tenderDate,
+            endTenderDate,
+            purObgs,
+            attachments
+        )
         val t = TenderOilb2b(tt)
         tendersS.add(t)
     }

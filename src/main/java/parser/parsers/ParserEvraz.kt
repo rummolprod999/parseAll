@@ -146,7 +146,8 @@ class ParserEvraz : IParser, ParserAbstract() {
             logger("can not purNum in tender $urlT")
             return
         }
-        val href = "https://supply.evraz.com/lot/index.php?ID=${purNum}&IBLOCK_ID=${idiblock}&IBLOCK_ID_APPLIK=${iblock_applick}&HISTORY_APPLIK=Y&modalWindow=Y"
+        val href =
+            "https://supply.evraz.com/lot/index.php?ID=${purNum}&IBLOCK_ID=${idiblock}&IBLOCK_ID_APPLIK=${iblock_applick}&HISTORY_APPLIK=Y&modalWindow=Y"
         val tt = Evraz(purNum, href, purName)
         val t = TenderEvraz(tt, driver)
         tendersList.add(t)

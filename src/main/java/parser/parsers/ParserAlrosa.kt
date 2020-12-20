@@ -128,21 +128,23 @@ class ParserAlrosa : IParser, ParserAbstract() {
     private fun parserTender(el: WebElement, driver: ChromeDriver) {
         driver.switchTo().defaultContent()
         val purNum = el.findElementWithoutException(By.xpath("./td[3]/a"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (purNum == "") {
             logger("can not purNum in tender")
             throw Exception("can not purNum in tender")
         }
         val purObj = el.findElementWithoutException(By.xpath("./td[5]/a"))?.text?.trim { it <= ' ' }
-                ?: ""
-        val datePubTmp = el.findElementWithoutException(By.xpath("./td[10]/span/span"))?.text?.trim()?.trim { it <= ' ' }
+            ?: ""
+        val datePubTmp =
+            el.findElementWithoutException(By.xpath("./td[10]/span/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
         val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
         if (datePub == Date(0L)) {
             logger("can not find pubDate on page", datePubTmp, purNum)
             return
         }
-        val dateEndTmp = el.findElementWithoutException(By.xpath("./td[11]/span/span"))?.text?.trim()?.trim { it <= ' ' }
+        val dateEndTmp =
+            el.findElementWithoutException(By.xpath("./td[11]/span/span"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
         val dateEnd = dateEndTmp.getDateFromString(formatterOnlyDate)
         if (dateEnd == Date(0L)) {
@@ -155,21 +157,37 @@ class ParserAlrosa : IParser, ParserAbstract() {
         val nmck = nmckT.replace(".", "").replace(",", ".").deleteAllWhiteSpace()
         val currency = el.findElementWithoutException(By.xpath("./td[13]/span/span"))?.text?.trim { it <= ' ' } ?: ""
         val contactPerson = el.findElementWithoutException(By.xpath("./td[14]/span/span"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val phone = el.findElementWithoutException(By.xpath("./td[15]/span/span"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val email = el.findElementWithoutException(By.xpath("./td[16]/span/span"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val orgName = el.findElementWithoutException(By.xpath("./td[17]/span/span"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val cusName = el.findElementWithoutException(By.xpath("./td[20]/span/span"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val prod = try {
             getProducts(el, driver)
         } catch (e: Exception) {
             mutableListOf<AlrosaProduct>()
         }
-        val tt = Alrosa(purNum, BaseUrl, purObj, datePub, dateEnd, status, pwName, cusName, nmck, currency, orgName, contactPerson, phone, email, prod)
+        val tt = Alrosa(
+            purNum,
+            BaseUrl,
+            purObj,
+            datePub,
+            dateEnd,
+            status,
+            pwName,
+            cusName,
+            nmck,
+            currency,
+            orgName,
+            contactPerson,
+            phone,
+            email,
+            prod
+        )
         val tender = TenderAlrosa(tt)
         tendersList.add(tender)
         Thread.sleep(1000)
@@ -186,13 +204,13 @@ class ParserAlrosa : IParser, ParserAbstract() {
         val products = driver.findElements(By.xpath("//td[@class = 'urSTSStd']/table/tbody/tr[@rr and @sst]"))
         for (prod in products) {
             val pName = prod.findElementWithoutException(By.xpath("./td[3]/span/span"))?.text?.trim { it <= ' ' }
-                    ?: ""
+                ?: ""
             if (pName == "") continue
             val quantT = prod.findElementWithoutException(By.xpath("./td[4]/span/span"))?.text?.trim { it <= ' ' }
-                    ?: ""
+                ?: ""
             val quant = quantT.replace(".", "").replace(",", ".").deleteAllWhiteSpace()
             val okei = prod.findElementWithoutException(By.xpath("./td[5]/span/span"))?.text?.trim { it <= ' ' }
-                    ?: ""
+                ?: ""
             val pr = AlrosaProduct(pName, quant, okei)
             listProd.add(pr)
         }

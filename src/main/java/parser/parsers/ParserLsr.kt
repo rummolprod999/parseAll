@@ -81,7 +81,8 @@ class ParserLsr : IParser, ParserAbstract() {
         val wait = WebDriverWait(driver, timeoutB)
         Thread.sleep(15000)
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@role, 'row') and @id][10]")))
-        val tenders = driver.findElements(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@role, 'row') and @id]"))
+        val tenders =
+            driver.findElements(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@role, 'row') and @id]"))
         for ((index, value) in tenders.withIndex()) {
             try {
                 parserTender(value, index + 1)
@@ -93,31 +94,32 @@ class ParserLsr : IParser, ParserAbstract() {
 
     private fun parserTender(el: WebElement, ind: Int) {
         val purNum = el.findElementWithoutException(By.xpath(".//td[1]/a"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (purNum == "") {
             logger("can not find purNum in tender")
             return
         }
         val hrefL = el.findElementWithoutException(By.xpath(".//td[1]/a"))?.getAttribute("href")?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val hrefT = el.findElementWithoutException(By.xpath(".//td[2]/a"))?.getAttribute("href")?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (hrefL == "" || hrefT == "") {
             logger("can not find hrefs in tender", purNum)
             return
         }
         var purName = el.findElementWithoutException(By.xpath(".//td[2]/a"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val purNameL = el.findElementWithoutException(By.xpath(".//td[3]/a"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (purName != purNameL) {
             purName = "$purName $purNameL"
         }
         val pubDate = Date()
         var endDateT = el.findElementWithoutException(By.xpath(".//td[5]"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (endDateT == "") {
-            endDateT = el.findElementWithoutException(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Окончание приема заявок')]/following-sibling::span"))?.text?.trim { it <= ' ' }
+            endDateT =
+                el.findElementWithoutException(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Окончание приема заявок')]/following-sibling::span"))?.text?.trim { it <= ' ' }
                     ?: ""
         }
         val endDate = endDateT.getDateFromString(formatterGpn)
@@ -126,21 +128,25 @@ class ParserLsr : IParser, ParserAbstract() {
             return
         }
         var status = el.findElementWithoutException(By.xpath(".//td[7]"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (status == "") {
-            status = el.findElementWithoutException(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Статус лота')]/following-sibling::span"))?.text?.trim { it <= ' ' }
+            status =
+                el.findElementWithoutException(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Статус лота')]/following-sibling::span"))?.text?.trim { it <= ' ' }
                     ?: ""
         }
         var placingWayName = el.findElementWithoutException(By.xpath(".//td[8]"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (placingWayName == "") {
-            placingWayName = el.findElementWithoutException(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Способ проведения закупки')]/following-sibling::span"))?.text?.trim { it <= ' ' }
+            placingWayName =
+                el.findElementWithoutException(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Способ проведения закупки')]/following-sibling::span"))?.text?.trim { it <= ' ' }
                     ?: ""
         }
         var nameCus = el.findElementWithoutException(By.xpath(".//td[6]"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (nameCus == "") {
-            nameCus = el.findElementWithoutException(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Заказчик')]/following-sibling::span"))?.getAttribute("href")?.trim { it <= ' ' }
+            nameCus =
+                el.findElementWithoutException(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Заказчик')]/following-sibling::span"))
+                    ?.getAttribute("href")?.trim { it <= ' ' }
                     ?: ""
         }
         val tn = Lsr(purNum, hrefT, hrefL, purName, pubDate, endDate, status, placingWayName, nameCus)

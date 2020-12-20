@@ -113,23 +113,30 @@ class ParserBerel : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: WebElement) {
-        val purNum = el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_num']"))?.text?.trim { it <= ' ' }
+        val purNum =
+            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_num']"))?.text?.trim { it <= ' ' }
                 ?: ""
         if (purNum == "") {
             logger("can not purNum in tender")
             return
         }
-        val urlT = el.findElementWithoutException(By.xpath(".//a[@class = 'purchase_item_attachment left']"))?.getAttribute("href")?.trim { it <= ' ' }
-                ?: ""
+        val urlT = el.findElementWithoutException(By.xpath(".//a[@class = 'purchase_item_attachment left']"))
+            ?.getAttribute("href")?.trim { it <= ' ' }
+            ?: ""
         if (urlT == "") {
             logger("can not urlT in tender", purNum)
             throw Exception("can not urlT in tender")
         }
-        val purObj = el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_text']"))?.text?.trim { it <= ' ' }
+        val purObj =
+            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_text']"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val datePubTmp = el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_date']/span"))?.text?.trim()?.trim { it <= ' ' }
+        val datePubTmp =
+            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_date']/span"))?.text?.trim()
+                ?.trim { it <= ' ' }
                 ?: ""
-        val dateEndTmp = el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_date purchase_item_marg']/span"))?.text?.trim()?.trim { it <= ' ' }
+        val dateEndTmp =
+            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_date purchase_item_marg']/span"))?.text?.trim()
+                ?.trim { it <= ' ' }
                 ?: ""
         val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
         val dateEnd = dateEndTmp.getDateFromString(formatterOnlyDate)

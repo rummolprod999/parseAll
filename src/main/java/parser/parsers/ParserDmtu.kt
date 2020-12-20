@@ -32,21 +32,21 @@ class ParserDmtu : IParser, ParserAbstract() {
 
     private fun parsingTender(e: Element) {
         val purName = e.selectFirst("div:eq(0)")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("purName not found"); return }
+            ?: run { logger("purName not found"); return }
         val purNum = e.selectFirst("div:eq(1)")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("purNum not found"); return }
+            ?: run { logger("purNum not found"); return }
         if (purNum == "") return
         val pwName = e.selectFirst("div:eq(2)")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("purName not found"); return }
+            ?: run { logger("purName not found"); return }
         val urlTender = e.selectFirst("div:eq(6) a")?.attr("href")?.trim { it <= ' ' }
-                ?: run { logger("urlTender not found on $purName"); return }
+            ?: run { logger("urlTender not found on $purName"); return }
         val status = e.selectFirst("div:eq(5)")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("status not found"); return }
+            ?: run { logger("status not found"); return }
         val pubDateT = e.selectFirst("div:eq(3)")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("pubDateT not found"); return }
+            ?: run { logger("pubDateT not found"); return }
         val datePub = pubDateT.getDateFromString(formatterOnlyDate)
         val endDateT = e.selectFirst("div:eq(4)")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("endDateT not found"); return }
+            ?: run { logger("endDateT not found"); return }
         val dateEnd = endDateT.getDateFromString(formatterOnlyDate)
         val attachmentsUrl = e.select("div:eq(6) a")
         val attachents = mutableListOf<AttachDmtu>()

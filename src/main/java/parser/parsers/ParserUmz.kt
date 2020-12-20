@@ -151,13 +151,13 @@ class ParserUmz : IParser, ParserAbstract() {
 
     private fun parserTender(el: WebElement) {
         val purNum = el.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (purNum == "") {
             logger("can not purNum in tender")
             return
         }
         val urlT = el.findElementWithoutException(By.xpath("."))?.getAttribute("data-load")?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         if (urlT == "") {
             logger("can not urlT in tender", purNum)
             return
@@ -172,10 +172,11 @@ class ParserUmz : IParser, ParserAbstract() {
         }
         val urlTender = "http://umz-vrn.etc.ru${doc.url}"
         val purObj = el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val pwName = el.findElementWithoutException(By.xpath("./td[6]"))?.text?.trim { it <= ' ' }
-                ?: ""
-        val datePubTmp = el.findElementWithoutException(By.xpath("./td[2]"))?.text?.trim()?.replace("в ", "")?.trim { it <= ' ' }
+            ?: ""
+        val datePubTmp =
+            el.findElementWithoutException(By.xpath("./td[2]"))?.text?.trim()?.replace("в ", "")?.trim { it <= ' ' }
                 ?: ""
         val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
         if (datePub == Date(0L)) {
@@ -183,11 +184,11 @@ class ParserUmz : IParser, ParserAbstract() {
             return
         }
         val cusName = el.findElementWithoutException(By.xpath("./td[8]"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val status = el.findElementWithoutException(By.xpath("./td[9]"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val nmckT = el.findElementWithoutException(By.xpath("./td[7]"))?.text?.trim { it <= ' ' }
-                ?: ""
+            ?: ""
         val nmck = nmckT.replace("&nbsp;", "").deleteAllWhiteSpace()
         val tt = Umz(purNum, urlTender, purObj, datePub, pwName, cusName, nmck, status)
         val t = TenderUmz(tt)

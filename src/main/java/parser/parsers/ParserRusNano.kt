@@ -32,21 +32,21 @@ class ParserRusNano : IParser, ParserAbstract() {
 
     private fun parsingTender(e: Element) {
         val purName = e.selectFirst("td:eq(0) a div")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("purName not found"); return }
+            ?: run { logger("purName not found"); return }
         val purNunAndPwName = e.selectFirst("td:eq(0) a")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("purNunAndPwName not found"); return }
+            ?: run { logger("purNunAndPwName not found"); return }
         val purNum = purNunAndPwName.getDataFromRegexp("№\\s+(\\d+)")
         val pwName = purNunAndPwName.getDataFromRegexp("(.+(?=№))")
         val orgName = e.selectFirst("td:eq(1) a")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("orgName not found"); return }
+            ?: run { logger("orgName not found"); return }
         val urlT = e.selectFirst("td:eq(0) a")?.attr("href")?.trim { it <= ' ' }
-                ?: run { logger("urlT not found on $purName"); return }
+            ?: run { logger("urlT not found on $purName"); return }
         val urlTend = "https://www.b2b-rusnano.ru$urlT"
         val pubDateT = e.selectFirst("td:eq(2)")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("pubDateT not found"); return }
+            ?: run { logger("pubDateT not found"); return }
         val datePub = pubDateT.getDateFromString(formatterGpn)
         val endDateT = e.selectFirst("td:eq(2)")?.ownText()?.trim { it <= ' ' }
-                ?: run { logger("endDateT not found"); return }
+            ?: run { logger("endDateT not found"); return }
         val dateEnd = endDateT.getDateFromString(formatterGpn)
         val tt = RusNano(purNum, urlTend, purName, datePub, dateEnd, pwName, orgName)
         val t = TenderRusNano(tt)
