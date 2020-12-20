@@ -120,10 +120,11 @@ class ParserZakazRf : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: WebElement) {
-        val purName = el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
-            ?: run { logger("purName not found"); return }
         val href = el.findElementWithoutException(By.xpath("./td[2]/a"))?.getAttribute("href")?.trim { it <= ' ' }
             ?: run { logger("href not found"); return }
+        val purName = el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
+            ?: el.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
+            ?: run { logger("purName not found ${href}"); return }
         val purNum = href.getDataFromRegexp("/id/([\\d.]+)")
         val status =
             el.findElementWithoutException(By.xpath("./td[16]"))?.text?.trim { it <= ' ' }
@@ -154,10 +155,10 @@ class ParserZakazRf : IParser, ParserAbstract() {
                 ?: ""
         val pubDateT =
             el.findElementWithoutException(By.xpath("./td[12]"))?.text?.trim { it <= ' ' }
-                ?: run { logger("pubDateT not found"); return }
+                ?: run { logger("pubDateT not found ${href}"); return }
         val datePub = pubDateT.getDateFromString(formatterEtpRfN)
         val endDateT = el.findElementWithoutException(By.xpath("./td[13]"))?.text?.trim { it <= ' ' }
-            ?: run { logger("endDateT not found"); return }
+            ?: run { logger("endDateT not found ${href}"); return }
         val dateEnd = endDateT.getDateFromString(formatterEtpRfN)
         val tt = ZakazRf(
             purNum,
@@ -181,7 +182,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
     companion object WebCl {
         const val BaseUrl = "http://bp.zakazrf.ru/DeliveryRequest"
         const val timeoutB = 30L
-        const val CountPage = 10
+        const val CountPage = 20
     }
 
 }
