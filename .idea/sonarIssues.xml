@@ -43,6 +43,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserBidBe.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserRb2B.kt">
           <value>
             <set />
@@ -58,6 +63,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/tenderClasses/BidBe.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/tenderClasses/ZakazRf.kt">
           <value>
             <set />
@@ -69,6 +79,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderAgEat.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderBidBe.kt">
           <value>
             <set />
           </value>

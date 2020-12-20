@@ -73,4 +73,5 @@ enum class Arguments {
     KAMAZ,
     RB2B,
     ZAKAZRF,
+    BIDBE,
 }

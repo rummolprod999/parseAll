@@ -262,6 +262,7 @@ class Executor {
             Arguments.KAMAZ -> run { p = ParserKamaz(); executeParser(p) { parser() } }
             Arguments.RB2B -> run { p = ParserRb2B(); executeParser(p) { parser() } }
             Arguments.ZAKAZRF -> run { p = ParserZakazRf(); executeParser(p) { parser() } }
+            Arguments.BIDBE -> run { p = ParserBidBe(); executeParser(p) { parser() } }
         }
     }
 
