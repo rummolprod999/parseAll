@@ -24,7 +24,8 @@ object BuilderApp {
     lateinit var UrlConnect: String
 }
 
-const val arguments = "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu, tuva, gzalt, amurobl, dvrt, afkast, tmk, evraz, rosles, rusnano, uzex, achi, vipast, retailast, neftast, exusex, postast, cbrfast, protek, dmtu, rencredit, berel, orpnz, dellin, vgtrk, aorti, kurgankhim, oilb2b, domrfast, enplusast, kamaz, rb2b"
+const val arguments =
+    "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu, tuva, gzalt, amurobl, dvrt, afkast, tmk, evraz, rosles, rusnano, uzex, achi, vipast, retailast, neftast, exusex, postast, cbrfast, protek, dmtu, rencredit, berel, orpnz, dellin, vgtrk, aorti, kurgankhim, oilb2b, domrfast, enplusast, kamaz, rb2b, zakazrf"
 
 class Builder(args: Array<String>) {
     lateinit var arg: Arguments
@@ -34,7 +35,8 @@ class Builder(args: Array<String>) {
     lateinit var PassDb: String
     lateinit var Server: String
     var Port: Int = 3306
-    val executePath: String = File(Class.forName("parser.AppKt").protectionDomain.codeSource.location.path).parentFile.toString()
+    val executePath: String =
+        File(Class.forName("parser.AppKt").protectionDomain.codeSource.location.path).parentFile.toString()
     lateinit var TempPath: String
     lateinit var LogPath: String
     lateinit var LogFile: String
@@ -116,7 +118,12 @@ class Builder(args: Array<String>) {
             "enplusast" -> arg = Arguments.ENPLUSAST
             "kamaz" -> arg = Arguments.KAMAZ
             "rb2b" -> arg = Arguments.RB2B
-            else -> run { println("Неверно указаны аргументы, используйте $arguments, выходим из программы"); exitProcess(0) }
+            "zakazrf" -> arg = Arguments.ZAKAZRF
+            else -> run {
+                println("Неверно указаны аргументы, используйте $arguments, выходим из программы"); exitProcess(
+                0
+            )
+            }
         }
         setSettings()
         createDirs()
@@ -165,7 +172,8 @@ class Builder(args: Array<String>) {
         BuilderApp.LogPath = LogPath
         BuilderApp.TempPath = TempPath
         BuilderApp.LogFile = LogFile
-        BuilderApp.UrlConnect = "jdbc:mysql://$Server:$Port/$Database?jdbcCompliantTruncation=false&useUnicode=true&characterEncoding=utf-8&useLegacyDatetimeCode=false&serverTimezone=Europe/Moscow&connectTimeout=30000&socketTimeout=30000"
+        BuilderApp.UrlConnect =
+            "jdbc:mysql://$Server:$Port/$Database?jdbcCompliantTruncation=false&useUnicode=true&characterEncoding=utf-8&useLegacyDatetimeCode=false&serverTimezone=Europe/Moscow&connectTimeout=30000&socketTimeout=30000"
     }
 }
 
