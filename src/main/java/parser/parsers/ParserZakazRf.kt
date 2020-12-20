@@ -7,8 +7,14 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
+import parser.extensions.deleteAllWhiteSpace
+import parser.extensions.findElementWithoutException
+import parser.extensions.getDataFromRegexp
+import parser.extensions.getDateFromString
 import parser.logger.logger
+import parser.tenderClasses.ZakazRf
 import parser.tenders.TenderZakazRf
+import parser.tools.formatterEtpRfN
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
@@ -43,7 +49,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
 
     private fun parserSelen() {
         val options = ChromeOptions()
-        //options.addArguments("headless")
+        options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         val driver = ChromeDriver(options)
@@ -114,7 +120,62 @@ class ParserZakazRf : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: WebElement) {
-        println(el.text)
+        val purName = el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
+            ?: run { logger("purName not found"); return }
+        val href = el.findElementWithoutException(By.xpath("./td[2]/a"))?.getAttribute("href")?.trim { it <= ' ' }
+            ?: run { logger("href not found"); return }
+        val purNum = href.getDataFromRegexp("/id/([\\d.]+)")
+        val status =
+            el.findElementWithoutException(By.xpath("./td[16]"))?.text?.trim { it <= ' ' }
+                ?: ""
+        val okei =
+            el.findElementWithoutException(By.xpath("./td[6]"))?.text?.trim { it <= ' ' }
+                ?: ""
+        val price =
+            el.findElementWithoutException(By.xpath("./td[7]"))?.text?.trim { it <= ' ' }?.replace(",", "")
+                ?.deleteAllWhiteSpace()
+                ?: ""
+        val quantity =
+            el.findElementWithoutException(By.xpath("./td[8]"))?.text?.trim { it <= ' ' }?.replace(",", "")
+                ?.deleteAllWhiteSpace()
+                ?: ""
+        val sum =
+            el.findElementWithoutException(By.xpath("./td[9]"))?.text?.trim { it <= ' ' }?.replace(",", "")
+                ?.deleteAllWhiteSpace()
+                ?: ""
+        val orgName =
+            el.findElementWithoutException(By.xpath("./td[10]"))?.text?.trim { it <= ' ' }
+                ?: ""
+        val region =
+            el.findElementWithoutException(By.xpath("./td[11]"))?.text?.trim { it <= ' ' }
+                ?: ""
+        val delivPlace =
+            el.findElementWithoutException(By.xpath("./td[14]"))?.text?.trim { it <= ' ' }
+                ?: ""
+        val pubDateT =
+            el.findElementWithoutException(By.xpath("./td[12]"))?.text?.trim { it <= ' ' }
+                ?: run { logger("pubDateT not found"); return }
+        val datePub = pubDateT.getDateFromString(formatterEtpRfN)
+        val endDateT = el.findElementWithoutException(By.xpath("./td[13]"))?.text?.trim { it <= ' ' }
+            ?: run { logger("endDateT not found"); return }
+        val dateEnd = endDateT.getDateFromString(formatterEtpRfN)
+        val tt = ZakazRf(
+            purNum,
+            href,
+            purName,
+            datePub,
+            dateEnd,
+            okei,
+            price,
+            quantity,
+            sum,
+            orgName,
+            region,
+            delivPlace,
+            status
+        )
+        val t = TenderZakazRf(tt)
+        tendersS.add(t)
     }
 
     companion object WebCl {

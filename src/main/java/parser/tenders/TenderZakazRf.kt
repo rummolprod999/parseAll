@@ -13,6 +13,6 @@ class TenderZakazRf(val tn: ZakazRf) : TenderAbstract(), ITender {
     }
 
     override fun parsing() {
-
+        println(tn)
     }
 }
