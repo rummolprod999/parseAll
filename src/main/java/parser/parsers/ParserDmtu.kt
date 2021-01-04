@@ -33,7 +33,7 @@ class ParserDmtu : IParser, ParserAbstract() {
     private fun parsingTender(e: Element) {
         val purName = e.selectFirst("div:eq(0)")?.ownText()?.trim { it <= ' ' }
             ?: run { logger("purName not found"); return }
-        val purNum = e.selectFirst("div:eq(1)")?.ownText()?.trim { it <= ' ' }
+        val purNum = e.selectFirst("div.number")?.ownText()?.trim { it <= ' ' }
             ?: run { logger("purNum not found"); return }
         if (purNum == "") return
         val pwName = e.selectFirst("div:eq(2)")?.ownText()?.trim { it <= ' ' }
@@ -42,7 +42,7 @@ class ParserDmtu : IParser, ParserAbstract() {
             ?: run { logger("urlTender not found on $purName"); return }
         val status = e.selectFirst("div:eq(5)")?.ownText()?.trim { it <= ' ' }
             ?: run { logger("status not found"); return }
-        val pubDateT = e.selectFirst("div:eq(3)")?.ownText()?.trim { it <= ' ' }
+        val pubDateT = e.selectFirst("div.pod_zaya")?.ownText()?.trim { it <= ' ' }
             ?: run { logger("pubDateT not found"); return }
         val datePub = pubDateT.getDateFromString(formatterOnlyDate)
         val endDateT = e.selectFirst("div:eq(4)")?.ownText()?.trim { it <= ' ' }
