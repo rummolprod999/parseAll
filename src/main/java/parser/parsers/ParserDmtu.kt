@@ -11,7 +11,7 @@ import parser.tenders.TenderDmtu
 import parser.tools.formatterOnlyDate
 
 class ParserDmtu : IParser, ParserAbstract() {
-    val url = "http://anomtu.ru/zakupki/"
+    val url = "https://anomtu.ru/zakupki/"
     override fun parser() = parse { parserDmtu() }
     private fun parserDmtu() {
         val pageTen = downloadFromUrl(url)
