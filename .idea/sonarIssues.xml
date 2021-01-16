@@ -18,6 +18,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-chrome-driver/3.14.0/selenium-chrome-driver-3.14.0.jar!/org/openqa/selenium/chrome/ChromeDriver.class">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/pom.xml">
           <value>
             <set />

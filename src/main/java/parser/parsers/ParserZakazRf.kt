@@ -1,8 +1,6 @@
 package parser.parsers
 
-import org.openqa.selenium.By
-import org.openqa.selenium.JavascriptExecutor
-import org.openqa.selenium.WebElement
+import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -17,6 +15,7 @@ import parser.tenders.TenderZakazRf
 import parser.tools.formatterEtpRfN
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
+
 
 class ParserZakazRf : IParser, ParserAbstract() {
 
@@ -49,17 +48,37 @@ class ParserZakazRf : IParser, ParserAbstract() {
 
     private fun parserSelen() {
         val options = ChromeOptions()
-        options.addArguments("headless")
+        //options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
+        //options.addArguments("user-agent=${RandomUserAgent.randomUserAgent}")
+        //options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE)
         val driver = ChromeDriver(options)
         try {
             driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
             driver.manage().deleteAllCookies()
+            try {
+                driver.get("http://bp.zakazrf.ru/Logon/Customers")
+                driver.switchTo().defaultContent()
+            } catch (f: UnhandledAlertException) {
+                try {
+                    val alert: Alert = driver.switchTo().alert()
+                    val alertText: String = alert.getText()
+                    println("Alert data: $alertText")
+                    alert.accept()
+                } catch (e: NoAlertPresentException) {
+                    e.printStackTrace()
+                }
+            }
+            driver.switchTo().defaultContent()
+            val wait = WebDriverWait(driver, timeoutB)
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id = 'userName']")))
+            driver.findElement(By.xpath("//input[@id = 'userName']")).sendKeys("Morozova_777")
+            driver.findElement(By.xpath("//input[@id = 'password']")).sendKeys("Adv66%EgRt")
+            driver.findElement(By.xpath("//button[@type = 'submit']")).click()
             driver.get(BaseUrl)
             driver.switchTo().defaultContent()
             //driver.manage().window().maximize()
-            val wait = WebDriverWait(driver, timeoutB)
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[@objecttype]/tbody/tr[@id]")))
             Thread.sleep(5000)
             driver.switchTo().defaultContent()

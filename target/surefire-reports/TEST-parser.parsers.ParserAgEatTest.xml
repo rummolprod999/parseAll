@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="parser.parsers.ParserAgEatTest" time="0.007" errors="0" skipped="0">
+<testsuite tests="1" failures="0" name="parser.parsers.ParserAgEatTest" time="0.006" errors="0" skipped="0">
   <properties>
     <property name="idea.plugins.compatible.build" value="201.6668.13"/>
     <property name="idea.version" value="2020.3.1"/>
@@ -23,7 +23,7 @@
     <property name="idea.io.use.nio2" value="true"/>
     <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/endorsed"/>
     <property name="os.arch" value="amd64"/>
-    <property name="visualvm.id" value="9710970389794"/>
+    <property name="visualvm.id" value="5035459834931"/>
     <property name="java.io.tmpdir" value="/tmp"/>
     <property name="line.separator" value="
 "/>
@@ -39,7 +39,7 @@
     <property name="java.class.version" value="52.0"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
-    <property name="os.version" value="5.4.0-59-generic"/>
+    <property name="os.version" value="5.4.0-63-generic"/>
     <property name="project.structure.add.tools.jar.to.new.jdk" value="false"/>
     <property name="psi.incremental.reparse.depth.limit" value="1000"/>
     <property name="user.home" value="/home/alex"/>
@@ -71,5 +71,5 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="parser.parsers.ParserAgEatTest" name="parser" time="0.007"/>
+  <testcase classname="parser.parsers.ParserAgEatTest" name="parser" time="0.006"/>
 </testsuite>
