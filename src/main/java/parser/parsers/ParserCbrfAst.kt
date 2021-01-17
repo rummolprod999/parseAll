@@ -104,7 +104,7 @@ class ParserCbrfAst : IParser, ParserAbstract() {
             ?: ""
         if (eis != "") {
             //logger("This tender exist on EIS, return")
-            return
+            //return
         }
         val purNum =
             el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))?.text?.trim { it <= ' ' }

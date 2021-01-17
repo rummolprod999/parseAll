@@ -163,7 +163,7 @@ class TenderCbrfAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                                 ?.trim { it <= ' ' }
                                 ?: ""
                         val inn =
-                            drv.findElementWithoutException(By.xpath("//td[contains(., 'ИНН организатора)]/following-sibling::td/span"))?.text?.trim()
+                            drv.findElementWithoutException(By.xpath("//td[contains(., 'ИНН организатора')]/following-sibling::td/span"))?.text?.trim()
                                 ?.trim { it <= ' ' }
                                 ?: ""
                         val kpp =
@@ -272,7 +272,7 @@ class TenderCbrfAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                     logger("Ошибка добавления версий", e.stackTrace, e)
                 }
             })
-        return Unit
+        return
     }
 
     private fun parserLot(el: WebElement, con: Connection, href: String, lotNum: Int) {

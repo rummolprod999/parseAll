@@ -53,6 +53,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserCbrfAst.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserDmtu.kt">
           <value>
             <set />
@@ -99,6 +104,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderBidBe.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderCbrfAst.kt">
           <value>
             <set />
           </value>
