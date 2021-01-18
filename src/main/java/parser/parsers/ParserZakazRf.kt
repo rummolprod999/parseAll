@@ -48,7 +48,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
 
     private fun parserSelen() {
         val options = ChromeOptions()
-        //options.addArguments("headless")
+        options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         //options.addArguments("user-agent=${RandomUserAgent.randomUserAgent}")
@@ -66,7 +66,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
                     val alertText: String = alert.getText()
                     println("Alert data: $alertText")
                     alert.accept()
-                } catch (e: NoAlertPresentException) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
@@ -76,6 +76,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
             driver.findElement(By.xpath("//input[@id = 'userName']")).sendKeys("Morozova_777")
             driver.findElement(By.xpath("//input[@id = 'password']")).sendKeys("Adv66%EgRt")
             driver.findElement(By.xpath("//button[@type = 'submit']")).click()
+            Thread.sleep(5000)
             driver.get(BaseUrl)
             driver.switchTo().defaultContent()
             //driver.manage().window().maximize()
