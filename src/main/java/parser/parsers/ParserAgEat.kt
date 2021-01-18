@@ -83,9 +83,9 @@ class ParserAgEat : IParser, ParserAbstract() {
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
         wait = WebDriverWait(driver, timeoutB)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'tabs-panel__link']/a[span[. = 'Все']]")))
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@href= '/purchases/all']")))
         try {
-            driver.clickerExp("//div[@class = 'tabs-panel__link']/a[span[. = 'Все']]")
+            driver.clickerExp("//a[@href= '/purchases/all']")
         } catch (e: Exception) {
             logger("Error in clickAll function", e.stackTrace, e)
             return true
@@ -120,9 +120,9 @@ class ParserAgEat : IParser, ParserAbstract() {
     }
 
     private fun getNextPage(num: Int) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'cursor-pointer') and .= '$num']")))
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(@class, 'ui-paginator-page') and .= '$num']")))
         try {
-            val paginator = driver.findElementByXPath("//div[contains(@class, 'cursor-pointer') and .= '$num']")
+            val paginator = driver.findElementByXPath("//a[contains(@class, 'ui-paginator-page') and .= '$num']")
             paginator.click()
             getListTenders()
         } catch (e: Exception) {
@@ -132,10 +132,10 @@ class ParserAgEat : IParser, ParserAbstract() {
 
     private fun getListTenders() {
         Thread.sleep(5000)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[contains(., 'Статус закупки:')]")))
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'registry-sorting' and contains(., 'Сортировать:')]")))
         driver.switchTo().defaultContent()
         val tenders =
-            driver.findElements(By.xpath("//div[@class = 'row']//div[contains(@class, 'purchase') and contains(@class, 'between-xs')]"))
+            driver.findElements(By.xpath("//article[@class = 'card p-grid']"))
         tenders.forEach {
             try {
                 parserTender(it)
@@ -150,20 +150,20 @@ class ParserAgEat : IParser, ParserAbstract() {
 
     private fun parserTender(el: WebElement) {
         val purNum =
-            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'td-underline') and contains(@class, 'mb5')]"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath(".//h3[@id = 'tradeNumber']/a"))?.text?.trim { it <= ' ' }
                 ?: ""
         if (purNum == "") {
             logger("can not purNum in tender")
             return
         }
         val purObj =
-            el.findElementWithoutException(By.xpath(".//label[. = 'Наименование']/following-sibling::div[1]"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath(".//label[. = 'Наименование']/following-sibling::p"))?.text?.trim { it <= ' ' }
                 ?: ""
         val status =
-            el.findElementWithoutException(By.xpath(".//label[contains(., 'Статус закупки:')]/following-sibling::strong[1]"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath(".//div[@id = 'purchaseStateDescription']//span"))?.text?.trim { it <= ' ' }
                 ?: ""
         val urlT =
-            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'group-buttons')]/a[starts-with(@href, '/purchase/')][1]"))
+            el.findElementWithoutException(By.xpath(".//a[@id = 'tradeInfoLink']"))
                 ?.getAttribute("href")?.trim { it <= ' ' }
                 ?: ""
         if (urlT == "") {
