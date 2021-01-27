@@ -6,7 +6,7 @@ import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import parser.builderApp.BuilderApp
 import parser.logger.logger
-import parser.networkTools.downloadFromUrl
+import parser.networkTools.downloadFromUrlNoSsl
 import parser.tenderClasses.RenCredit
 import java.sql.Connection
 import java.sql.DriverManager
@@ -44,7 +44,7 @@ class TenderRenCredit(val tn: RenCredit) : TenderAbstract(), ITender {
                 stmt0.close()
                 var cancelstatus = 0
                 var updated = false
-                val pageTen = downloadFromUrl(tn.href)
+                val pageTen = downloadFromUrlNoSsl(tn.href)
                 if (pageTen == "") {
                     logger("Gets empty string ${this::class.simpleName}", tn.href)
                     return

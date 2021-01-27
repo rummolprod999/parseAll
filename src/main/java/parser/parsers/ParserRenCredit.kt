@@ -4,7 +4,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import parser.extensions.getDateFromString
 import parser.logger.logger
-import parser.networkTools.downloadFromUrl
+import parser.networkTools.downloadFromUrlNoSsl
 import parser.tenderClasses.RenCredit
 import parser.tenders.TenderRenCredit
 import parser.tools.formatter
@@ -14,7 +14,7 @@ class ParserRenCredit : IParser, ParserAbstract() {
     val url = "https://rencredit.ru/about/tenders/"
     override fun parser() = parse { parserRenCredit() }
     private fun parserRenCredit() {
-        val pageTen = downloadFromUrl(url)
+        val pageTen = downloadFromUrlNoSsl(url)
         if (pageTen == "") {
             logger("Gets empty string ${this::class.simpleName}", url)
             return

@@ -6,12 +6,82 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.lang.Thread.sleep
 import java.net.URL
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 private const val timeoutD = 3000L
+
+var trustAllCerts: Array<TrustManager> = arrayOf<TrustManager>(
+    object : X509TrustManager {
+
+        override fun checkClientTrusted(
+            certs: Array<X509Certificate?>?, authType: String?
+        ) {
+        }
+
+        override fun checkServerTrusted(
+            certs: Array<X509Certificate?>?, authType: String?
+        ) {
+        }
+
+        override fun getAcceptedIssuers(): Array<X509Certificate>? {
+            return null
+        }
+    }
+)
+
+fun downloadFromUrlNoSsl(urls: String, i: Int = 5, wt: Long = 3000): String {
+    try {
+        val sc: SSLContext = SSLContext.getInstance("SSL")
+        sc.init(null, trustAllCerts, SecureRandom())
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
+    } catch (e: Exception) {
+    }
+    var count = 0
+    while (true) {
+        //val i = 50
+        if (count >= i) {
+            logger(String.format("Не скачали строку за %d попыток", count), urls)
+            break
+        }
+        try {
+            var s: String
+            val executor = Executors.newCachedThreadPool()
+            val task = { downloadWaitWithRef(urls) }
+            val future = executor.submit(task)
+            try {
+                s = future.get(60, TimeUnit.SECONDS)
+            } catch (ex: TimeoutException) {
+                throw ex
+            } catch (ex: InterruptedException) {
+                throw ex
+            } catch (ex: ExecutionException) {
+                throw ex
+            } catch (ex: Exception) {
+                throw ex
+            } finally {
+                future.cancel(true)
+                executor.shutdown()
+            }
+            return s
+
+        } catch (e: Exception) {
+            logger(e, e.stackTrace)
+            count++
+            sleep(wt)
+        }
+
+    }
+    return ""
+}
 
 fun downloadFromUrl(urls: String, i: Int = 5, wt: Long = 3000): String {
     var count = 0
