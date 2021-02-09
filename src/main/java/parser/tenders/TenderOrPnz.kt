@@ -144,13 +144,16 @@ class TenderOrPnz(val tn: OrPnz) : TenderAbstract(), ITender {
                 } else {
                     AddTender++
                 }
-                val insertDoc =
-                    con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
-                insertDoc.setInt(1, idTender)
-                insertDoc.setString(2, "Скачать")
-                insertDoc.setString(3, tn.href)
-                insertDoc.executeUpdate()
-                insertDoc.close()
+                if (tn.href != "https://www.ornpz.ru/tenderyi/potrebnosti/dogovornaya-konkursnaya-komissiya/tablicza-tenderov-oao-orsknefteorgsintez/") {
+                    val insertDoc =
+                        con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
+                    insertDoc.setInt(1, idTender)
+                    insertDoc.setString(2, "Скачать")
+                    insertDoc.setString(3, tn.href)
+                    insertDoc.executeUpdate()
+                    insertDoc.close()
+                }
+
                 var idLot = 0
                 val lotNumber = 1
                 val currency = ""
