@@ -1,6 +1,8 @@
 package parser.parsers
 
 import org.openqa.selenium.By
+import org.openqa.selenium.Dimension
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -24,7 +26,7 @@ class ParserLsr : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "http://zakupki.lsr.ru/Tenders#page="
+        const val BaseUrl = "https://zakupki.lsr.ru/Tenders"
         const val timeoutB = 120L
         const val CountPage = 30
     }
@@ -58,11 +60,15 @@ class ParserLsr : IParser, ParserAbstract() {
         //val wait = WebDriverWait(driver, timeoutB)
         driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         driver.manage().deleteAllCookies()
+        driver.manage().window().size = Dimension(1280, 1024)
+        driver.manage().window().fullscreen()
+        driver.get(BaseUrl)
+        driver.switchTo().defaultContent()
+        parserList(driver)
         try {
             for (i in 1..CountPage) {
-                val urlT = "$BaseUrl$i"
                 try {
-                    parserList(urlT, driver)
+                    parserNextPage(driver)
                 } catch (e: Exception) {
                     logger("Error in parserList function", e.stackTrace, e)
                 }
@@ -75,19 +81,29 @@ class ParserLsr : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserList(urlT: String, driver: ChromeDriver) {
-        driver.get(urlT)
-        driver.switchTo().defaultContent()
+    private fun parserNextPage(driver: ChromeDriver) {
         val wait = WebDriverWait(driver, timeoutB)
-        Thread.sleep(15000)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@role, 'row') and @id][10]")))
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@class = 'page-link page-next']")))
+            val js = driver as JavascriptExecutor
+            js.executeScript("document.querySelectorAll('a.page-link.page-next')[0].click()")
+        } catch (e: Exception) {
+            logger("next page not found")
+        }
+        parserList(driver)
+    }
+
+    private fun parserList(driver: ChromeDriver) {
+        val wait = WebDriverWait(driver, timeoutB)
+        Thread.sleep(5000)
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[@aria-describedby = 'DataTables_Table_0_info']/tbody/tr[contains(@role, 'row')][10]")))
         val tenders =
-            driver.findElements(By.xpath("//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@role, 'row') and @id]"))
+            driver.findElements(By.xpath("//table[@aria-describedby = 'DataTables_Table_0_info']/tbody/tr[contains(@role, 'row')]"))
         for ((index, value) in tenders.withIndex()) {
             try {
                 parserTender(value, index + 1)
             } catch (e: Exception) {
-                logger("error in parserTender", e.stackTrace, e, urlT)
+                logger("error in parserTender", e.stackTrace, e, BaseUrl)
             }
         }
     }
@@ -99,7 +115,7 @@ class ParserLsr : IParser, ParserAbstract() {
             logger("can not find purNum in tender")
             return
         }
-        val hrefL = el.findElementWithoutException(By.xpath(".//td[1]/a"))?.getAttribute("href")?.trim { it <= ' ' }
+        val hrefL = el.findElementWithoutException(By.xpath(".//td[3]/a"))?.getAttribute("href")?.trim { it <= ' ' }
             ?: ""
         val hrefT = el.findElementWithoutException(By.xpath(".//td[2]/a"))?.getAttribute("href")?.trim { it <= ' ' }
             ?: ""
@@ -114,7 +130,13 @@ class ParserLsr : IParser, ParserAbstract() {
         if (purName != purNameL) {
             purName = "$purName $purNameL"
         }
-        val pubDate = Date()
+        val pubDateT = el.findElementWithoutException(By.xpath(".//td[4]"))?.text?.trim { it <= ' ' }
+            ?: ""
+        val pubDate = pubDateT.getDateFromString(formatterGpn)
+        if (pubDate == Date(0L)) {
+            logger("can not find date pub in tender", hrefL, pubDateT)
+            return
+        }
         var endDateT = el.findElementWithoutException(By.xpath(".//td[5]"))?.text?.trim { it <= ' ' }
             ?: ""
         if (endDateT == "") {
@@ -124,7 +146,7 @@ class ParserLsr : IParser, ParserAbstract() {
         }
         val endDate = endDateT.getDateFromString(formatterGpn)
         if (endDate == Date(0L)) {
-            logger("can not find date in tender", hrefL, endDateT)
+            logger("can not find date end in tender", hrefL, endDateT)
             return
         }
         var status = el.findElementWithoutException(By.xpath(".//td[7]"))?.text?.trim { it <= ' ' }
