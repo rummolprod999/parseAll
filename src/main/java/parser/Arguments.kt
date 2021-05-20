@@ -74,4 +74,5 @@ enum class Arguments {
     RB2B,
     ZAKAZRF,
     BIDBE,
+    SPNOVA,
 }
