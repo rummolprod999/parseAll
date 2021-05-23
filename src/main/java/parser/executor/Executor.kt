@@ -1,3 +1,5 @@
+@file:Suppress("ConvertLambdaToReference")
+
 package parser.executor
 
 import ParserProtek
@@ -6,38 +8,39 @@ import parser.builderApp.BuilderApp
 import parser.logger.logger
 import parser.parsers.*
 
+@Suppress("ConvertLambdaToReference")
 class Executor {
     lateinit var p: IParser
 
     init {
         when (BuilderApp.arg) {
-            Arguments.SALAVAT -> run { p = ParserSalavat(); executeParser(p) { parser() } }
-            Arguments.UMZ -> run { p = ParserUmz(); executeParser(p) { parser() } }
-            Arguments.LSR -> run { p = ParserLsr(); executeParser(p) { parser() } }
-            Arguments.ZMOKURSK -> run { p = ParserZmoKursk(); executeParser(p) { parser() } }
-            Arguments.ZMO45 -> run { p = ParserZmo45(); executeParser(p) { parser() } }
-            Arguments.ZMOKURGAN -> run { p = ParserZmoKurgan(); executeParser(p) { parser() } }
-            Arguments.ZMOCHEL -> run { p = ParserZmoChel(); executeParser(p) { parser() } }
-            Arguments.TRANSAST -> run { p = ParserTransAst(); executeParser(p) { parser() } }
-            Arguments.ALROSA -> run { p = ParserAlrosa(); executeParser(p) { parser() } }
-            Arguments.AGEAT -> run { p = ParserAgEat(); executeParser(p) { parser() } }
-            Arguments.RZN -> run { p = ParserRzn(); executeParser(p) { parser() } }
-            Arguments.BRN -> run { p = ParserBrn(); executeParser(p) { parser() } }
-            Arguments.IVAN -> run { p = ParserZmoIvan(); executeParser(p) { parser() } }
-            Arguments.OREL -> run { p = ParserZmoOrel(); executeParser(p) { parser() } }
-            Arguments.NOV -> run { p = ParserZmoNov(); executeParser(p) { parser() } }
-            Arguments.KOMI -> run { p = ParserZmoKomi(); executeParser(p) { parser() } }
-            Arguments.KALIN -> run { p = ParserZmoKalin(); executeParser(p) { parser() } }
-            Arguments.NEN -> run { p = ParserZmoNen(); executeParser(p) { parser() } }
-            Arguments.YALTA -> run { p = ParserZmoYalta(); executeParser(p) { parser() } }
-            Arguments.DAG -> run { p = ParserZmoDag(); executeParser(p) { parser() } }
+            Arguments.SALAVAT -> run { p = ParserSalavat(); executeParser(p, IParser::parser) }
+            Arguments.UMZ -> run { p = ParserUmz(); executeParser(p, IParser::parser) }
+            Arguments.LSR -> run { p = ParserLsr(); executeParser(p, IParser::parser) }
+            Arguments.ZMOKURSK -> run { p = ParserZmoKursk(); executeParser(p, IParser::parser) }
+            Arguments.ZMO45 -> run { p = ParserZmo45(); executeParser(p, IParser::parser) }
+            Arguments.ZMOKURGAN -> run { p = ParserZmoKurgan(); executeParser(p, IParser::parser) }
+            Arguments.ZMOCHEL -> run { p = ParserZmoChel(); executeParser(p, IParser::parser) }
+            Arguments.TRANSAST -> run { p = ParserTransAst(); executeParser(p, IParser::parser) }
+            Arguments.ALROSA -> run { p = ParserAlrosa(); executeParser(p, IParser::parser) }
+            Arguments.AGEAT -> run { p = ParserAgEat(); executeParser(p, IParser::parser) }
+            Arguments.RZN -> run { p = ParserRzn(); executeParser(p, IParser::parser) }
+            Arguments.BRN -> run { p = ParserBrn(); executeParser(p, IParser::parser) }
+            Arguments.IVAN -> run { p = ParserZmoIvan(); executeParser(p, IParser::parser) }
+            Arguments.OREL -> run { p = ParserZmoOrel(); executeParser(p, IParser::parser) }
+            Arguments.NOV -> run { p = ParserZmoNov(); executeParser(p, IParser::parser) }
+            Arguments.KOMI -> run { p = ParserZmoKomi(); executeParser(p, IParser::parser) }
+            Arguments.KALIN -> run { p = ParserZmoKalin(); executeParser(p, IParser::parser) }
+            Arguments.NEN -> run { p = ParserZmoNen(); executeParser(p, IParser::parser) }
+            Arguments.YALTA -> run { p = ParserZmoYalta(); executeParser(p, IParser::parser) }
+            Arguments.DAG -> run { p = ParserZmoDag(); executeParser(p, IParser::parser) }
             Arguments.STAV -> run {
                 p = UnParserZmo(
                     156,
                     "Закупки малого объема города Ставрополя",
                     "https://stavzmo.rts-tender.ru/",
                     "ставроп"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.CHUV -> run {
                 p = UnParserZmo(
@@ -45,7 +48,7 @@ class Executor {
                     "Закупки малого объема Чувашской Республики",
                     "https://zmo21.rts-tender.ru/",
                     "чуваш"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.CHEB -> run {
                 p = UnParserZmo(
@@ -53,7 +56,7 @@ class Executor {
                     "Электронный магазин города Чебоксары",
                     "https://chebzmo.rts-tender.ru/",
                     "чуваш"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.HANT -> run {
                 p = UnParserZmo(
@@ -61,7 +64,7 @@ class Executor {
                     "Электронный магазин Ханты-мансийского автономного округа",
                     "https://ozhmao-zmo.rts-tender.ru/",
                     "ханты"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.NEFT -> run {
                 p = UnParserZmo(
@@ -69,7 +72,7 @@ class Executor {
                     "Закупки малого объема администрации города Нефтеюганска",
                     "https://uganskzmo.rts-tender.ru/",
                     "ханты"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.SURGUT -> run {
                 p = UnParserZmo(
@@ -77,7 +80,7 @@ class Executor {
                     "ЗАКУПКИ МАЛОГО ОБЪЁМА СУРГУТСКОГО РАЙОНА",
                     "https://admsr-zmo.rts-tender.ru/",
                     "ханты"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.MAGNIT -> run {
                 p = UnParserZmo(
@@ -85,7 +88,7 @@ class Executor {
                     "ЭЛЕКТРОННЫЙ МАГАЗИН ГОРОДА МАГНИТОГОРСКА",
                     "https://magnitogorskmarket.rts-tender.ru/",
                     "челяб"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.PPP -> run {
                 p = UnParserZmo(
@@ -93,7 +96,7 @@ class Executor {
                     "ЭЛЕКТРОННЫЙ МАГАЗИН ФГУП «ППП»",
                     "https://pppmarket.rts-tender.ru/",
                     ""
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.OMSK -> run {
                 p = UnParserZmo(
@@ -101,7 +104,7 @@ class Executor {
                     "ЭЛЕКТРОННЫЙ МАГАЗИН ГОРОДА ОМСКА",
                     "https://zmo-omsk.rts-tender.ru/",
                     "омск"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.OMSKOBL -> run {
                 p = UnParserZmo(
@@ -109,7 +112,7 @@ class Executor {
                     "ЭЛЕКТРОННЫЙ МАГАЗИН ОМСКОЙ ОБЛАСТИ",
                     "https://zmo-omskobl.rts-tender.ru/",
                     "омск"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.IRKOBL -> run {
                 p = UnParserZmo(
@@ -117,7 +120,7 @@ class Executor {
                     "ЭЛЕКТРОННЫЙ МАГАЗИН ИРКУТСКОЙ ОБЛАСТИ ДЛЯ ЗАКУПОК МАЛОГО ОБЪЕМА (РТС-МАРКЕТ)",
                     "https://irkoblmarket.rts-tender.ru/",
                     "иркут"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.ALTAY -> run {
                 p = UnParserZmo(
@@ -125,7 +128,7 @@ class Executor {
                     "ЭЛЕКТРОННЫЙ МАГАЗИН МИНИСТЕРСТВА ЭКОНОМИЧЕСКОГО РАЗВИТИЯ И ТУРИЗМА РЕСПУБЛИКИ АЛТАЙ",
                     "https://zmo04.rts-tender.ru/",
                     "алтай"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.HAKAS -> run {
                 p = UnParserZmo(
@@ -133,7 +136,7 @@ class Executor {
                     "ЭЛЕКТРОННЫЙ МАРКЕТ ГОСУДАРСТВЕННОГО КОМИТЕТА ПО РЕГУЛИРОВАНИЮ КОНТРАКТНОЙ СИСТЕМЫ В СФЕРЕ ЗАКУПОК РЕСПУБЛИКИ ХАКАСИЯ",
                     "https://zmo19.rts-tender.ru/",
                     "хакас"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.ZABAY -> run {
                 p = UnParserZmo(
@@ -141,7 +144,7 @@ class Executor {
                     "ЭЛЕКТРОННЫЙ МАГАЗИН ЗАБАЙКАЛЬСКОГО КРАЯ",
                     "https://zmo-zab.rts-tender.ru/",
                     "забайк"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.NOVOSIB -> run {
                 p = UnParserZmo(
@@ -149,7 +152,7 @@ class Executor {
                     "ЭЛЕКТРОННЫЙ МАГАЗИН НОВОСИБИРСКОЙ ОБЛАСТИ",
                     "https://novobl-zmo.rts-tender.ru/",
                     "новосиб"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.TPU -> run {
                 p = UnParserZmo(
@@ -157,7 +160,7 @@ class Executor {
                     "ЗАКУПКИ У ЕДИНСТВЕННОГО ПОСТАВЩИКА (ПОДРЯДЧИКА , ИСПОЛНИТЕЛЯ). ЭЛЕКТРОННЫЙ МАГАЗИН ТПУ",
                     "https://tpu.rts-tender.ru/",
                     "томск"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.GORTOMSK -> run {
                 p = UnParserZmo(
@@ -165,7 +168,7 @@ class Executor {
                     "ЭЛЕКТРОННЫЙ МАГАЗИН ГОРОДА ТОМСКА",
                     "https://tomsk.rts-tender.ru/",
                     "томск"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.TSU -> run {
                 p = UnParserZmo(
@@ -173,7 +176,7 @@ class Executor {
                     "ЗАКУПКИ МАЛОГО ОБЪЕМА ТГУ",
                     "https://tsu.rts-tender.ru/",
                     "томск"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.TUSUR -> run {
                 p = UnParserZmo(
@@ -201,7 +204,7 @@ class Executor {
                     "ЗАКУПКИ МАЛОГО ОБЪЕМА РЕСПУБЛИКИ ТЫВА",
                     "https://tuva-zmo.rts-tender.ru/",
                     "тыва"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.GZALT -> run {
                 p = UnParserZmo(
@@ -209,7 +212,7 @@ class Executor {
                     "ПОРТАЛ ПОСТАВЩИКОВ АЛТАЙСКОГО КРАЯ",
                     "https://gzalt.rts-tender.ru/",
                     "алтайск"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.AMUROBL -> run {
                 p = UnParserZmo(
@@ -217,7 +220,7 @@ class Executor {
                     "ЭЛЕКТРОННЫЙ МАГАЗИН АМУРСКОЙ ОБЛАСТИ",
                     "https://zmo-amurobl.rts-tender.ru/",
                     "амурск"
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
             Arguments.DVRT -> run {
                 p = UnParserZmo(
@@ -225,45 +228,46 @@ class Executor {
                     "ЗАКУПКИ МАЛОГО ОБЪЕМА МАКРОРЕГИОНАЛЬНОГО ФИЛИАЛА \"ДАЛЬНИЙ ВОСТОК\" ПАО \"РОСТЕЛЕКОМ\"",
                     "https://zmodvrt.rts-tender.ru/",
                     ""
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
-            Arguments.AFKAST -> run { p = ParserAfkAst(); executeParser(p) { parser() } }
-            Arguments.TMK -> run { p = ParserTmk(); executeParser(p) { parser() } }
-            Arguments.EVRAZ -> run { p = ParserEvraz(); executeParser(p) { parser() } }
+            Arguments.AFKAST -> run { p = ParserAfkAst(); executeParser(p, IParser::parser) }
+            Arguments.TMK -> run { p = ParserTmk(); executeParser(p, IParser::parser) }
+            Arguments.EVRAZ -> run { p = ParserEvraz(); executeParser(p, IParser::parser) }
             Arguments.ROSLES -> run {
                 p = UnParserZmo(
                     192,
                     "МАГАЗИН ЗАКУПОК МАЛОГО ОБЪЕМА РОСЛЕСИНФОРГ",
                     "https://roslesinforg-market.rts-tender.ru/",
                     ""
-                ); executeParser(p) { parser() }
+                ); executeParser(p, IParser::parser)
             }
-            Arguments.RUSNANO -> run { p = ParserRusNano(); executeParser(p) { parser() } }
-            Arguments.UZEX -> run { p = ParserUzex(); executeParser(p) { parser() } }
-            Arguments.ACHI -> run { p = ParserAchi(); executeParser(p) { parser() } }
-            Arguments.VIPAST -> run { p = ParserVipAst(); executeParser(p) { parser() } }
-            Arguments.RETAILAST -> run { p = ParserRetailAst(); executeParser(p) { parser() } }
-            Arguments.NEFTAST -> run { p = ParserNeftAst(); executeParser(p) { parser() } }
-            Arguments.EXUSEX -> run { p = ParserExUzex(); executeParser(p) { parser() } }
-            Arguments.POSTAST -> run { p = ParserRussianPostAst(); executeParser(p) { parser() } }
-            Arguments.CBRFAST -> run { p = ParserCbrfAst(); executeParser(p) { parser() } }
-            Arguments.PROTEK -> run { p = ParserProtek(); executeParser(p) { parser() } }
-            Arguments.DMTU -> run { p = ParserDmtu(); executeParser(p) { parser() } }
-            Arguments.RENCREDIT -> run { p = ParserRenCredit(); executeParser(p) { parser() } }
-            Arguments.ORPNZ -> run { p = ParserOrPnz(); executeParser(p) { parser() } }
-            Arguments.BEREL -> run { p = ParserBerel(); executeParser(p) { parser() } }
-            Arguments.DELLIN -> run { p = ParserDellin(); executeParser(p) { parser() } }
-            Arguments.VGTRK -> run { p = ParserVgtrk(); executeParser(p) { parser() } }
-            Arguments.AORTI -> run { p = ParserAorti(); executeParser(p) { parser() } }
-            Arguments.KURGANKHIM -> run { p = ParserKurganKhim(); executeParser(p) { parser() } }
-            Arguments.OILB2B -> run { p = ParserOilb2b(); executeParser(p) { parser() } }
-            Arguments.DOMRFAST -> run { p = ParserDomRfAst(); executeParser(p) { parser() } }
-            Arguments.ENPLUSAST -> run { p = ParserEnPlusAst(); executeParser(p) { parser() } }
-            Arguments.KAMAZ -> run { p = ParserKamaz(); executeParser(p) { parser() } }
-            Arguments.RB2B -> run { p = ParserRb2B(); executeParser(p) { parser() } }
-            Arguments.ZAKAZRF -> run { p = ParserZakazRf(); executeParser(p) { parser() } }
-            Arguments.BIDBE -> run { p = ParserBidBe(); executeParser(p) { parser() } }
-            Arguments.SPNOVA -> run { p = ParserSpnova(); executeParser(p) { parser() } }
+            Arguments.RUSNANO -> run { p = ParserRusNano(); executeParser(p, IParser::parser) }
+            Arguments.UZEX -> run { p = ParserUzex(); executeParser(p, IParser::parser) }
+            Arguments.ACHI -> run { p = ParserAchi(); executeParser(p, IParser::parser) }
+            Arguments.VIPAST -> run { p = ParserVipAst(); executeParser(p, IParser::parser) }
+            Arguments.RETAILAST -> run { p = ParserRetailAst(); executeParser(p, IParser::parser) }
+            Arguments.NEFTAST -> run { p = ParserNeftAst(); executeParser(p, IParser::parser) }
+            Arguments.EXUSEX -> run { p = ParserExUzex(); executeParser(p, IParser::parser) }
+            Arguments.POSTAST -> run { p = ParserRussianPostAst(); executeParser(p, IParser::parser) }
+            Arguments.CBRFAST -> run { p = ParserCbrfAst(); executeParser(p, IParser::parser) }
+            Arguments.PROTEK -> run { p = ParserProtek(); executeParser(p, IParser::parser) }
+            Arguments.DMTU -> run { p = ParserDmtu(); executeParser(p, IParser::parser) }
+            Arguments.RENCREDIT -> run { p = ParserRenCredit(); executeParser(p, IParser::parser) }
+            Arguments.ORPNZ -> run { p = ParserOrPnz(); executeParser(p, IParser::parser) }
+            Arguments.BEREL -> run { p = ParserBerel(); executeParser(p, IParser::parser) }
+            Arguments.DELLIN -> run { p = ParserDellin(); executeParser(p, IParser::parser) }
+            Arguments.VGTRK -> run { p = ParserVgtrk(); executeParser(p, IParser::parser) }
+            Arguments.AORTI -> run { p = ParserAorti(); executeParser(p, IParser::parser) }
+            Arguments.KURGANKHIM -> run { p = ParserKurganKhim(); executeParser(p, IParser::parser) }
+            Arguments.OILB2B -> run { p = ParserOilb2b(); executeParser(p, IParser::parser) }
+            Arguments.DOMRFAST -> run { p = ParserDomRfAst(); executeParser(p, IParser::parser) }
+            Arguments.ENPLUSAST -> run { p = ParserEnPlusAst(); executeParser(p, IParser::parser) }
+            Arguments.KAMAZ -> run { p = ParserKamaz(); executeParser(p, IParser::parser) }
+            Arguments.RB2B -> run { p = ParserRb2B(); executeParser(p, IParser::parser) }
+            Arguments.ZAKAZRF -> run { p = ParserZakazRf(); executeParser(p, IParser::parser) }
+            Arguments.BIDBE -> run { p = ParserBidBe(); executeParser(p, IParser::parser) }
+            Arguments.SPNOVA -> run { p = ParserSpnova(); executeParser(p, IParser::parser) }
+            Arguments.VPROM -> run { p = ParserVprom(); executeParser(p, IParser::parser) }
         }
     }
 

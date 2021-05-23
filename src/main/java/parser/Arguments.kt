@@ -75,4 +75,5 @@ enum class Arguments {
     ZAKAZRF,
     BIDBE,
     SPNOVA,
+    VPROM,
 }
