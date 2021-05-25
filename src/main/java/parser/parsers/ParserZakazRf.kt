@@ -77,7 +77,25 @@ class ParserZakazRf : IParser, ParserAbstract() {
             driver.findElement(By.xpath("//input[@id = 'password']")).sendKeys("Adv66%EgRt")
             driver.findElement(By.xpath("//button[@type = 'submit']")).click()
             Thread.sleep(5000)
+            try {
+                val alert: Alert = driver.switchTo().alert()
+                val alertText: String = alert.getText()
+                println("Alert data: $alertText")
+                alert.accept()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            Thread.sleep(5000)
             driver.get(BaseUrl)
+            try {
+                val alert: Alert = driver.switchTo().alert()
+                val alertText: String = alert.getText()
+                println("Alert data: $alertText")
+                alert.accept()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            Thread.sleep(5000)
             driver.switchTo().defaultContent()
             //driver.manage().window().maximize()
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[@objecttype]/tbody/tr[@id]")))
