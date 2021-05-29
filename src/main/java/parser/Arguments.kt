@@ -76,4 +76,5 @@ enum class Arguments {
     BIDBE,
     SPNOVA,
     VPROM,
+    AOMSZ,
 }

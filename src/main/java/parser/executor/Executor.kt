@@ -268,6 +268,7 @@ class Executor {
             Arguments.BIDBE -> run { p = ParserBidBe(); executeParser(p, IParser::parser) }
             Arguments.SPNOVA -> run { p = ParserSpnova(); executeParser(p, IParser::parser) }
             Arguments.VPROM -> run { p = ParserVprom(); executeParser(p, IParser::parser) }
+            Arguments.AOMSZ -> run { p = ParserAomsz(); executeParser(p, IParser::parser) }
         }
     }
 

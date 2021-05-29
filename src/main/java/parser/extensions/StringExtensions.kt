@@ -3,6 +3,7 @@ package parser.extensions
 import org.apache.commons.codec.digest.DigestUtils
 import java.text.Format
 import java.text.SimpleDateFormat
+import java.time.ZoneId
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -37,14 +38,16 @@ fun String.deleteAllWhiteSpace(): String {
     return ss
 }
 
-fun String.getDateFromString(format: Format): Date {
+fun String.getDateFromString(format: Format, datePub: Date = Date(0L)): Date {
     var d = Date(0L)
     if (this == "") return d
     try {
         d = format.parseObject(this) as Date
-    } catch (e: Exception) {
+    } catch (_: Exception) {
     }
-
+    if (datePub != Date(0L)) {
+        d = Date.from(datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant())
+    }
     return d
 }
 
