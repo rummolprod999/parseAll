@@ -77,4 +77,5 @@ enum class Arguments {
     SPNOVA,
     VPROM,
     AOMSZ,
+    RUSFISH,
 }
