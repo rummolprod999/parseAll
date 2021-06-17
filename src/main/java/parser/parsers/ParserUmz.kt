@@ -63,6 +63,7 @@ class ParserUmz : IParser, ParserAbstract() {
         options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
+        options.addArguments("disable-dev-shm-usage")
         val driver = ChromeDriver(options)
         val wait = WebDriverWait(driver, timeoutB)
         driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)

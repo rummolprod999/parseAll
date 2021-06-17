@@ -53,6 +53,7 @@ class ParserAfkAst : IParser, ParserAbstract() {
         options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
+        options.addArguments("disable-dev-shm-usage")
         drv = ChromeDriver(options)
         drv.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         drv.manage().timeouts().setScriptTimeout(timeoutB, TimeUnit.SECONDS)
