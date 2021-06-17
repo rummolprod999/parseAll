@@ -116,7 +116,6 @@ class ParserAgEat : IParser, ParserAbstract() {
         options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
-        options.addArguments("disable-dev-shm-usage")
         return options
     }
 

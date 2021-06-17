@@ -58,7 +58,6 @@ class ParserAlrosa : IParser, ParserAbstract() {
         options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
-        options.addArguments("disable-dev-shm-usage")
         val driver = ChromeDriver(options)
         try {
             driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)

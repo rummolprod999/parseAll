@@ -53,7 +53,6 @@ class ParserVipAst : IParser, ParserAbstract() {
         options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
-        options.addArguments("disable-dev-shm-usage")
         drv = ChromeDriver(options)
         drv.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         drv.manage().timeouts().setScriptTimeout(timeoutB, TimeUnit.SECONDS)
@@ -166,7 +165,7 @@ class ParserVipAst : IParser, ParserAbstract() {
 
     companion object WebCl {
         const val BaseUrl = "http://utp.sberbank-ast.ru/VIP/List/PurchaseList"
-        const val timeoutB = 90L
+        const val timeoutB = 60L
         const val CountPage = 10
     }
 }

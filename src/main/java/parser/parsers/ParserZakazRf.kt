@@ -51,7 +51,6 @@ class ParserZakazRf : IParser, ParserAbstract() {
         options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
-        options.addArguments("disable-dev-shm-usage")
         //options.addArguments("user-agent=${RandomUserAgent.randomUserAgent}")
         //options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE)
         val driver = ChromeDriver(options)
