@@ -269,6 +269,7 @@ class Executor {
             Arguments.SPNOVA -> run { p = ParserSpnova(); executeParser(p, IParser::parser) }
             Arguments.VPROM -> run { p = ParserVprom(); executeParser(p, IParser::parser) }
             Arguments.AOMSZ -> run { p = ParserAomsz(); executeParser(p, IParser::parser) }
+            Arguments.FPK -> run { p = ParserFpk(); executeParser(p, IParser::parser) }
         }
     }
 
