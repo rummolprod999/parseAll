@@ -50,7 +50,7 @@ class ParserVipAst : IParser, ParserAbstract() {
 
     private fun parserSelen() {
         val options = ChromeOptions()
-        options.addArguments("headless")
+        //options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         drv = ChromeDriver(options)
@@ -164,7 +164,7 @@ class ParserVipAst : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "http://utp.sberbank-ast.ru/VIP/List/PurchaseList"
+        const val BaseUrl = "https://utp.sberbank-ast.ru/VIP/List/PurchaseList"
         const val timeoutB = 60L
         const val CountPage = 10
     }
