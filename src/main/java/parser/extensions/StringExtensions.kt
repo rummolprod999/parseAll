@@ -137,6 +137,42 @@ fun String.replaceDateAchi(): String {
     return this
 }
 
+fun String.replaceDateBoretsEnd(): String {
+    when {
+        this.contains("января") -> return this.replace("января", ".01.")
+        this.contains("февраля") -> return this.replace("февраля", ".02.")
+        this.contains("марта") -> return this.replace("марта", ".03.")
+        this.contains("апреля") -> return this.replace("апреля", ".04.")
+        this.contains("мая") -> return this.replace("мая", ".05.")
+        this.contains("июня") -> return this.replace("июня", ".06.")
+        this.contains("июля") -> return this.replace("июля", ".07.")
+        this.contains("августа") -> return this.replace("августа", ".08.")
+        this.contains("сентября") -> return this.replace("сентября", ".09.")
+        this.contains("октября") -> return this.replace("октября", ".10.")
+        this.contains("ноября") -> return this.replace("ноября", ".11.")
+        this.contains("декабря") -> return this.replace("декабря", ".12.")
+    }
+    return this
+}
+
+fun String.replaceDateBorets(): String {
+    when {
+        this.contains("январь") -> return this.replace("январь", "01")
+        this.contains("февраль") -> return this.replace("февраль", "02")
+        this.contains("март") -> return this.replace("март", "03")
+        this.contains("апрель") -> return this.replace("апрель", "04")
+        this.contains("май") -> return this.replace("май", "05")
+        this.contains("июнь") -> return this.replace("июнь", "06")
+        this.contains("июль") -> return this.replace("июль", "07")
+        this.contains("август") -> return this.replace("август", "08")
+        this.contains("сентябрь") -> return this.replace("сентябрь", "09")
+        this.contains("октябрь") -> return this.replace("октябрь", "10")
+        this.contains("ноябрь") -> return this.replace("ноябрь", "11")
+        this.contains("декабрь") -> return this.replace("декабрь", "12")
+    }
+    return this
+}
+
 fun String.md5(): String {
     return DigestUtils.md5Hex(this).toUpperCase()
 }

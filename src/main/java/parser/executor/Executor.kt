@@ -270,6 +270,7 @@ class Executor {
             Arguments.VPROM -> run { p = ParserVprom(); executeParser(p, IParser::parser) }
             Arguments.AOMSZ -> run { p = ParserAomsz(); executeParser(p, IParser::parser) }
             Arguments.FPK -> run { p = ParserFpk(); executeParser(p, IParser::parser) }
+            Arguments.BORETS -> run { p = ParserBorets(); executeParser(p, IParser::parser) }
         }
     }
 

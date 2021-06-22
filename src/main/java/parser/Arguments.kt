@@ -78,4 +78,5 @@ enum class Arguments {
     VPROM,
     AOMSZ,
     FPK,
+    BORETS,
 }
