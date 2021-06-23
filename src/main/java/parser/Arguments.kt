@@ -79,4 +79,5 @@ enum class Arguments {
     AOMSZ,
     FPK,
     BORETS,
+    TKNSO,
 }

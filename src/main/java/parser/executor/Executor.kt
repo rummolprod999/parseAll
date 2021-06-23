@@ -271,6 +271,7 @@ class Executor {
             Arguments.AOMSZ -> run { p = ParserAomsz(); executeParser(p, IParser::parser) }
             Arguments.FPK -> run { p = ParserFpk(); executeParser(p, IParser::parser) }
             Arguments.BORETS -> run { p = ParserBorets(); executeParser(p, IParser::parser) }
+            Arguments.TKNSO -> run { p = ParserTknso(); executeParser(p, IParser::parser) }
         }
     }
 
