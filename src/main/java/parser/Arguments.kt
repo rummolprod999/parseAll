@@ -80,4 +80,5 @@ enum class Arguments {
     FPK,
     BORETS,
     TKNSO,
+    GNS,
 }

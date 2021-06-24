@@ -11,7 +11,6 @@ import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import java.lang.reflect.Type
 import java.sql.*
-import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -272,7 +271,7 @@ abstract class TenderAbstract {
     }
 
     fun getRegion(sp: String): String {
-        val s = sp.toLowerCase()
+        val s = sp.lowercase()
         return when {
             s.contains("белгор") -> "белгор"
             s.contains("брянск") -> "брянск"
