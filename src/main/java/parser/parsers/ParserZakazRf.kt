@@ -220,7 +220,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
     companion object WebCl {
         const val BaseUrl = "http://bp.zakazrf.ru/DeliveryRequest"
         const val timeoutB = 30L
-        const val CountPage = 40
+        const val CountPage = 80
     }
 
 }
