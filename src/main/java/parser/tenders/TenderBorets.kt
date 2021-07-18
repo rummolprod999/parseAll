@@ -239,7 +239,7 @@ class TenderBorets(val tn: Borets) : TenderAbstract(), ITender {
         }
     }
 
-    private fun updateVersion(con: Connection, dateVer: Date): TenderKurganKhim.Result {
+    private fun updateVersion(con: Connection, dateVer: Date): Result {
         var updated1 = false
         var cancelstatus1 = 0
         val stmt =
@@ -265,6 +265,6 @@ class TenderBorets(val tn: Borets) : TenderAbstract(), ITender {
         }
         rs.close()
         stmt.close()
-        return TenderKurganKhim.Result(cancelstatus1, updated1)
+        return Result(cancelstatus1, updated1)
     }
 }

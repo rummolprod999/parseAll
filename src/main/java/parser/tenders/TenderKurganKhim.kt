@@ -13,7 +13,6 @@ import java.sql.Timestamp
 import java.util.*
 
 class TenderKurganKhim(val tn: KurganKhim) : TenderAbstract(), ITender {
-    data class Result(val cancelstatus: Int, val updated: Boolean)
 
     init {
         etpName = "Электронная торговая площадка  ООО «Курганхиммаш»"

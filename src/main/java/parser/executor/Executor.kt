@@ -273,6 +273,7 @@ class Executor {
             Arguments.BORETS -> run { p = ParserBorets(); executeParser(p, IParser::parser) }
             Arguments.TKNSO -> run { p = ParserTknso(); executeParser(p, IParser::parser) }
             Arguments.GNS -> run { p = ParserGns(); executeParser(p, IParser::parser) }
+            Arguments.DSK1 -> run { p = ParserDsk1(); executeParser(p, IParser::parser) }
         }
     }
 

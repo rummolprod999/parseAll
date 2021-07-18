@@ -1,23 +1,24 @@
 package parser.tenders
 
+import org.jsoup.Jsoup
 import parser.builderApp.BuilderApp
 import parser.logger.logger
-import parser.tenderClasses.Gns
+import parser.networkTools.downloadFromUrlNoSslNew
+import parser.tenderClasses.Dsk1
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
 
-class TenderGns(val tn: Gns) : TenderAbstract(), ITender {
-
+class TenderDsk1(val tn: Dsk1) : TenderAbstract(), ITender {
     init {
-        etpName = "Группа компаний «Главновосибирскстрой»"
-        etpUrl = "https://www.gns-tender.ru/"
+        etpName = "ООО «Первый ДСК»"
+        etpUrl = "https://tender.dsk1.ru/"
     }
 
     val typeFz by lazy {
-        336
+        344
     }
 
     override fun parsing() {
@@ -25,12 +26,11 @@ class TenderGns(val tn: Gns) : TenderAbstract(), ITender {
         DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
             .use(fun(con: Connection) {
                 val stmt0 =
-                    con.prepareStatement("SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ? AND notice_version = ?")
+                    con.prepareStatement("SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?")
                         .apply {
                             setString(1, tn.purNum)
                             setInt(2, typeFz)
                             setTimestamp(3, Timestamp(tn.endDate.time))
-                            setString(4, tn.status)
                         }
                 val r = stmt0.executeQuery()
                 if (r.next()) {
@@ -40,7 +40,7 @@ class TenderGns(val tn: Gns) : TenderAbstract(), ITender {
                 }
                 r.close()
                 stmt0.close()
-                val (cancelstatus, updated) = updateVersion(con, dateVer)
+                val (cancelstatus, updated) = updateVersion(con, dateVer, typeFz, tn.purNum)
                 var idOrganizer = 0
                 if (etpName != "") {
                     val stmto =
@@ -84,10 +84,10 @@ class TenderGns(val tn: Gns) : TenderAbstract(), ITender {
                 }
                 val idEtp = getEtp(con)
                 var idPlacingWay = 0
-                val idRegion = getIdRegion(con, tn.region)
                 var idTender = 0
+                val idRegion = 0
                 val insertTender = con.prepareStatement(
-                    "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?, bidding_date = ?",
+                    "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?",
                     Statement.RETURN_GENERATED_KEYS
                 )
                 insertTender.setString(1, tn.purNum)
@@ -103,11 +103,10 @@ class TenderGns(val tn: Gns) : TenderAbstract(), ITender {
                 insertTender.setInt(11, cancelstatus)
                 insertTender.setTimestamp(12, Timestamp(dateVer.time))
                 insertTender.setInt(13, 1)
-                insertTender.setString(14, tn.status)
+                insertTender.setString(14, "")
                 insertTender.setString(15, tn.href)
                 insertTender.setString(16, tn.href)
                 insertTender.setInt(17, idRegion)
-                insertTender.setTimestamp(18, Timestamp(tn.biddingDate.time))
                 insertTender.executeUpdate()
                 val rt = insertTender.generatedKeys
                 if (rt.next()) {
@@ -184,6 +183,11 @@ class TenderGns(val tn: Gns) : TenderAbstract(), ITender {
                         close()
                     }
                 try {
+                    insertDocs(con, idTender)
+                } catch (e: Exception) {
+                    logger(e, e.stackTrace)
+                }
+                try {
                     tenderKwords(idTender, con)
                 } catch (e: Exception) {
                     logger("Ошибка добавления ключевых слов", e.stackTrace, e)
@@ -197,33 +201,28 @@ class TenderGns(val tn: Gns) : TenderAbstract(), ITender {
             })
     }
 
-    private fun updateVersion(con: Connection, dateVer: Date): Result {
-        var updated1 = false
-        var cancelstatus1 = 0
-        val stmt =
-            con.prepareStatement("SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?")
-                .apply {
-                    setString(1, tn.purNum)
-                    setInt(2, typeFz)
-                }
-        val rs = stmt.executeQuery()
-        while (rs.next()) {
-            updated1 = true
-            val idT = rs.getInt(1)
-            val dateB: Timestamp = rs.getTimestamp(2)
-            if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
-                con.prepareStatement("UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?")
-                    .apply {
-                        setInt(1, idT)
-                        execute()
-                        close()
-                    }
-            } else {
-                cancelstatus1 = 1
-            }
+    private fun insertDocs(con: Connection, idTender: Int) {
+        val pageTen = downloadFromUrlNoSslNew(tn.href)
+        if (pageTen == "") {
+            logger("Gets empty string ${this::class.simpleName}", tn.href)
+            return
         }
-        rs.close()
-        stmt.close()
-        return Result(cancelstatus1, updated1)
+        val htmlTen = Jsoup.parse(pageTen)
+        val documents = htmlTen.select("a[href ^='/upload/iblock']")
+        for (doc in documents) {
+            val urlT = doc?.attr("href")?.trim { it <= ' ' } ?: ""
+            val url = "https://tender.dsk1.ru$urlT"
+            var docName = doc?.text()?.trim { it <= ' ' } ?: ""
+            if (docName == "") {
+                continue
+            }
+            val insertDoc =
+                con.prepareStatement("INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?")
+            insertDoc.setInt(1, idTender)
+            insertDoc.setString(2, docName)
+            insertDoc.setString(3, url)
+            insertDoc.executeUpdate()
+            insertDoc.close()
+        }
     }
 }

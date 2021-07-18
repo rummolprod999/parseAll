@@ -81,4 +81,5 @@ enum class Arguments {
     BORETS,
     TKNSO,
     GNS,
+    DSK1,
 }

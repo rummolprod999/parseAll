@@ -11,6 +11,7 @@ import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import java.lang.reflect.Type
 import java.sql.*
+import java.util.Date
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -22,6 +23,35 @@ abstract class TenderAbstract {
 
     var etpName = ""
     var etpUrl = ""
+
+    protected fun updateVersion(con: Connection, dateVer: Date, typeFz: Int, purNum: String): Result {
+        var updated1 = false
+        var cancelstatus1 = 0
+        val stmt =
+            con.prepareStatement("SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?")
+                .apply {
+                    setString(1, purNum)
+                    setInt(2, typeFz)
+                }
+        val rs = stmt.executeQuery()
+        while (rs.next()) {
+            updated1 = true
+            val idT = rs.getInt(1)
+            val dateB: Timestamp = rs.getTimestamp(2)
+            if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
+                con.prepareStatement("UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?").apply {
+                    setInt(1, idT)
+                    execute()
+                    close()
+                }
+            } else {
+                cancelstatus1 = 1
+            }
+        }
+        rs.close()
+        stmt.close()
+        return Result(cancelstatus1, updated1)
+    }
 
     fun getEtp(con: Connection): Int {
         var IdEtp = 0
