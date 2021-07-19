@@ -10,6 +10,8 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
 import java.sql.Timestamp
+import java.time.ZoneId
+import java.util.*
 
 class TenderUmz(val tn: Umz) : TenderAbstract(), ITender {
     companion object TypeFz {
@@ -121,12 +123,13 @@ class TenderUmz(val tn: Umz) : TenderAbstract(), ITender {
                 val idEtp = getEtp(con)
                 var idPlacingWay = 0
                 var idTender = 0
-                val idRegion = 0
+                val idRegion = getIdRegion(con, "ворон")
                 if (tn.placingWayName != "") {
                     idPlacingWay = getPlacingWay(con, tn.placingWayName)
                 }
+                val dateEnd = Date.from(tn.pubDate.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant())
                 val insertTender = con.prepareStatement(
-                    "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?",
+                    "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?, end_date = ?",
                     Statement.RETURN_GENERATED_KEYS
                 )
                 insertTender.setString(1, tn.purNum)
@@ -145,6 +148,7 @@ class TenderUmz(val tn: Umz) : TenderAbstract(), ITender {
                 insertTender.setString(14, tn.hrefT)
                 insertTender.setString(15, tn.hrefT)
                 insertTender.setInt(16, idRegion)
+                insertTender.setTimestamp(17, Timestamp(dateEnd.time))
                 insertTender.executeUpdate()
                 val rt = insertTender.generatedKeys
                 if (rt.next()) {

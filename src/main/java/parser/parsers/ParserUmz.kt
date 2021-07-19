@@ -1,10 +1,7 @@
 package parser.parsers
 
 import com.google.gson.Gson
-import org.openqa.selenium.By
-import org.openqa.selenium.Keys
-import org.openqa.selenium.TimeoutException
-import org.openqa.selenium.WebElement
+import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -67,9 +64,17 @@ class ParserUmz : IParser, ParserAbstract() {
         val wait = WebDriverWait(driver, timeoutB)
         driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         driver.manage().deleteAllCookies()
+        driver.manage().window().maximize()
         try {
             driver.get(BaseUrl)
             try {
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'paging']/i[contains(., 'Всего записей:')]")))
+                driver.findElement(By.cssSelector("body")).sendKeys(Keys.END)
+                driver.findElement(By.cssSelector("body")).sendKeys(Keys.RIGHT)
+                Thread.sleep(5000)
+                driver.switchTo().defaultContent()
+                val js = driver as JavascriptExecutor
+                js.executeScript("""document.querySelectorAll('div.dataPager div span[onclick="\$.ETC.EventContainer.trigger(this,\'Grid.SetRowPerPage\',\'100\')"]')[0].click()""")
                 parserPageN(driver, wait)
             } catch (e: TimeoutException) {
                 logger("next page not found")
@@ -111,7 +116,7 @@ class ParserUmz : IParser, ParserAbstract() {
 
     private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait, np: Int = 0) {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'paging']/i[contains(., 'Всего записей:')]")))
-        driver.keyboard.pressKey(Keys.END)
+        driver.findElement(By.cssSelector("body")).sendKeys(Keys.END)
         Thread.sleep(5000)
         driver.switchTo().defaultContent()
         if (np == 0) {
@@ -125,13 +130,28 @@ class ParserUmz : IParser, ParserAbstract() {
             Thread.sleep(5000)*/
         }
         if (np != 0) {
-            try {
-                /* val js = driver as JavascriptExecutor
-                 js.executeScript("document.querySelectorAll('div.dataPager div.paging span')[${np + 1}].click()")*/
-                //println("//div[@class = 'dataPager']/div/span[. = '${np + 1}']")
-                driver.findElementByXPath("//div[@class = 'dataPager']/div/span[. = '${np + 1}']").click()
-            } catch (e: NoSuchElementException) {
-                throw e
+            var c = 0
+            while (true) {
+                try {
+                    try {
+                        /* val js = driver as JavascriptExecutor
+                     js.executeScript("document.querySelectorAll('div.dataPager div.paging span')[${np + 1}].click()")*/
+                        //println("//div[@class = 'dataPager']/div/span[. = '${np + 1}']")
+                        //driver.findElementByXPath("//div[@class = 'dataPager']/div/span[. = '${np + 1}']").click()
+                        val js = driver as JavascriptExecutor
+                        js.executeScript("""document.querySelectorAll('div.dataPager div span[onclick="${'$'}.ETC.EventContainer.trigger(this,\'Grid.SetPage\',${np + 1})"]')[0].click()""")
+                        break
+                    } catch (e: JavascriptException) {
+                        c++
+                        driver.findElementByXPath("//div[@class = 'dataPager']/div/span[. = '${np + 1}']").click()
+                        break
+                    }
+                } catch (e: Exception) {
+                    if (c > 5) {
+                        throw e
+                    }
+                    c++
+                }
             }
         }
 

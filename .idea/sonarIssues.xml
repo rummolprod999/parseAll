@@ -98,6 +98,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserUmz.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/parsers/ParserZakazRf.kt">
           <value>
             <set />
@@ -204,6 +209,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderRzn.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/parser/tenders/TenderUmz.kt">
           <value>
             <set />
           </value>
