@@ -15,7 +15,10 @@ class Executor {
     init {
         when (BuilderApp.arg) {
             Arguments.SALAVAT -> run { p = ParserSalavat(); executeParser(p, IParser::parser) }
-            Arguments.UMZ -> run { p = ParserUmz(); executeParser(p, IParser::parser) }
+            Arguments.UMZ -> {
+                run { p = ParserUmz(); executeParser(p, IParser::parser) }
+                run { p = ParserUmzMark(); executeParser(p, IParser::parser) }
+            }
             Arguments.LSR -> run { p = ParserLsr(); executeParser(p, IParser::parser) }
             Arguments.ZMOKURSK -> run { p = ParserZmoKursk(); executeParser(p, IParser::parser) }
             Arguments.ZMO45 -> run { p = ParserZmo45(); executeParser(p, IParser::parser) }
