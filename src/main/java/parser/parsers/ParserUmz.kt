@@ -73,8 +73,13 @@ class ParserUmz : IParser, ParserAbstract() {
                 driver.findElement(By.cssSelector("body")).sendKeys(Keys.RIGHT)
                 Thread.sleep(5000)
                 driver.switchTo().defaultContent()
-                val js = driver as JavascriptExecutor
-                js.executeScript("""document.querySelectorAll('div.dataPager div span[onclick="\$.ETC.EventContainer.trigger(this,\'Grid.SetRowPerPage\',\'100\')"]')[0].click()""")
+                try {
+                    val js = driver as JavascriptExecutor
+                    js.executeScript("""document.querySelectorAll('div.dataPager div span[onclick="\$.ETC.EventContainer.trigger(this,\'Grid.SetRowPerPage\',\'100\')"]')[0].click()""")
+                } catch (e: Exception) {
+                    logger(e)
+                }
+                driver.switchTo().defaultContent()
                 parserPageN(driver, wait)
             } catch (e: TimeoutException) {
                 logger("next page not found")
