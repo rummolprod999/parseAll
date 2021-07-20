@@ -130,8 +130,8 @@ class ParserAlrosa : IParser, ParserAbstract() {
         val purNum = el.findElementWithoutException(By.xpath("./td[3]/a"))?.text?.trim { it <= ' ' }
             ?: ""
         if (purNum == "") {
-            logger("can not purNum in tender")
-            throw Exception("can not purNum in tender")
+            logger("cannot purNum in tender")
+            throw Exception("cannot purNum in tender")
         }
         val purObj = el.findElementWithoutException(By.xpath("./td[5]/a"))?.text?.trim { it <= ' ' }
             ?: ""
@@ -140,7 +140,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
                 ?: ""
         val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
         if (datePub == Date(0L)) {
-            logger("can not find pubDate on page", datePubTmp, purNum)
+            logger("cannot find pubDate on page", datePubTmp, purNum)
             return
         }
         val dateEndTmp =
@@ -148,7 +148,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
                 ?: ""
         val dateEnd = dateEndTmp.getDateFromString(formatterOnlyDate)
         if (dateEnd == Date(0L)) {
-            logger("can not find dateEnd on page", dateEndTmp, purNum)
+            logger("cannot find dateEnd on page", dateEndTmp, purNum)
             return
         }
         val status = el.findElementWithoutException(By.xpath("./td[8]/span/span"))?.text?.trim { it <= ' ' } ?: ""

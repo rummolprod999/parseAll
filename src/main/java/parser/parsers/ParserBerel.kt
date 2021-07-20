@@ -117,15 +117,15 @@ class ParserBerel : IParser, ParserAbstract() {
             el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_num']"))?.text?.trim { it <= ' ' }
                 ?: ""
         if (purNum == "") {
-            logger("can not purNum in tender")
+            logger("cannot purNum in tender")
             return
         }
         val urlT = el.findElementWithoutException(By.xpath(".//a[@class = 'purchase_item_attachment left']"))
             ?.getAttribute("href")?.trim { it <= ' ' }
             ?: ""
         if (urlT == "") {
-            logger("can not urlT in tender", purNum)
-            throw Exception("can not urlT in tender")
+            logger("cannot urlT in tender", purNum)
+            throw Exception("cannot urlT in tender")
         }
         val purObj =
             el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_text']"))?.text?.trim { it <= ' ' }

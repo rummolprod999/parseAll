@@ -109,13 +109,13 @@ class ParserSalavat : IParser, ParserAbstract() {
         val purNum = el.findElementWithoutException(By.xpath("./td[2]/p/a/span"))?.text?.trim { it <= ' ' }
             ?: ""
         if (purNum == "") {
-            logger("can not purNum in tender")
+            logger("cannot purNum in tender")
             return
         }
         val urlT = el.findElementWithoutException(By.xpath("./td[2]/p/a"))?.getAttribute("href")?.trim { it <= ' ' }
             ?: ""
         if (urlT == "") {
-            logger("can not urlT in tender", purNum)
+            logger("cannot urlT in tender", purNum)
             return
         }
         val purObj = el.findElementWithoutException(By.xpath("./td[2]/p[2]"))?.text?.trim { it <= ' ' }
@@ -128,7 +128,7 @@ class ParserSalavat : IParser, ParserAbstract() {
             ?: ""
         val dateEnd = dateEndTmp.getDateFromString(formatterGpn)
         if (dateEnd == Date(0L)) {
-            logger("can not find dateEnd on page", urlT, purNum)
+            logger("cannot find dateEnd on page", urlT, purNum)
             return
         }
         val cusName = el.findElementWithoutException(By.xpath("./td[3]/p"))?.text?.trim { it <= ' ' }

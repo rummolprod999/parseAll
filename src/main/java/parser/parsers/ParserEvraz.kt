@@ -127,23 +127,23 @@ class ParserEvraz : IParser, ParserAbstract() {
     private fun parserTender(el: WebElement) {
         val purName = el.text.trim { it <= ' ' }
         if (purName == "") {
-            logger("can not purName in tender")
+            logger("cannot purName in tender")
             return
         }
         val urlT = el.getAttribute("url") ?: run {
-            logger("can not urlT in tender $purName")
+            logger("cannot urlT in tender $purName")
             return
         }
         val idiblock = el.getAttribute("idiblock") ?: run {
-            logger("can not idiblock in tender $purName")
+            logger("cannot idiblock in tender $purName")
             return
         }
         val iblock_applick = el.getAttribute("iblock-applick") ?: run {
-            logger("can not iblock_applick in tender $purName")
+            logger("cannot iblock_applick in tender $purName")
             return
         }
         val purNum = el.getAttribute("idelement") ?: run {
-            logger("can not purNum in tender $urlT")
+            logger("cannot purNum in tender $urlT")
             return
         }
         val href =

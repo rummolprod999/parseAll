@@ -148,13 +148,13 @@ class ParserTmk : IParser, ParserAbstract() {
             el.findElementWithoutException(By.xpath(".//td[last()]/div/a[1]"))?.getAttribute("href")?.trim { it <= ' ' }
                 ?: ""
         if (href == "") {
-            logger("can not href in tender")
+            logger("cannot href in tender")
             return
         }
         val purNum = el.findElementWithoutException(By.xpath(".//td[3]/div"))?.text?.trim { it <= ' ' }
             ?: ""
         if (purNum == "") {
-            logger("can not purNum in tender $href")
+            logger("cannot purNum in tender $href")
             return
         }
         val nameOrg = el.findElementWithoutException(By.xpath(".//td[6]/div"))?.text?.trim { it <= ' ' }
@@ -162,7 +162,7 @@ class ParserTmk : IParser, ParserAbstract() {
         val purName = el.findElementWithoutException(By.xpath(".//td[7]/div"))?.text?.trim { it <= ' ' }
             ?: ""
         if (purName == "") {
-            logger("can not purName in tender $href")
+            logger("cannot purName in tender $href")
             return
         }
         val status = el.findElementWithoutException(By.xpath(".//td[last()-1]/div"))?.text?.trim { it <= ' ' }
@@ -171,7 +171,7 @@ class ParserTmk : IParser, ParserAbstract() {
             ?: ""
         val datePub = datePubTmp.getDateFromString(formatterGpn)
         if (datePub == Date(0L)) {
-            logger("can not find dateEnd on page", href, purNum)
+            logger("cannot find dateEnd on page", href, purNum)
             return
         }
         val dateEndTmp = el.findElementWithoutException(By.xpath(".//td[10]/div"))?.text?.trim { it <= ' ' }

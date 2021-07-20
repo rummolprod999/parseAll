@@ -112,7 +112,7 @@ class ParserLsr : IParser, ParserAbstract() {
         val purNum = el.findElementWithoutException(By.xpath(".//td[1]/a"))?.text?.trim { it <= ' ' }
             ?: ""
         if (purNum == "") {
-            logger("can not find purNum in tender")
+            logger("cannot find purNum in tender")
             return
         }
         val hrefL = el.findElementWithoutException(By.xpath(".//td[3]/a"))?.getAttribute("href")?.trim { it <= ' ' }
@@ -120,7 +120,7 @@ class ParserLsr : IParser, ParserAbstract() {
         val hrefT = el.findElementWithoutException(By.xpath(".//td[2]/a"))?.getAttribute("href")?.trim { it <= ' ' }
             ?: ""
         if (hrefL == "" || hrefT == "") {
-            logger("can not find hrefs in tender", purNum)
+            logger("cannot find hrefs in tender", purNum)
             return
         }
         var purName = el.findElementWithoutException(By.xpath(".//td[2]/a"))?.text?.trim { it <= ' ' }
@@ -134,7 +134,7 @@ class ParserLsr : IParser, ParserAbstract() {
             ?: ""
         val pubDate = pubDateT.getDateFromString(formatterGpn)
         if (pubDate == Date(0L)) {
-            logger("can not find date pub in tender", hrefL, pubDateT)
+            logger("cannot find date pub in tender", hrefL, pubDateT)
             return
         }
         var endDateT = el.findElementWithoutException(By.xpath(".//td[5]"))?.text?.trim { it <= ' ' }
@@ -146,7 +146,7 @@ class ParserLsr : IParser, ParserAbstract() {
         }
         val endDate = endDateT.getDateFromString(formatterGpn)
         if (endDate == Date(0L)) {
-            logger("can not find date end in tender", hrefL, endDateT)
+            logger("cannot find date end in tender", hrefL, endDateT)
             return
         }
         var status = el.findElementWithoutException(By.xpath(".//td[7]"))?.text?.trim { it <= ' ' }

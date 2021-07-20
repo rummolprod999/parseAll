@@ -102,7 +102,7 @@ class ParserTransAst : IParser, ParserAbstract() {
             el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))?.text?.trim { it <= ' ' }
                 ?: ""
         if (purNum == "") {
-            logger("can not find purNum in tender", el.text)
+            logger("cannot find purNum in tender", el.text)
             return
         }
         try {

@@ -153,7 +153,7 @@ class ParserAgEat : IParser, ParserAbstract() {
             el.findElementWithoutException(By.xpath(".//h3[@id = 'tradeNumber']/a"))?.text?.trim { it <= ' ' }
                 ?: ""
         if (purNum == "") {
-            logger("can not purNum in tender")
+            logger("cannot purNum in tender")
             return
         }
         val purObj =
@@ -167,7 +167,7 @@ class ParserAgEat : IParser, ParserAbstract() {
                 ?.getAttribute("href")?.trim { it <= ' ' }
                 ?: ""
         if (urlT == "") {
-            logger("can not urlT in tender", purNum)
+            logger("cannot urlT in tender", purNum)
             return
         }
         val tt = AgEat(purNum, urlT, purObj, status)

@@ -178,20 +178,20 @@ class ParserUmz : IParser, ParserAbstract() {
         val purNum = el.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
             ?: ""
         if (purNum == "") {
-            logger("can not purNum in tender")
+            logger("cannot purNum in tender")
             return
         }
         val urlT = el.findElementWithoutException(By.xpath("."))?.getAttribute("data-load")?.trim { it <= ' ' }
             ?: ""
         if (urlT == "") {
-            logger("can not urlT in tender", purNum)
+            logger("cannot urlT in tender", purNum)
             return
         }
         val gson = Gson()
         val doc = gson.fromJson<UrlTen>(urlT, UrlTen::class.java)
         when {
             doc.url == null || doc.url == "" -> {
-                logger("can not doc.url in tender", purNum)
+                logger("cannot doc.url in tender", purNum)
                 return
             }
         }
@@ -205,7 +205,7 @@ class ParserUmz : IParser, ParserAbstract() {
                 ?: ""
         val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
         if (datePub == Date(0L)) {
-            logger("can not find datePub on page", urlTender, purNum)
+            logger("cannot find datePub on page", urlTender, purNum)
             return
         }
         val cusName = el.findElementWithoutException(By.xpath("./td[8]"))?.text?.trim { it <= ' ' }

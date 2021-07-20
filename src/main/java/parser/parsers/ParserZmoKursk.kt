@@ -134,14 +134,14 @@ class ParserZmoKursk : IParser, ParserAbstract() {
         val purNum = el.findElementWithoutException(By.xpath("./td[2]/p"))?.text?.trim { it <= ' ' }
             ?: ""
         if (purNum == "") {
-            logger("can not purNum in tender")
-            throw Exception("can not purNum in tender")
+            logger("cannot purNum in tender")
+            throw Exception("cannot purNum in tender")
         }
         val urlT = el.findElementWithoutException(By.xpath("./td[4]/a"))?.getAttribute("href")?.trim { it <= ' ' }
             ?: ""
         if (urlT == "") {
-            logger("can not urlT in tender", purNum)
-            throw Exception("can not urlT in tender")
+            logger("cannot urlT in tender", purNum)
+            throw Exception("cannot urlT in tender")
         }
         val purObj = el.findElementWithoutException(By.xpath("./td[4]/a"))?.text?.trim { it <= ' ' }
             ?: ""
@@ -156,7 +156,7 @@ class ParserZmoKursk : IParser, ParserAbstract() {
             ?.trim { it <= ' ' }
             ?: ""
         if (datePub == Date(0L) || dateEnd == Date(0L)) {
-            logger("can not find pubDate or dateEnd on page", urlT, purNum)
+            logger("cannot find pubDate or dateEnd on page", urlT, purNum)
             return
         }
         val tt = ZmoKursk(status, purNum, purObj, nmck, datePub, dateEnd, urlT)
