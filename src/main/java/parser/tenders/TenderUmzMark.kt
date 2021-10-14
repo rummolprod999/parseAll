@@ -14,6 +14,12 @@ import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
 
+/**
+ * Tender umz mark
+ *
+ * @property tn
+ * @constructor Create empty Tender umz mark
+ */
 class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
     companion object TypeFz {
         val typeFz = 79

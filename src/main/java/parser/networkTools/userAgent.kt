@@ -1,7 +1,5 @@
 package parser.networkTools
 
-import java.util.*
-
 object RandomUserAgent {
 
     private val uaMap = HashMap<String, Array<String>>()
