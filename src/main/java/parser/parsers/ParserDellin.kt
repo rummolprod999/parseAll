@@ -18,7 +18,10 @@ class ParserDellin : IParser, ParserAbstract() {
     lateinit var options: ChromeOptions
 
     init {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
+        System.setProperty(
+            "org.apache.commons.logging.Log",
+            "org.apache.commons.logging.impl.NoOpLog"
+        )
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
@@ -39,7 +42,7 @@ class ParserDellin : IParser, ParserAbstract() {
 
     private fun getchromeOptions(): ChromeOptions {
         val options = ChromeOptions()
-        //options.addArguments("headless")
+        // options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         options.addArguments("noerrdialogs")
@@ -68,11 +71,9 @@ class ParserDellin : IParser, ParserAbstract() {
                 logger("Error in parserDellin function", e.stackTrace, e)
                 e.printStackTrace()
             } finally {
-                if (this::driver.isInitialized)
-                    driver.quit()
+                if (this::driver.isInitialized) driver.quit()
             }
         }
-
     }
 
     private fun parserTenderList() {
@@ -91,21 +92,27 @@ class ParserDellin : IParser, ParserAbstract() {
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
         wait = WebDriverWait(driver, timeoutB)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[@__gwtcellbasedwidgetimpldispatchingfocus]/tbody/tr")))
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//table[@__gwtcellbasedwidgetimpldispatchingfocus]/tbody/tr")
+            )
+        )
         getListTenders()
     }
 
     private fun getListTenders() {
         Thread.sleep(2000)
         driver.switchTo().defaultContent()
-        val tenders = driver.findElements(By.xpath("//table[@__gwtcellbasedwidgetimpldispatchingfocus]/tbody/tr"))
+        val tenders =
+            driver.findElements(
+                By.xpath("//table[@__gwtcellbasedwidgetimpldispatchingfocus]/tbody/tr")
+            )
         tenders.forEach {
             try {
                 parserTender(it)
             } catch (e: Exception) {
 
                 logger("error in parserTender", e.stackTrace, e)
-
             }
         }
     }

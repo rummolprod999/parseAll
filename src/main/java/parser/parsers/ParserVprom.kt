@@ -52,21 +52,38 @@ class ParserVprom : IParser, ParserAbstract() {
     }
 
     private fun parserTend(el: Element) {
-        var urlTend = el.selectFirst("div.s-tender__name a")?.attr("href")?.trim { it <= ' ' }
-            ?: run { logger("urlTend not found"); return }
+        var urlTend =
+            el.selectFirst("div.s-tender__name a")?.attr("href")?.trim { it <= ' ' }
+                ?: run {
+                    logger("urlTend not found")
+                    return
+                }
         urlTend = "https://voltyre-prom.ru${urlTend}"
-        val purName = el.selectFirst("div.s-tender__name a")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("purName not found"); return }
+        val purName =
+            el.selectFirst("div.s-tender__name a")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("purName not found")
+                    return
+                }
         val purNum = purName.getDataFromRegexp("""№(.+?)\s""")
-        val datePubTmp = el.selectFirst("span:contains(Дата размещения:) + span")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("datePubTmp not found"); return }
+        val datePubTmp =
+            el.selectFirst("span:contains(Дата размещения:) + span")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("datePubTmp not found")
+                    return
+                }
         val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
         val dateEndTmp =
-            el.selectFirst("span:contains(Дата окончания приема заявок:) + span")?.ownText()?.trim { it <= ' ' }
+            el.selectFirst("span:contains(Дата окончания приема заявок:) + span")?.ownText()?.trim {
+                it <= ' '
+            }
                 ?: ""
         var dateEnd = dateEndTmp.getDateFromString(formatterOnlyDate)
         if (dateEnd == Date(0L)) {
-            dateEnd = Date.from(datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant())
+            dateEnd =
+                Date.from(
+                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                )
         }
         val tt = Vprom(purNum, urlTend, purName, dateEnd, datePub)
         val t = TenderVprom(tt)

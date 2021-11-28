@@ -22,7 +22,10 @@ class ParserBerel : IParser, ParserAbstract() {
     lateinit var options: ChromeOptions
 
     init {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
+        System.setProperty(
+            "org.apache.commons.logging.Log",
+            "org.apache.commons.logging.impl.NoOpLog"
+        )
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
@@ -70,11 +73,9 @@ class ParserBerel : IParser, ParserAbstract() {
                 logger("Error in ParserBerel function", e.stackTrace, e)
                 e.printStackTrace()
             } finally {
-                if (this::driver.isInitialized)
-                    driver.quit()
+                if (this::driver.isInitialized) driver.quit()
             }
         }
-
     }
 
     private fun parserTenderList() {
@@ -93,7 +94,11 @@ class ParserBerel : IParser, ParserAbstract() {
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
         wait = WebDriverWait(driver, timeoutB)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'purchase_item')]")))
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//div[contains(@class, 'purchase_item')]")
+            )
+        )
         getListTenders()
     }
 
@@ -107,35 +112,51 @@ class ParserBerel : IParser, ParserAbstract() {
             } catch (e: Exception) {
 
                 logger("error in parserTender", e.stackTrace, e)
-
             }
         }
     }
 
     private fun parserTender(el: WebElement) {
         val purNum =
-            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_num']"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_num']"))
+                ?.text
+                ?.trim { it <= ' ' }
                 ?: ""
         if (purNum == "") {
             logger("cannot purNum in tender")
             return
         }
-        val urlT = el.findElementWithoutException(By.xpath(".//a[@class = 'purchase_item_attachment left']"))
-            ?.getAttribute("href")?.trim { it <= ' ' }
-            ?: ""
+        val urlT =
+            el
+                .findElementWithoutException(
+                    By.xpath(".//a[@class = 'purchase_item_attachment left']")
+                )
+                ?.getAttribute("href")
+                ?.trim { it <= ' ' }
+                ?: ""
         if (urlT == "") {
             logger("cannot urlT in tender", purNum)
             throw Exception("cannot urlT in tender")
         }
         val purObj =
-            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_text']"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_text']"))
+                ?.text
+                ?.trim { it <= ' ' }
                 ?: ""
         val datePubTmp =
-            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_date']/span"))?.text?.trim()
+            el
+                .findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_date']/span"))
+                ?.text
+                ?.trim()
                 ?.trim { it <= ' ' }
                 ?: ""
         val dateEndTmp =
-            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_date purchase_item_marg']/span"))?.text?.trim()
+            el
+                .findElementWithoutException(
+                    By.xpath(".//div[@class = 'purchase_item_date purchase_item_marg']/span")
+                )
+                ?.text
+                ?.trim()
                 ?.trim { it <= ' ' }
                 ?: ""
         val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
@@ -143,6 +164,5 @@ class ParserBerel : IParser, ParserAbstract() {
         val tt = Berel(purNum, urlT, purObj, datePub, dateEnd)
         val t = TenderBerel(tt)
         tendersList.add(t)
-
     }
 }

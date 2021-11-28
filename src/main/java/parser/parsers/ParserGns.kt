@@ -13,7 +13,6 @@ import parser.tools.formatterOnlyDate
 import java.time.ZoneId
 import java.util.*
 
-
 class ParserGns : IParser, ParserAbstract() {
 
     override fun parser() = parse {
@@ -46,10 +45,13 @@ class ParserGns : IParser, ParserAbstract() {
         }
     }
 
-
     private fun parsingTenderList(e: Element) {
-        val urlT = e.selectFirst("a:contains(Подробнее)")?.attr("href")?.trim { it <= ' ' }
-            ?: run { logger("urlT not found"); return }
+        val urlT =
+            e.selectFirst("a:contains(Подробнее)")?.attr("href")?.trim { it <= ' ' }
+                ?: run {
+                    logger("urlT not found")
+                    return
+                }
         val urlTend = "https://www.gns-tender.ru$urlT"
         val pageTen = downloadFromUrlNoSslNew(urlTend)
         if (pageTen == "") {
@@ -58,43 +60,68 @@ class ParserGns : IParser, ParserAbstract() {
         }
         val htmlTen = Jsoup.parse(pageTen)
         parsingTender(htmlTen, urlTend)
-
     }
 
     private fun parsingTender(e: Element, url: String) {
-        val purName = e.selectFirst("h1")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("purName not found"); return }
-        val purNum = e.selectFirst("div.tender-number > span")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("purNum not found"); return }
-        val status = e.selectFirst("div.tender-status > p:eq(0) span")?.ownText()?.trim { it <= ' ' }
-            ?: ""
-        val pubMounth = e.selectFirst("div.tender-mounth")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("pubMounth not found"); return }
-        val pubDay = e.selectFirst("div.tender-date")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("pubDay not found"); return }
-        val pubYear = e.selectFirst("div.tender-year")?.ownText()?.replace("год", "")?.trim { it <= ' ' }
-            ?: run { logger("pubYear not found"); return }
+        val purName =
+            e.selectFirst("h1")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("purName not found")
+                    return
+                }
+        val purNum =
+            e.selectFirst("div.tender-number > span")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("purNum not found")
+                    return
+                }
+        val status =
+            e.selectFirst("div.tender-status > p:eq(0) span")?.ownText()?.trim { it <= ' ' } ?: ""
+        val pubMounth =
+            e.selectFirst("div.tender-mounth")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("pubMounth not found")
+                    return
+                }
+        val pubDay =
+            e.selectFirst("div.tender-date")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("pubDay not found")
+                    return
+                }
+        val pubYear =
+            e.selectFirst("div.tender-year")?.ownText()?.replace("год", "")?.trim { it <= ' ' }
+                ?: run {
+                    logger("pubYear not found")
+                    return
+                }
         val datePubT = "$pubDay$pubMounth$pubYear".replaceDateBoretsEnd()
         val datePub = Date()
-        val dateEndT = e.selectFirst("div.tender-info:contains(Дата окончания приема заявок на участие:)")?.ownText()
-            ?.trim { it <= ' ' }
-            ?: run { logger("dateEndT not found"); return }
+        val dateEndT =
+            e
+                .selectFirst("div.tender-info:contains(Дата окончания приема заявок на участие:)")
+                ?.ownText()
+                ?.trim { it <= ' ' }
+                ?: run {
+                    logger("dateEndT not found")
+                    return
+                }
         var dateEnd = dateEndT.getDateFromString(formatterOnlyDate)
         if (dateEnd == Date(0)) {
-            dateEnd = Date.from(datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant())
+            dateEnd =
+                Date.from(
+                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                )
         }
         val dateBiddingT =
-            e.selectFirst("div.tender-info:contains(Проводится:)")?.ownText()
-                ?.trim { it <= ' ' }
+            e.selectFirst("div.tender-info:contains(Проводится:)")?.ownText()?.trim { it <= ' ' }
                 ?: ""
         val dateBidding = dateBiddingT.getDateFromString(formatter)
         val cusName =
-            e.selectFirst("div.tender-info:contains(Организация:)")?.ownText()
-                ?.trim { it <= ' ' }
+            e.selectFirst("div.tender-info:contains(Организация:)")?.ownText()?.trim { it <= ' ' }
                 ?: ""
         val region =
-            e.selectFirst("div.tender-region:contains(Регион:)")?.ownText()
-                ?.trim { it <= ' ' }
+            e.selectFirst("div.tender-region:contains(Регион:)")?.ownText()?.trim { it <= ' ' }
                 ?: ""
         val tn = Gns(purNum, url, purName, datePub, dateEnd, status, region, cusName, dateBidding)
         val t = TenderGns(tn)

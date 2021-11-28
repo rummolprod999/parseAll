@@ -24,7 +24,10 @@ class ParserZmo45 : IParser, ParserAbstract() {
     private val tendersS = mutableListOf<TenderZmo45>()
 
     init {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
+        System.setProperty(
+            "org.apache.commons.logging.Log",
+            "org.apache.commons.logging.impl.NoOpLog"
+        )
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
@@ -59,12 +62,18 @@ class ParserZmo45 : IParser, ParserAbstract() {
             driver.manage().deleteAllCookies()
             driver.get(BaseUrl)
             driver.switchTo().defaultContent()
-            //driver.manage().window().maximize()
+            // driver.manage().window().maximize()
             val wait = WebDriverWait(driver, timeoutB)
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'wg-selectbox']/div[@class = 'select']")))
+            wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//div[@class = 'wg-selectbox']/div[@class = 'select']")
+                )
+            )
             val js = driver as JavascriptExecutor
             js.executeScript("document.querySelectorAll('div.wg-selectbox div.select')[0].click()")
-            js.executeScript("document.querySelectorAll('div.wg-selectbox ul li:last-child')[0].click()")
+            js.executeScript(
+                "document.querySelectorAll('div.wg-selectbox ul li:last-child')[0].click()"
+            )
             driver.switchTo().defaultContent()
             getListTenders(driver, wait)
             (1..CountPage).forEach { _ ->
@@ -77,7 +86,7 @@ class ParserZmo45 : IParser, ParserAbstract() {
             }
             tendersS.forEach {
                 try {
-                    //println(it)
+                    // println(it)
                     ParserTender(it)
                 } catch (e: Exception) {
                     logger("error in TenderZmo.parsing()", e.stackTrace, e, it.tn.url)
@@ -92,7 +101,13 @@ class ParserZmo45 : IParser, ParserAbstract() {
 
     private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait): Boolean {
         driver.switchTo().defaultContent()
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'paginator__page-selector']/a[contains(@class, 'paginator__next')]")))
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath(
+                    "//div[@class = 'paginator__page-selector']/a[contains(@class, 'paginator__next')]"
+                )
+            )
+        )
         val js = driver as JavascriptExecutor
         js.executeScript("document.getElementsByClassName('paginator__next')[0].click()")
         driver.switchTo().defaultContent()
@@ -102,7 +117,11 @@ class ParserZmo45 : IParser, ParserAbstract() {
     private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait): Boolean {
         Thread.sleep(5000)
         try {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[@id = 'jqGrid']/tbody/tr[not(@class = 'jqgfirstrow')][10]")))
+            wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//table[@id = 'jqGrid']/tbody/tr[not(@class = 'jqgfirstrow')][10]")
+                )
+            )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
             return false
@@ -110,7 +129,10 @@ class ParserZmo45 : IParser, ParserAbstract() {
         var st = 2
         loop@ while (true) {
             driver.switchTo().defaultContent()
-            val tenders = driver.findElements(By.xpath("//table[@id = 'jqGrid']/tbody/tr[not(@class = 'jqgfirstrow')]"))
+            val tenders =
+                driver.findElements(
+                    By.xpath("//table[@id = 'jqGrid']/tbody/tr[not(@class = 'jqgfirstrow')]")
+                )
             for (it in tenders) {
                 try {
                     parserTender(it)
@@ -130,31 +152,46 @@ class ParserZmo45 : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: WebElement) {
-        //driver.switchTo().defaultContent()
-        val purNum = el.findElementWithoutException(By.xpath("./td[2]/p"))?.text?.trim { it <= ' ' }
-            ?: ""
+        // driver.switchTo().defaultContent()
+        val purNum =
+            el.findElementWithoutException(By.xpath("./td[2]/p"))?.text?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot purNum in tender")
             throw Exception("cannot purNum in tender")
         }
-        val urlT = el.findElementWithoutException(By.xpath("./td[4]/a"))?.getAttribute("href")?.trim { it <= ' ' }
-            ?: ""
+        val urlT =
+            el.findElementWithoutException(By.xpath("./td[4]/a"))?.getAttribute("href")?.trim {
+                it <= ' '
+            }
+                ?: ""
         if (urlT == "") {
             logger("cannot urlT in tender", purNum)
             throw Exception("cannot urlT in tender")
         }
-        val purObj = el.findElementWithoutException(By.xpath("./td[4]/a"))?.text?.trim { it <= ' ' }
-            ?: ""
-        val datePubTmp = el.findElementWithoutException(By.xpath("./td[6]/span"))?.text?.trim()?.trim { it <= ' ' }
-            ?: ""
-        val dateEndTmp = el.findElementWithoutException(By.xpath("./td[7]/span"))?.text?.trim()?.trim { it <= ' ' }
-            ?: ""
+        val purObj =
+            el.findElementWithoutException(By.xpath("./td[4]/a"))?.text?.trim { it <= ' ' } ?: ""
+        val datePubTmp =
+            el.findElementWithoutException(By.xpath("./td[6]/span"))?.text?.trim()?.trim {
+                it <= ' '
+            }
+                ?: ""
+        val dateEndTmp =
+            el.findElementWithoutException(By.xpath("./td[7]/span"))?.text?.trim()?.trim {
+                it <= ' '
+            }
+                ?: ""
         val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
         val dateEnd = dateEndTmp.getDateFromString(formatterGpn)
-        val status = el.findElementWithoutException(By.xpath("./td[9]"))?.text?.trim { it <= ' ' } ?: ""
-        val nmck = el.findElementWithoutException(By.xpath("./td[5]"))?.text?.replace(',', '.')?.deleteAllWhiteSpace()
-            ?.trim { it <= ' ' }
-            ?: ""
+        val status =
+            el.findElementWithoutException(By.xpath("./td[9]"))?.text?.trim { it <= ' ' } ?: ""
+        val nmck =
+            el
+                .findElementWithoutException(By.xpath("./td[5]"))
+                ?.text
+                ?.replace(',', '.')
+                ?.deleteAllWhiteSpace()
+                ?.trim { it <= ' ' }
+                ?: ""
         if (datePub == Date(0L) || dateEnd == Date(0L)) {
             logger("cannot find pubDate or dateEnd on page", urlT, purNum)
             return

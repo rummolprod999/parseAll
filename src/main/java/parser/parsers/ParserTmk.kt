@@ -25,7 +25,10 @@ class ParserTmk : IParser, ParserAbstract() {
     lateinit var options: ChromeOptions
 
     init {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
+        System.setProperty(
+            "org.apache.commons.logging.Log",
+            "org.apache.commons.logging.impl.NoOpLog"
+        )
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
@@ -71,8 +74,7 @@ class ParserTmk : IParser, ParserAbstract() {
                 logger("Error in parserSelen function", e.stackTrace, e)
                 e.printStackTrace()
             } finally {
-                if (this::driver.isInitialized)
-                    driver.quit()
+                if (this::driver.isInitialized) driver.quit()
             }
         }
     }
@@ -91,7 +93,6 @@ class ParserTmk : IParser, ParserAbstract() {
         try {
             if (createTenderList()) return
             parserTenderList()
-
         } catch (e: Exception) {
             logger("Error in parser function", e.stackTrace, e)
             throw e
@@ -104,7 +105,11 @@ class ParserTmk : IParser, ParserAbstract() {
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
         wait = WebDriverWait(driver, timeoutB)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'x-grid3-body']/div[contains(@class, 'x-grid3-row')][25]")))
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//div[@class = 'x-grid3-body']/div[contains(@class, 'x-grid3-row')][25]")
+            )
+        )
         getListTenders()
         (1..CountPage).forEach { _ ->
             try {
@@ -117,9 +122,14 @@ class ParserTmk : IParser, ParserAbstract() {
     }
 
     private fun getNextPage() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(@class, 'x-tbar-page-next')]")))
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//button[contains(@class, 'x-tbar-page-next')]")
+            )
+        )
         try {
-            val paginator = driver.findElementByXPath("//button[contains(@class, 'x-tbar-page-next')]")
+            val paginator =
+                driver.findElementByXPath("//button[contains(@class, 'x-tbar-page-next')]")
             paginator.click()
             getListTenders()
         } catch (e: Exception) {
@@ -131,57 +141,65 @@ class ParserTmk : IParser, ParserAbstract() {
         Thread.sleep(2000)
         driver.switchTo().defaultContent()
         val tenders =
-            driver.findElements(By.xpath("//div[@class = 'x-grid3-body']/div[contains(@class, 'x-grid3-row')]//tr[1]"))
+            driver.findElements(
+                By.xpath(
+                    "//div[@class = 'x-grid3-body']/div[contains(@class, 'x-grid3-row')]//tr[1]"
+                )
+            )
         tenders.forEach {
             try {
                 parserTender(it)
             } catch (e: Exception) {
 
                 logger("error in parserTender", e.stackTrace, e)
-
             }
         }
     }
 
     private fun parserTender(el: WebElement) {
         val href =
-            el.findElementWithoutException(By.xpath(".//td[last()]/div/a[1]"))?.getAttribute("href")?.trim { it <= ' ' }
+            el
+                .findElementWithoutException(By.xpath(".//td[last()]/div/a[1]"))
+                ?.getAttribute("href")
+                ?.trim { it <= ' ' }
                 ?: ""
         if (href == "") {
             logger("cannot href in tender")
             return
         }
-        val purNum = el.findElementWithoutException(By.xpath(".//td[3]/div"))?.text?.trim { it <= ' ' }
-            ?: ""
+        val purNum =
+            el.findElementWithoutException(By.xpath(".//td[3]/div"))?.text?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot purNum in tender $href")
             return
         }
-        val nameOrg = el.findElementWithoutException(By.xpath(".//td[6]/div"))?.text?.trim { it <= ' ' }
-            ?: ""
-        val purName = el.findElementWithoutException(By.xpath(".//td[7]/div"))?.text?.trim { it <= ' ' }
-            ?: ""
+        val nameOrg =
+            el.findElementWithoutException(By.xpath(".//td[6]/div"))?.text?.trim { it <= ' ' } ?: ""
+        val purName =
+            el.findElementWithoutException(By.xpath(".//td[7]/div"))?.text?.trim { it <= ' ' } ?: ""
         if (purName == "") {
             logger("cannot purName in tender $href")
             return
         }
-        val status = el.findElementWithoutException(By.xpath(".//td[last()-1]/div"))?.text?.trim { it <= ' ' }
-            ?: ""
-        val datePubTmp = el.findElementWithoutException(By.xpath(".//td[8]/div"))?.text?.trim { it <= ' ' }
-            ?: ""
+        val status =
+            el.findElementWithoutException(By.xpath(".//td[last()-1]/div"))?.text?.trim {
+                it <= ' '
+            }
+                ?: ""
+        val datePubTmp =
+            el.findElementWithoutException(By.xpath(".//td[8]/div"))?.text?.trim { it <= ' ' } ?: ""
         val datePub = datePubTmp.getDateFromString(formatterGpn)
         if (datePub == Date(0L)) {
             logger("cannot find dateEnd on page", href, purNum)
             return
         }
-        val dateEndTmp = el.findElementWithoutException(By.xpath(".//td[10]/div"))?.text?.trim { it <= ' ' }
-            ?: ""
+        val dateEndTmp =
+            el.findElementWithoutException(By.xpath(".//td[10]/div"))?.text?.trim { it <= ' ' }
+                ?: ""
         val dateEndR = dateEndTmp.getDataFromRegexp("""(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")
         val dateEnd = dateEndR.getDateFromString(formatterGpn)
         val tt = Tmk(purNum, href, purName, dateEnd, datePub, status, nameOrg)
         val t = TenderTmk(tt, driver)
         tendersList.add(t)
-
     }
-
 }

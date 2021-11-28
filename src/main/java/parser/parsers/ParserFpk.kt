@@ -37,26 +37,37 @@ class ParserFpk : IParser, ParserAbstract() {
     }
 
     private fun parsingTender(e: Element) {
-        val purName = e.selectFirst("td:eq(3)")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("purName not found"); return }
-        val purNum = e.selectFirst("td:eq(0) strong")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("purNum not found"); return }
+        val purName =
+            e.selectFirst("td:eq(3)")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("purName not found")
+                    return
+                }
+        val purNum =
+            e.selectFirst("td:eq(0) strong")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("purNum not found")
+                    return
+                }
         val href = "https://fpkinvest.ru/purchase/$purNum"
-        val orgName = e.selectFirst("td:eq(9)")?.ownText()?.trim { it <= ' ' }
-            ?: ""
-        val cusName = e.selectFirst("td:eq(8)")?.ownText()?.trim { it <= ' ' }
-            ?: ""
-        val pubDateT = e.selectFirst("td:eq(1)")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("pubDateT not found"); return }
+        val orgName = e.selectFirst("td:eq(9)")?.ownText()?.trim { it <= ' ' } ?: ""
+        val cusName = e.selectFirst("td:eq(8)")?.ownText()?.trim { it <= ' ' } ?: ""
+        val pubDateT =
+            e.selectFirst("td:eq(1)")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("pubDateT not found")
+                    return
+                }
         val datePub = pubDateT.getDateFromString(formatterOnlyDate)
-        val endDateT = e.selectFirst("td:eq(2)")?.ownText()?.trim { it <= ' ' }
-            ?: ""
+        val endDateT = e.selectFirst("td:eq(2)")?.ownText()?.trim { it <= ' ' } ?: ""
         var dateEnd = endDateT.getDateFromString(formatterOnlyDate)
         if (dateEnd == Date(0)) {
-            dateEnd = Date.from(datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant())
+            dateEnd =
+                Date.from(
+                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                )
         }
-        val pwName = e.selectFirst("td:eq(7)")?.ownText()?.trim { it <= ' ' }
-            ?: ""
+        val pwName = e.selectFirst("td:eq(7)")?.ownText()?.trim { it <= ' ' } ?: ""
         val tn = Fpk(purNum, href, purName, datePub, dateEnd, pwName, orgName, cusName)
         val t = TenderFpk(tn)
         ParserTender(t)

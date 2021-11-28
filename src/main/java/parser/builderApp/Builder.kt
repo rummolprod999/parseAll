@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.system.exitProcess
 
-
 object BuilderApp {
     lateinit var arg: Arguments
     lateinit var Database: String
@@ -36,7 +35,9 @@ class Builder(args: Array<String>) {
     lateinit var Server: String
     var Port: Int = 3306
     val executePath: String =
-        File(Class.forName("parser.AppKt").protectionDomain.codeSource.location.path).parentFile.toString()
+        File(Class.forName("parser.AppKt").protectionDomain.codeSource.location.path)
+            .parentFile
+            .toString()
     lateinit var TempPath: String
     lateinit var LogPath: String
     lateinit var LogFile: String
@@ -128,11 +129,13 @@ class Builder(args: Array<String>) {
             "tknso" -> arg = Arguments.TKNSO
             "gns" -> arg = Arguments.GNS
             "dsk1" -> arg = Arguments.DSK1
-            else -> run {
-                println("Неверно указаны аргументы, используйте $arguments, выходим из программы"); exitProcess(
-                0
-            )
-            }
+            else ->
+                run {
+                    println(
+                        "Неверно указаны аргументы, используйте $arguments, выходим из программы"
+                    )
+                    exitProcess(0)
+                }
         }
         setSettings()
         createDirs()

@@ -46,30 +46,55 @@ class ParserTknso : IParser, ParserAbstract() {
     }
 
     private fun parsingTender(e: Element) {
-        val purName = e.selectFirst("h4.media-heading")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("purName not found"); return }
-        val urlT = e.selectFirst("a:contains(Подробнее)")?.attr("href")?.trim { it <= ' ' }
-            ?: run { logger("urlT not found on $purName"); return }
+        val purName =
+            e.selectFirst("h4.media-heading")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("purName not found")
+                    return
+                }
+        val urlT =
+            e.selectFirst("a:contains(Подробнее)")?.attr("href")?.trim { it <= ' ' }
+                ?: run {
+                    logger("urlT not found on $purName")
+                    return
+                }
         val urlTend = "http://tknso.ru$urlT"
         val dates =
-            e.selectFirst("span:contains(Прием заявок:)")?.ownText()?.replace("Прием заявок:", "")?.trim { it <= ' ' }
-                ?: run { logger("dates not found"); return }
-        val datePubR = dates.getDataFromRegexp("""с\s+(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")
-            .deleteDoubleWhiteSpace().trim()
+            e
+                .selectFirst("span:contains(Прием заявок:)")
+                ?.ownText()
+                ?.replace("Прием заявок:", "")
+                ?.trim { it <= ' ' }
+                ?: run {
+                    logger("dates not found")
+                    return
+                }
+        val datePubR =
+            dates
+                .getDataFromRegexp("""с\s+(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")
+                .deleteDoubleWhiteSpace()
+                .trim()
         val datePub = datePubR.getDateFromString(formatterGpn)
         if (datePub == Date(0L)) {
-            run { logger("datePub was not found", urlTend); throw Exception("datePub was not found") }
+            run {
+                logger("datePub was not found", urlTend)
+                throw Exception("datePub was not found")
+            }
         }
         val dateEndR =
-            dates.getDataFromRegexp("""до\s+(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")
-                .deleteDoubleWhiteSpace().trim()
+            dates
+                .getDataFromRegexp("""до\s+(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")
+                .deleteDoubleWhiteSpace()
+                .trim()
         var dateEnd = dateEndR.getDateFromString(formatterGpn)
         if (dateEnd == Date(0)) {
-            dateEnd = Date.from(datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant())
+            dateEnd =
+                Date.from(
+                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                )
         }
         val purNum = urlTend.md5()
-        val status = e.selectFirst("span.sp-2")?.ownText()?.trim { it <= ' ' }
-            ?: ""
+        val status = e.selectFirst("span.sp-2")?.ownText()?.trim { it <= ' ' } ?: ""
 
         val tn = Tknso(purNum, urlTend, purName, datePub, dateEnd, status)
         val t = TenderTknso(tn)

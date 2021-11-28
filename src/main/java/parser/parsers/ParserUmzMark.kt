@@ -20,7 +20,10 @@ import java.util.logging.Level
 
 class ParserUmzMark : IParser, ParserAbstract() {
     init {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
+        System.setProperty(
+            "org.apache.commons.logging.Log",
+            "org.apache.commons.logging.impl.NoOpLog"
+        )
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
@@ -69,14 +72,20 @@ class ParserUmzMark : IParser, ParserAbstract() {
         try {
             driver.get(BaseUrl)
             try {
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'paging']/i[contains(., 'Всего записей:')]")))
+                wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath("//div[@class = 'paging']/i[contains(., 'Всего записей:')]")
+                    )
+                )
                 driver.findElement(By.cssSelector("body")).sendKeys(Keys.END)
                 driver.findElement(By.cssSelector("body")).sendKeys(Keys.RIGHT)
                 Thread.sleep(5000)
                 driver.switchTo().defaultContent()
                 try {
                     val js = driver as JavascriptExecutor
-                    js.executeScript("""document.querySelectorAll('div.dataPager div span[onclick="\$.ETC.EventContainer.trigger(this,\'Grid.SetRowPerPage\',\'100\')"]')[0].click()""")
+                    js.executeScript(
+                        """document.querySelectorAll('div.dataPager div span[onclick="\$.ETC.EventContainer.trigger(this,\'Grid.SetRowPerPage\',\'100\')"]')[0].click()"""
+                    )
                 } catch (e: Exception) {
                     logger(e)
                 }
@@ -112,7 +121,6 @@ class ParserUmzMark : IParser, ParserAbstract() {
                     logger("Error in parserPageN function", e.stackTrace, e)
                 }
             }
-
         } catch (e: Exception) {
             logger("Error in parser function", e.stackTrace, e)
         } finally {
@@ -121,7 +129,11 @@ class ParserUmzMark : IParser, ParserAbstract() {
     }
 
     private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait, np: Int = 0) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'paging']/i[contains(., 'Всего записей:')]")))
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//div[@class = 'paging']/i[contains(., 'Всего записей:')]")
+            )
+        )
         driver.findElement(By.cssSelector("body")).sendKeys(Keys.END)
         Thread.sleep(5000)
         driver.switchTo().defaultContent()
@@ -131,11 +143,17 @@ class ParserUmzMark : IParser, ParserAbstract() {
                 try {
                     try {
                         val js = driver as JavascriptExecutor
-                        js.executeScript("""document.querySelectorAll('div.dataPager div span[onclick="${'$'}.ETC.EventContainer.trigger(this,\'Grid.SetPage\',${np + 1})"]')[0].click()""")
+                        js.executeScript(
+                            """document.querySelectorAll('div.dataPager div span[onclick="${'$'}.ETC.EventContainer.trigger(this,\'Grid.SetPage\',${np + 1})"]')[0].click()"""
+                        )
                         break
                     } catch (e: JavascriptException) {
                         c++
-                        driver.findElementByXPath("//div[@class = 'dataPager']/div/span[. = '${np + 1}']").click()
+                        driver
+                            .findElementByXPath(
+                                "//div[@class = 'dataPager']/div/span[. = '${np + 1}']"
+                            )
+                            .click()
                         break
                     }
                 } catch (e: Exception) {
@@ -149,9 +167,14 @@ class ParserUmzMark : IParser, ParserAbstract() {
 
         Thread.sleep(5000)
         driver.switchTo().defaultContent()
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[contains(@class, 'datagrid')]/tbody")))
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//table[contains(@class, 'datagrid')]/tbody")
+            )
+        )
         driver.switchTo().defaultContent()
-        val tenders = driver.findElements(By.xpath("//table[contains(@class, 'datagrid')]/tbody/tr"))
+        val tenders =
+            driver.findElements(By.xpath("//table[contains(@class, 'datagrid')]/tbody/tr"))
         tenders.forEach {
             try {
                 parserTender(it)
@@ -162,8 +185,11 @@ class ParserUmzMark : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: WebElement) {
-        val urlT = el.findElementWithoutException(By.xpath("."))?.getAttribute("data-load")?.trim { it <= ' ' }
-            ?: ""
+        val urlT =
+            el.findElementWithoutException(By.xpath("."))?.getAttribute("data-load")?.trim {
+                it <= ' '
+            }
+                ?: ""
         if (urlT == "") {
             logger("cannot urlT in tender")
             return
@@ -179,25 +205,25 @@ class ParserUmzMark : IParser, ParserAbstract() {
         val urlTender = "http://umz-vrn.etc.ru${doc.url}"
         val purNum = urlTender.getDataFromRegexp("""PublicMR/(.+)/Info""")
         val datePub = Date()
-        val purObj = el.findElementWithoutException(By.xpath("./td[3]"))?.text?.trim { it <= ' ' }
-            ?: ""
+        val purObj =
+            el.findElementWithoutException(By.xpath("./td[3]"))?.text?.trim { it <= ' ' } ?: ""
         if (purObj == "") {
             logger("cannot purObj in tender", urlTender)
             return
         }
-        val okpd = el.findElementWithoutException(By.xpath("./td[2]"))?.text?.trim { it <= ' ' }
-            ?: ""
-        val quant = el.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
-            ?: ""
-        val okei = el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
-            ?: ""
-        val nameCus = el.findElementWithoutException(By.xpath("./td[1]"))?.text?.trim { it <= ' ' }
-            ?: ""
-        val nmckT = el.findElementWithoutException(By.xpath("./td[6]"))?.text?.trim { it <= ' ' }
-            ?: ""
+        val okpd =
+            el.findElementWithoutException(By.xpath("./td[2]"))?.text?.trim { it <= ' ' } ?: ""
+        val quant =
+            el.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' } ?: ""
+        val okei =
+            el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' } ?: ""
+        val nameCus =
+            el.findElementWithoutException(By.xpath("./td[1]"))?.text?.trim { it <= ' ' } ?: ""
+        val nmckT =
+            el.findElementWithoutException(By.xpath("./td[6]"))?.text?.trim { it <= ' ' } ?: ""
         val nmck = nmckT.replace("&nbsp;", "").deleteAllWhiteSpace()
-        val status = el.findElementWithoutException(By.xpath("./td[8]"))?.text?.trim { it <= ' ' }
-            ?: ""
+        val status =
+            el.findElementWithoutException(By.xpath("./td[8]"))?.text?.trim { it <= ' ' } ?: ""
         val dateEndTmp =
             el.findElementWithoutException(By.xpath("./td[7]"))?.text?.trim()?.trim { it <= ' ' }
                 ?: ""
@@ -206,7 +232,20 @@ class ParserUmzMark : IParser, ParserAbstract() {
             logger("cannot find dateEnd on page", urlTender, purNum)
             return
         }
-        val tt = UmzMark(purNum, urlTender, purObj, datePub, dateEnd, okpd, quant, okei, nameCus, nmck, status)
+        val tt =
+            UmzMark(
+                purNum,
+                urlTender,
+                purObj,
+                datePub,
+                dateEnd,
+                okpd,
+                quant,
+                okei,
+                nameCus,
+                nmck,
+                status
+            )
         val t = TenderUmzMark(tt)
         ParserTender(t)
     }

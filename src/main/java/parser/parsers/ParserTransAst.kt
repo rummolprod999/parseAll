@@ -1,5 +1,7 @@
 package parser.parsers
 
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -10,8 +12,6 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenders.TenderTransAst
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 
 class ParserTransAst : IParser, ParserAbstract() {
 
@@ -20,7 +20,10 @@ class ParserTransAst : IParser, ParserAbstract() {
     private lateinit var windowsSet: Set<String?>
 
     init {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
+        System.setProperty(
+            "org.apache.commons.logging.Log",
+            "org.apache.commons.logging.impl.NoOpLog"
+        )
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
@@ -41,7 +44,6 @@ class ParserTransAst : IParser, ParserAbstract() {
                 }
                 logger("Error in parserSelen function", e.stackTrace, e)
                 e.printStackTrace()
-
             }
         }
     }
@@ -71,7 +73,11 @@ class ParserTransAst : IParser, ParserAbstract() {
         Thread.sleep(5000)
         drv.switchTo().defaultContent()
         val wait = WebDriverWait(drv, timeoutB)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]")))
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]")
+            )
+        )
         drv.switchTo().defaultContent()
         if (firstPage) {
             windowsSet = drv.windowHandles
@@ -87,19 +93,26 @@ class ParserTransAst : IParser, ParserAbstract() {
         }
         try {
             val js = drv as JavascriptExecutor
-            js.executeScript("var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();")
+            js.executeScript(
+                "var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();"
+            )
         } catch (e: Exception) {
         }
     }
 
     private fun parserTender(el: WebElement, ind: Int) {
-        val eis = el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim { it <= ' ' }
-            ?: ""
+        val eis =
+            el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim {
+                it <= ' '
+            }
+                ?: ""
         if (eis != "") {
             logger("This tender exist on EIS")
         }
         val purNum =
-            el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))
+                ?.text
+                ?.trim { it <= ' ' }
                 ?: ""
         if (purNum == "") {
             logger("cannot find purNum in tender", el.text)
@@ -111,7 +124,6 @@ class ParserTransAst : IParser, ParserAbstract() {
         } catch (e: Exception) {
             logger("document.querySelectorAll('div.sendApplication + a')[$ind].click();")
         }
-
     }
 
     private fun parserPageS() {
@@ -130,7 +142,7 @@ class ParserTransAst : IParser, ParserAbstract() {
         drv.switchTo().window(window)
         val tnd = TenderTransAst(drv)
         try {
-            //println(it)
+            // println(it)
             ParserTender(tnd)
         } catch (e: Exception) {
             logger("error in ParserTender", e.stackTrace, e)
@@ -138,10 +150,11 @@ class ParserTransAst : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        val BaseUrl = listOf(
-            "http://utp.sberbank-ast.ru/Transneft/List/PurchaseList",
-            "http://utp.sberbank-ast.ru/Transneft/List/PurchaseListSMiSP"
-        )
+        val BaseUrl =
+            listOf(
+                "http://utp.sberbank-ast.ru/Transneft/List/PurchaseList",
+                "http://utp.sberbank-ast.ru/Transneft/List/PurchaseListSMiSP"
+            )
         const val timeoutB = 120L
         const val CountPage = 10
     }

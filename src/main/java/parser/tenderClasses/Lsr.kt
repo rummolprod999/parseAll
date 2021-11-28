@@ -12,5 +12,4 @@ data class Lsr(
     var status: String,
     var placingWayName: String,
     var nameCus: String
-) {
-}
+) {}

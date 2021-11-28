@@ -14,8 +14,13 @@ data class Oilb2b(
     val endTenderDate: String,
     val products: MutableList<Oilb2bProduct>,
     val attachments: List<AttachOilb2b>
-) {
-}
+) {}
 
-data class Oilb2bProduct(val prodName: String, val quant: String, val okei: String, val extDef: String)
+data class Oilb2bProduct(
+    val prodName: String,
+    val quant: String,
+    val okei: String,
+    val extDef: String
+)
+
 data class AttachOilb2b(val Url: String, val Name: String)

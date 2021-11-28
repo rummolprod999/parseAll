@@ -19,7 +19,10 @@ class ParserEvraz : IParser, ParserAbstract() {
     lateinit var options: ChromeOptions
 
     init {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
+        System.setProperty(
+            "org.apache.commons.logging.Log",
+            "org.apache.commons.logging.impl.NoOpLog"
+        )
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
@@ -39,7 +42,7 @@ class ParserEvraz : IParser, ParserAbstract() {
 
     private fun getchromeOptions(): ChromeOptions {
         val options = ChromeOptions()
-        //options.addArguments("headless")
+        // options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         return options
@@ -67,8 +70,7 @@ class ParserEvraz : IParser, ParserAbstract() {
                 logger("Error in parserEvraz function", e.stackTrace, e)
                 e.printStackTrace()
             } finally {
-                if (this::driver.isInitialized)
-                    driver.quit()
+                if (this::driver.isInitialized) driver.quit()
             }
         }
     }
@@ -84,13 +86,17 @@ class ParserEvraz : IParser, ParserAbstract() {
     }
 
     private fun createTenderList() {
-        //return //TODO change next week
+        // return //TODO change next week
         driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         driver.manage().deleteAllCookies()
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
         wait = WebDriverWait(driver, timeoutB)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'company-name')]")))
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//div[contains(@class, 'company-name')]")
+            )
+        )
         val collapsed = driver.findElementsByXPath("//div[contains(@class, 'company-name')]")
         collapsed.forEach {
             it.click()
@@ -105,7 +111,11 @@ class ParserEvraz : IParser, ParserAbstract() {
                 logger(e)
             }
         }
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(@class, 'open_lot')]")))
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//a[contains(@class, 'open_lot')]")
+            )
+        )
         getListTenders()
     }
 
@@ -119,7 +129,6 @@ class ParserEvraz : IParser, ParserAbstract() {
             } catch (e: Exception) {
 
                 logger("error in parserTender", e.stackTrace, e)
-
             }
         }
     }
@@ -130,22 +139,30 @@ class ParserEvraz : IParser, ParserAbstract() {
             logger("cannot purName in tender")
             return
         }
-        val urlT = el.getAttribute("url") ?: run {
-            logger("cannot urlT in tender $purName")
-            return
-        }
-        val idiblock = el.getAttribute("idiblock") ?: run {
-            logger("cannot idiblock in tender $purName")
-            return
-        }
-        val iblock_applick = el.getAttribute("iblock-applick") ?: run {
-            logger("cannot iblock_applick in tender $purName")
-            return
-        }
-        val purNum = el.getAttribute("idelement") ?: run {
-            logger("cannot purNum in tender $urlT")
-            return
-        }
+        val urlT =
+            el.getAttribute("url")
+                ?: run {
+                    logger("cannot urlT in tender $purName")
+                    return
+                }
+        val idiblock =
+            el.getAttribute("idiblock")
+                ?: run {
+                    logger("cannot idiblock in tender $purName")
+                    return
+                }
+        val iblock_applick =
+            el.getAttribute("iblock-applick")
+                ?: run {
+                    logger("cannot iblock_applick in tender $purName")
+                    return
+                }
+        val purNum =
+            el.getAttribute("idelement")
+                ?: run {
+                    logger("cannot purNum in tender $urlT")
+                    return
+                }
         val href =
             "https://supply.evraz.com/lot/index.php?ID=${purNum}&IBLOCK_ID=${idiblock}&IBLOCK_ID_APPLIK=${iblock_applick}&HISTORY_APPLIK=Y&modalWindow=Y"
         val tt = Evraz(purNum, href, purName)

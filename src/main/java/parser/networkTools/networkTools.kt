@@ -1,6 +1,5 @@
 package parser.networkTools
 
-import parser.logger.logger
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -15,27 +14,23 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import javax.net.ssl.*
+import parser.logger.logger
 
 private const val timeoutD = 3000L
 
-var trustAllCerts: Array<TrustManager> = arrayOf<TrustManager>(
-    object : X509TrustManager {
+var trustAllCerts: Array<TrustManager> =
+    arrayOf<TrustManager>(
+        object : X509TrustManager {
 
-        override fun checkClientTrusted(
-            certs: Array<X509Certificate?>?, authType: String?
-        ) {
-        }
+            override fun checkClientTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
 
-        override fun checkServerTrusted(
-            certs: Array<X509Certificate?>?, authType: String?
-        ) {
-        }
+            override fun checkServerTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
 
-        override fun getAcceptedIssuers(): Array<X509Certificate>? {
-            return null
+            override fun getAcceptedIssuers(): Array<X509Certificate>? {
+                return null
+            }
         }
-    }
-)
+    )
 
 fun downloadFromUrlNoSsl(urls: String, i: Int = 5, wt: Long = 3000): String {
     try {
@@ -46,7 +41,7 @@ fun downloadFromUrlNoSsl(urls: String, i: Int = 5, wt: Long = 3000): String {
     }
     var count = 0
     while (true) {
-        //val i = 50
+        // val i = 50
         if (count >= i) {
             logger(String.format("Не скачали строку за %d попыток", count), urls)
             break
@@ -71,13 +66,11 @@ fun downloadFromUrlNoSsl(urls: String, i: Int = 5, wt: Long = 3000): String {
                 executor.shutdown()
             }
             return s
-
         } catch (e: Exception) {
             logger(e, e.stackTrace)
             count++
             sleep(wt)
         }
-
     }
     return ""
 }
@@ -92,7 +85,7 @@ fun downloadFromUrlNoSslNew(urls: String, i: Int = 5, wt: Long = 3000): String {
     }
     var count = 0
     while (true) {
-        //val i = 50
+        // val i = 50
         if (count >= i) {
             logger(String.format("Не скачали строку за %d попыток", count), urls)
             break
@@ -117,13 +110,11 @@ fun downloadFromUrlNoSslNew(urls: String, i: Int = 5, wt: Long = 3000): String {
                 executor.shutdown()
             }
             return s
-
         } catch (e: Exception) {
             logger(e, e.stackTrace)
             count++
             sleep(wt)
         }
-
     }
     return ""
 }
@@ -131,7 +122,7 @@ fun downloadFromUrlNoSslNew(urls: String, i: Int = 5, wt: Long = 3000): String {
 fun downloadFromUrl(urls: String, i: Int = 5, wt: Long = 3000): String {
     var count = 0
     while (true) {
-        //val i = 50
+        // val i = 50
         if (count >= i) {
             logger(String.format("Не скачали строку за %d попыток", count), urls)
             break
@@ -144,7 +135,7 @@ fun downloadFromUrl(urls: String, i: Int = 5, wt: Long = 3000): String {
             try {
                 s = future.get(60, TimeUnit.SECONDS)
                 if (s == "") {
-                    throw  Exception("Empty string")
+                    throw Exception("Empty string")
                 }
             } catch (ex: TimeoutException) {
                 throw ex
@@ -159,13 +150,11 @@ fun downloadFromUrl(urls: String, i: Int = 5, wt: Long = 3000): String {
                 executor.shutdown()
             }
             return s
-
         } catch (e: Exception) {
             logger(e, e.stackTrace)
             count++
             sleep(wt)
         }
-
     }
     return ""
 }
@@ -184,7 +173,6 @@ fun downloadWait(urls: String): String {
         } else {
             s.append(inputLine)
         }
-
     }
     br.close()
     `is`.close()
@@ -210,7 +198,6 @@ fun downloadWaitWithRef(urls: String): String {
         } else {
             s.append(inputLine)
         }
-
     }
     br.close()
     `is`.close()
@@ -220,7 +207,7 @@ fun downloadWaitWithRef(urls: String): String {
 fun downloadFromUrl1251(urls: String, i: Int = 5): String {
     var count = 0
     while (true) {
-        //val i = 50
+        // val i = 50
         if (count >= i) {
             logger(String.format("Не скачали строку за %d попыток", count), urls)
             break
@@ -245,13 +232,11 @@ fun downloadFromUrl1251(urls: String, i: Int = 5): String {
                 executor.shutdown()
             }
             return s
-
         } catch (e: Exception) {
             logger(e, e.stackTrace)
             count++
             sleep(timeoutD)
         }
-
     }
     return ""
 }
@@ -278,33 +263,44 @@ fun downloadWaitWithRef1251(urls: String): String {
         } else {
             s.append(inputLine)
         }
-
     }
     br.close()
     `is`.close()
     return s.toString()
 }
 
-
 private fun disableSslVerification() {
     try {
-        val trustAllCerts: Array<TrustManager> = arrayOf(object : X509TrustManager {
+        val trustAllCerts: Array<TrustManager> =
+            arrayOf(
+                object : X509TrustManager {
 
-            override fun checkClientTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
-            override fun checkServerTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
-            override fun getAcceptedIssuers(): Array<X509Certificate> {
-                TODO("Not yet implemented")
-            }
-        }
-        )
+                    override fun checkClientTrusted(
+                        certs: Array<X509Certificate?>?,
+                        authType: String?
+                    ) {
+                    }
+
+                    override fun checkServerTrusted(
+                        certs: Array<X509Certificate?>?,
+                        authType: String?
+                    ) {
+                    }
+
+                    override fun getAcceptedIssuers(): Array<X509Certificate> {
+                        TODO("Not yet implemented")
+                    }
+                }
+            )
         val sc: SSLContext = SSLContext.getInstance("SSL")
         sc.init(null, trustAllCerts, SecureRandom())
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
-        val allHostsValid: HostnameVerifier = object : HostnameVerifier {
-            override fun verify(hostname: String?, session: SSLSession?): Boolean {
-                return true
+        val allHostsValid: HostnameVerifier =
+            object : HostnameVerifier {
+                override fun verify(hostname: String?, session: SSLSession?): Boolean {
+                    return true
+                }
             }
-        }
         HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid)
     } catch (e: NoSuchAlgorithmException) {
         logger(e)

@@ -1,5 +1,8 @@
 package parser.parsers
 
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -10,9 +13,6 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenders.TenderCbrfAst
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 
 class ParserCbrfAst : IParser, ParserAbstract() {
 
@@ -20,9 +20,11 @@ class ParserCbrfAst : IParser, ParserAbstract() {
     var firstPage = true
     private lateinit var windowsSet: Set<String?>
 
-
     init {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
+        System.setProperty(
+            "org.apache.commons.logging.Log",
+            "org.apache.commons.logging.impl.NoOpLog"
+        )
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
@@ -42,7 +44,6 @@ class ParserCbrfAst : IParser, ParserAbstract() {
                 }
                 logger("Error in parserSelen function", e.stackTrace, e)
                 e.printStackTrace()
-
             }
         }
         executor.shutdown()
@@ -78,7 +79,11 @@ class ParserCbrfAst : IParser, ParserAbstract() {
             drv.switchTo().defaultContent()
         }
         val wait = WebDriverWait(drv, timeoutB)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]")))
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]")
+            )
+        )
         drv.switchTo().defaultContent()
         if (firstPage) {
             windowsSet = drv.windowHandles
@@ -94,20 +99,27 @@ class ParserCbrfAst : IParser, ParserAbstract() {
         }
         try {
             val js = drv as JavascriptExecutor
-            js.executeScript("var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();")
+            js.executeScript(
+                "var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();"
+            )
         } catch (e: Exception) {
         }
     }
 
     private fun parserTender(el: WebElement, ind: Int) {
-        val eis = el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim { it <= ' ' }
-            ?: ""
+        val eis =
+            el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim {
+                it <= ' '
+            }
+                ?: ""
         if (eis != "") {
-            //logger("This tender exist on EIS, return")
-            //return
+            // logger("This tender exist on EIS, return")
+            // return
         }
         val purNum =
-            el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))
+                ?.text
+                ?.trim { it <= ' ' }
                 ?: ""
         if (purNum == "") {
             logger("cannot find purNum in tender", el.text)
@@ -119,12 +131,11 @@ class ParserCbrfAst : IParser, ParserAbstract() {
         } catch (e: Exception) {
             logger("document.querySelectorAll('div.sendApplication + a')[$ind].click();")
         }
-
     }
 
     private fun parserPageS() {
         val windowHandlers = drv.windowHandles
-        //windowHandlers.removeAll(windowsSet)
+        // windowHandlers.removeAll(windowsSet)
         windowHandlers.forEach { t ->
             if (t == windowsSet.elementAt(0)) {
                 return@forEach
@@ -140,7 +151,6 @@ class ParserCbrfAst : IParser, ParserAbstract() {
                     future.cancel(true)
                 }*/
                 parserPage(t)
-
             } catch (e: Exception) {
                 logger(e)
             }

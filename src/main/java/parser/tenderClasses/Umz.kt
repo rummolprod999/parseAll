@@ -11,5 +11,4 @@ data class Umz(
     val nameCus: String,
     val nmck: String,
     val status: String
-) {
-}
+) {}

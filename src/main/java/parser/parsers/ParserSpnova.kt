@@ -19,7 +19,6 @@ class ParserSpnova : IParser, ParserAbstract() {
         const val CountPage = 11
     }
 
-
     override fun parser() = parse {
         try {
             parserSpnova()
@@ -37,7 +36,6 @@ class ParserSpnova : IParser, ParserAbstract() {
                 logger(e, e.stackTrace)
             }
         }
-
     }
 
     private fun parserPageList(url: String) {
@@ -61,28 +59,44 @@ class ParserSpnova : IParser, ParserAbstract() {
     }
 
     private fun parserTend(el: Element) {
-        val urlTend = el.selectFirst("td:eq(1) a")?.attr("href")?.trim { it <= ' ' }
-            ?: run { logger("urlTend not found"); return }
-        val purName = el.selectFirst("td:eq(1) a")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("purName not found"); return }
+        val urlTend =
+            el.selectFirst("td:eq(1) a")?.attr("href")?.trim { it <= ' ' }
+                ?: run {
+                    logger("urlTend not found")
+                    return
+                }
+        val purName =
+            el.selectFirst("td:eq(1) a")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("purName not found")
+                    return
+                }
         val purNumT =
-            el.selectFirst("td:eq(0) p")?.ownText()?.trim { it <= ' ' } ?: run { logger("purNumT not found"); return }
+            el.selectFirst("td:eq(0) p")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("purNumT not found")
+                    return
+                }
         val purNum = purNumT.getDataFromRegexp("""№(\d+)""")
-        val pwName = el.selectFirst("td:eq(3) p")?.ownText()?.trim { it <= ' ' }
-            ?: ""
-        val datePubTmp = el.selectFirst("td:eq(4) p")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("datePubTmp not found"); return }
+        val pwName = el.selectFirst("td:eq(3) p")?.ownText()?.trim { it <= ' ' } ?: ""
+        val datePubTmp =
+            el.selectFirst("td:eq(4) p")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("datePubTmp not found")
+                    return
+                }
         val datePub = datePubTmp.getDateFromString(formatter)
 
-        val dateEndTmp = el.selectFirst("td:eq(5) p")?.ownText()?.trim { it <= ' ' }
-            ?: ""
+        val dateEndTmp = el.selectFirst("td:eq(5) p")?.ownText()?.trim { it <= ' ' } ?: ""
         var dateEnd = dateEndTmp.getDateFromString(formatter)
         if (dateEnd == Date(0L)) {
-            dateEnd = Date.from(datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant())
+            dateEnd =
+                Date.from(
+                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                )
         }
 
-        val nmck = el.selectFirst("td:eq(2) p")?.ownText()?.trim { it <= ' ' }?.extractPrice()
-            ?: ""
+        val nmck = el.selectFirst("td:eq(2) p")?.ownText()?.trim { it <= ' ' }?.extractPrice() ?: ""
         val tt = Spnova(purNum, urlTend, purName, dateEnd, pwName, datePub, nmck)
         val t = TenderSpnova(tt)
         ParserTender(t)

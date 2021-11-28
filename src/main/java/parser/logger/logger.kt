@@ -15,13 +15,13 @@ fun <T : Any> logger(vararg parametrs: T) {
         } else {
             s.append(" $p\n")
         }
-
     }
     try {
-        FileWriter(parser.builderApp.BuilderApp.LogFile, true).use { writer -> writer.write(s.toString()) }
+        FileWriter(parser.builderApp.BuilderApp.LogFile, true).use { writer ->
+            writer.write(s.toString())
+        }
     } catch (ex: IOException) {
 
         println(ex.message)
     }
-
 }

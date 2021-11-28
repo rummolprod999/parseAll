@@ -1,13 +1,12 @@
 package parser.extensions
 
-import org.apache.commons.codec.digest.DigestUtils
 import java.text.Format
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-
+import org.apache.commons.codec.digest.DigestUtils
 
 fun String.getDataFromRegexp(reg: String): String {
     var st = ""
@@ -67,7 +66,6 @@ fun String.extractNum(): String {
     return nm
 }
 
-
 fun String.extractPrice(): String {
     var nm = ""
     try {
@@ -92,7 +90,6 @@ fun String.tryParseInt(): Boolean {
     } catch (e: NumberFormatException) {
         false
     }
-
 }
 
 fun String.getDateFromFormatOffset(format: SimpleDateFormat, offset: String): Date {

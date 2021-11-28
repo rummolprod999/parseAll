@@ -15,9 +15,7 @@ import java.util.*
 
 class ParserAorti : IParser, ParserAbstract() {
     val url = "https://www.aorti.ru/purchases/tenders/?PAGEN_1="
-    override fun parser() = parse {
-        (1..10).forEach { parserAorti("$url$it") }
-    }
+    override fun parser() = parse { (1..10).forEach { parserAorti("$url$it") } }
 
     private fun parserAorti(url: String) {
         val pageTen = downloadFromUrl(url)
@@ -37,20 +35,36 @@ class ParserAorti : IParser, ParserAbstract() {
     }
 
     private fun parsingTender(e: Element) {
-        val purName = e.selectFirst("a.collapsed")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("purName not found"); return }
-        val urlTender = e.selectFirst("a:contains(Подробнее)")?.attr("href")?.trim { it <= ' ' }
-            ?: run { logger("urlTender not found on $purName"); return }
+        val purName =
+            e.selectFirst("a.collapsed")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("purName not found")
+                    return
+                }
+        val urlTender =
+            e.selectFirst("a:contains(Подробнее)")?.attr("href")?.trim { it <= ' ' }
+                ?: run {
+                    logger("urlTender not found on $purName")
+                    return
+                }
         val href = "https://www.aorti.ru$urlTender"
         val purNum = href.getDataFromRegexp("""/(\d+)/$""")
-        val pubDateT = e.selectFirst("span.main-color")?.ownText()?.trim { it <= ' ' }
-            ?: run { logger("pubDateT not found"); return }
+        val pubDateT =
+            e.selectFirst("span.main-color")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("pubDateT not found")
+                    return
+                }
         var datePub = LocalDate.now()
         if (pubDateT.contains("вчера")) {
             datePub = datePub.minusDays(1)
         } else if (!pubDateT.contains("сегодня")) {
             datePub =
-                pubDateT.getDateFromString(formatterOnlyDate).toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                pubDateT
+                    .getDateFromString(formatterOnlyDate)
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
         }
         val tt = Achi(href, purNum, purName)
         val t = TenderAorti(tt, Date.from(datePub.atStartOfDay(ZoneId.systemDefault()).toInstant()))

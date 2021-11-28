@@ -5,8 +5,7 @@ import org.openqa.selenium.SearchContext
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 
-fun <T> T.findElementWithoutException(by: By): WebElement?
-        where T : SearchContext {
+fun <T> T.findElementWithoutException(by: By): WebElement? where T : SearchContext {
     return try {
         this.findElement(by)
     } catch (e: Exception) {
@@ -25,5 +24,5 @@ fun ChromeDriver.clickerExp(xpath: String) {
             Thread.sleep(1000)
         }
     }
-    throw  Exception("Can not click on element for 20 times")
+    throw Exception("Can not click on element for 20 times")
 }

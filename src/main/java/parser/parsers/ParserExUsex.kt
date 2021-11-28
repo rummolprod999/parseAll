@@ -14,11 +14,12 @@ import java.util.*
 
 class ParserExUzex : IParser, ParserAbstract() {
     companion object WebCl {
-        val BaseUrl = arrayOf(
-            "https://exarid.uzex.uz/ru?page=",
-            "https://exarid.uzex.uz/ru/competitive/?page=",
-            "https://exarid.uzex.uz/ru/tender2/?page="
-        )
+        val BaseUrl =
+            arrayOf(
+                "https://exarid.uzex.uz/ru?page=",
+                "https://exarid.uzex.uz/ru/competitive/?page=",
+                "https://exarid.uzex.uz/ru/tender2/?page="
+            )
         const val CountPage = 50
     }
 
@@ -41,7 +42,6 @@ class ParserExUzex : IParser, ParserAbstract() {
                 }
             }
         }
-
     }
 
     private fun parserPageList(url: String) {
@@ -65,20 +65,17 @@ class ParserExUzex : IParser, ParserAbstract() {
     }
 
     private fun parserTend(el: Element) {
-        val urlT = el.selectFirst("td a.table_link")?.attr("href")?.trim { it <= ' ' }
-            ?: return
+        val urlT = el.selectFirst("td a.table_link")?.attr("href")?.trim { it <= ' ' } ?: return
         val urlTend = "https://exarid.uzex.uz$urlT"
         val purNum = el.selectFirst("td a.table_link")?.ownText()?.trim { it <= ' ' } ?: ""
         val region1 = el.selectFirst("td:eq(3)")?.ownText()?.trim { it <= ' ' } ?: ""
         val region2 = el.selectFirst("td:eq(4)")?.ownText()?.trim { it <= ' ' } ?: ""
         val region = "$region1, $region2"
-        val purName = el.selectFirst("td:eq(5) a span")?.ownText()?.trim { it <= ' ' }
-            ?: return
+        val purName = el.selectFirst("td:eq(5) a span")?.ownText()?.trim { it <= ' ' } ?: return
         val fullNmck = el.selectFirst("td:eq(6)")?.ownText()?.trim { it <= ' ' } ?: ""
         val nmck = fullNmck.extractNum()
         val currency = fullNmck.getDataFromRegexp("(?<=\\d\\s)([a-zA-Z]+)\$")
-        val dateEndTmp = el.selectFirst("td:eq(2)")?.ownText()?.trim { it <= ' ' }
-            ?: return
+        val dateEndTmp = el.selectFirst("td:eq(2)")?.ownText()?.trim { it <= ' ' } ?: return
         val dateEnd = dateEndTmp.getDateFromString(formatter)
         val datePub = Date(0L)
         val tt = Uzex(purNum, urlTend, purName, datePub, dateEnd, region, nmck, currency)

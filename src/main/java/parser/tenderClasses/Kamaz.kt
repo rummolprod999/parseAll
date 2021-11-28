@@ -10,5 +10,4 @@ data class Kamaz(
     val endDate: Date,
     val attachments: Map<String, String>,
     val orgName: String
-) {
-}
+) {}

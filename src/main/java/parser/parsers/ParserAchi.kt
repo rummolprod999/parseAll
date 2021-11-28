@@ -56,16 +56,18 @@ class ParserAchi : IParser, ParserAbstract() {
     }
 
     private fun parserTend(el: Element) {
-        val urlT = el.selectFirst("h2 > a")?.attr("href")?.trim { it <= ' ' }
-            ?: throw Exception("urlT was not found")
+        val urlT =
+            el.selectFirst("h2 > a")?.attr("href")?.trim { it <= ' ' }
+                ?: throw Exception("urlT was not found")
         val urlTend = "https://achizitii.md$urlT"
         val purNum = urlT.getDataFromRegexp("/(\\d+)/$")
         if (purNum == "") {
             logger("empty purNum", urlTend)
             return
         }
-        val purName = el.selectFirst("h2 > a")?.ownText()?.trim { it <= ' ' }
-            ?: throw Exception("purName was not found")
+        val purName =
+            el.selectFirst("h2 > a")?.ownText()?.trim { it <= ' ' }
+                ?: throw Exception("purName was not found")
         val t = TenderAchi(Achi(urlTend, purNum, purName))
         ParserTender(t)
     }

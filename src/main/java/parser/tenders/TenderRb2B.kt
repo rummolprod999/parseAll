@@ -9,9 +9,7 @@ class TenderRb2B(val tn: Oilb2b) : TenderAbstract(), ITender {
         etpUrl = "https://zakupki.rb2b.ru/"
     }
 
-    override fun parsing() {
-
-    }
+    override fun parsing() {}
 
     private fun addCounts(updated: Boolean) {
         if (updated) {
@@ -24,5 +22,4 @@ class TenderRb2B(val tn: Oilb2b) : TenderAbstract(), ITender {
     companion object TypeFz {
         const val typeFz = 291
     }
-
 }

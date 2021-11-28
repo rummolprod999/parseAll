@@ -36,13 +36,23 @@ class ParserProtek : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: Element) {
-        val purName = el.selectFirst("p")?.text()?.trim { it <= ' ' }
-            ?: run { logger("purName was not found", el.text()); throw Exception("purName was not found") }
+        val purName =
+            el.selectFirst("p")?.text()?.trim { it <= ' ' }
+                ?: run {
+                    logger("purName was not found", el.text())
+                    throw Exception("purName was not found")
+                }
         val purNum = purName.md5()
-        var href = el.selectFirst("a:contains(Подробнее...)")?.attr("href") ?: throw Exception("href was not found")
+        var href =
+            el.selectFirst("a:contains(Подробнее...)")?.attr("href")
+                ?: throw Exception("href was not found")
         href = "https://protek.ru$href"
-        val endDateT = el.selectFirst("span > time")?.text()?.trim { it <= ' ' }
-            ?: run { logger("endDateT was not found", el.text()); throw Exception("endDateT was not found") }
+        val endDateT =
+            el.selectFirst("span > time")?.text()?.trim { it <= ' ' }
+                ?: run {
+                    logger("endDateT was not found", el.text())
+                    throw Exception("endDateT was not found")
+                }
         val dateEnd = endDateT.getDateFromString(formatterOnlyDate)
         val attachments = mutableMapOf<String, String>()
         el.select("div.detail_box a").forEach {

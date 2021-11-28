@@ -12,7 +12,5 @@ class TenderDellin(val tn: Dellin) : TenderAbstract(), ITender {
         etpUrl = "https://etp.dellin.ru/"
     }
 
-    override fun parsing() {
-
-    }
+    override fun parsing() {}
 }
