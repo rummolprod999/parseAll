@@ -1,5 +1,8 @@
 package parser.parsers
 
+import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.Dimension
 import org.openqa.selenium.WebElement
@@ -14,9 +17,6 @@ import parser.logger.logger
 import parser.tenderClasses.Tmk
 import parser.tenders.TenderTmk
 import parser.tools.formatterGpn
-import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 
 class ParserTmk : IParser, ParserAbstract() {
     private val tendersList = mutableListOf<TenderTmk>()
@@ -49,7 +49,7 @@ class ParserTmk : IParser, ParserAbstract() {
 
     private fun getchromeOptions(): ChromeOptions {
         val options = ChromeOptions()
-        options.addArguments("headless")
+        // options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         return options
@@ -105,6 +105,8 @@ class ParserTmk : IParser, ParserAbstract() {
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
         wait = WebDriverWait(driver, timeoutB)
+        Thread.sleep(5000)
+        clickException()
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[@class = 'x-grid3-body']/div[contains(@class, 'x-grid3-row')][25]")
@@ -121,6 +123,15 @@ class ParserTmk : IParser, ParserAbstract() {
         return false
     }
 
+    private fun clickException() {
+        try {
+            val el = driver.findElementByXPath("//button[. = 'OK']")
+            el.click()
+        } catch (e: Exception) {
+            Thread.sleep(1000)
+        }
+    }
+
     private fun getNextPage() {
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
@@ -131,6 +142,8 @@ class ParserTmk : IParser, ParserAbstract() {
             val paginator =
                 driver.findElementByXPath("//button[contains(@class, 'x-tbar-page-next')]")
             paginator.click()
+            Thread.sleep(5000)
+            clickException()
             getListTenders()
         } catch (e: Exception) {
             logger("Bad clicker", e.stackTrace, e)
