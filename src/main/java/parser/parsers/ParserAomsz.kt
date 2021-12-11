@@ -1,26 +1,26 @@
 package parser.parsers
 
+import java.time.ZoneId
+import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import parser.extensions.getDateFromString
 import parser.logger.logger
-import parser.networkTools.downloadWaitWithRef
+import parser.networkTools.downloadFromUrlNoSslNew
 import parser.tenderClasses.Aomsz
 import parser.tenders.TenderAomsz
 import parser.tools.formatter
 import parser.tools.formatterOnlyDate
-import java.time.ZoneId
-import java.util.*
 
 class ParserAomsz : IParser, ParserAbstract() {
-    val url = "https://aomsz.ru/purchases/requests/"
+    val url = "https://oaomsz.ru/purchases/requests/"
     override fun parser() = parse {
         System.setProperty("jsse.enableSNIExtension", "false")
         parserAomsz("$url")
     }
 
     private fun parserAomsz(url: String) {
-        val pageTen = downloadWaitWithRef(url)
+        val pageTen = downloadFromUrlNoSslNew(url)
         if (pageTen == "") {
             logger("Gets empty string ${this::class.simpleName}", url)
             return

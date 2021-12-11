@@ -14,7 +14,7 @@ class TenderAomsz(val tn: Aomsz) : TenderAbstract(), ITender {
 
     init {
         etpName = "АО «МСЗ»"
-        etpUrl = "https://aomsz.ru/"
+        etpUrl = "https://oaomsz.ru/"
     }
 
     val typeFz by lazy { 321 }
