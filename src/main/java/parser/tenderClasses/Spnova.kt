@@ -9,5 +9,6 @@ data class Spnova(
     val endDate: Date,
     val placingWayName: String,
     val pubDate: Date,
-    val nmck: String
+    val nmck: String,
+    val doc: String
 ) {}

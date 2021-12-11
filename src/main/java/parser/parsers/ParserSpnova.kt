@@ -1,5 +1,7 @@
 package parser.parsers
 
+import java.time.ZoneId
+import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import parser.extensions.extractPrice
@@ -10,8 +12,6 @@ import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.Spnova
 import parser.tenders.TenderSpnova
 import parser.tools.formatter
-import java.time.ZoneId
-import java.util.*
 
 class ParserSpnova : IParser, ParserAbstract() {
 
@@ -29,7 +29,7 @@ class ParserSpnova : IParser, ParserAbstract() {
 
     private fun parserSpnova() {
         (1..CountPage).forEach {
-            val url = "http://www.snpnova.com/zakupki/izveshcheniya-o-zakupkakh/page?page=$it"
+            val url = "https://etp.snpnova.com/procurement-notices/?nav-list=page-$it"
             try {
                 parserPageList(url)
             } catch (e: Exception) {
@@ -60,34 +60,42 @@ class ParserSpnova : IParser, ParserAbstract() {
 
     private fun parserTend(el: Element) {
         val urlTend =
-            el.selectFirst("td:eq(1) a")?.attr("href")?.trim { it <= ' ' }
+            el.selectFirst("td:eq(0) a")?.attr("href")?.trim { it <= ' ' }
                 ?: run {
                     logger("urlTend not found")
                     return
                 }
+        val href = "https://etp.snpnova.com$urlTend"
+        val urlDoc =
+            el.selectFirst("td:eq(10) a")?.attr("href")?.trim { it <= ' ' }
+                ?: run {
+                    logger("urlDoc not found")
+                    return
+                }
+        val hrefDoc = "https://etp.snpnova.com$urlDoc"
         val purName =
-            el.selectFirst("td:eq(1) a")?.ownText()?.trim { it <= ' ' }
+            el.selectFirst("td:eq(3)")?.ownText()?.trim { it <= ' ' }
                 ?: run {
                     logger("purName not found")
                     return
                 }
         val purNumT =
-            el.selectFirst("td:eq(0) p")?.ownText()?.trim { it <= ' ' }
+            el.selectFirst("td:eq(0)")?.ownText()?.trim { it <= ' ' }
                 ?: run {
                     logger("purNumT not found")
                     return
                 }
-        val purNum = purNumT.getDataFromRegexp("""№(\d+)""")
-        val pwName = el.selectFirst("td:eq(3) p")?.ownText()?.trim { it <= ' ' } ?: ""
+        val purNum = purNumT.getDataFromRegexp("""№(ЭТ-\d+)""")
+        val pwName = el.selectFirst("td:eq(5)")?.ownText()?.trim { it <= ' ' } ?: ""
         val datePubTmp =
-            el.selectFirst("td:eq(4) p")?.ownText()?.trim { it <= ' ' }
+            el.selectFirst("td:eq(6)")?.ownText()?.trim { it <= ' ' }
                 ?: run {
                     logger("datePubTmp not found")
                     return
                 }
         val datePub = datePubTmp.getDateFromString(formatter)
 
-        val dateEndTmp = el.selectFirst("td:eq(5) p")?.ownText()?.trim { it <= ' ' } ?: ""
+        val dateEndTmp = el.selectFirst("td:eq(7)")?.ownText()?.trim { it <= ' ' } ?: ""
         var dateEnd = dateEndTmp.getDateFromString(formatter)
         if (dateEnd == Date(0L)) {
             dateEnd =
@@ -96,8 +104,8 @@ class ParserSpnova : IParser, ParserAbstract() {
                 )
         }
 
-        val nmck = el.selectFirst("td:eq(2) p")?.ownText()?.trim { it <= ' ' }?.extractPrice() ?: ""
-        val tt = Spnova(purNum, urlTend, purName, dateEnd, pwName, datePub, nmck)
+        val nmck = el.selectFirst("td:eq(4)")?.ownText()?.trim { it <= ' ' }?.extractPrice() ?: ""
+        val tt = Spnova(purNum, href, purName, dateEnd, pwName, datePub, nmck, hrefDoc)
         val t = TenderSpnova(tt)
         ParserTender(t)
     }

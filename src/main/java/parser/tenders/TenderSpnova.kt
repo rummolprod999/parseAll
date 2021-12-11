@@ -155,7 +155,7 @@ class TenderSpnova(val tn: Spnova) : TenderAbstract(), ITender {
                         )
                     insertDoc.setInt(1, idTender)
                     insertDoc.setString(2, "Документация")
-                    insertDoc.setString(3, tn.href)
+                    insertDoc.setString(3, tn.doc)
                     insertDoc.executeUpdate()
                     insertDoc.close()
                     var idCustomer = 0
