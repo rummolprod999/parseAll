@@ -82,4 +82,5 @@ enum class Arguments {
     TKNSO,
     GNS,
     DSK1,
+    CDS,
 }

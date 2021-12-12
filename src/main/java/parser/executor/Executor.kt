@@ -574,6 +574,11 @@ class Executor {
                     p = ParserDsk1()
                     executeParser(p, IParser::parser)
                 }
+            Arguments.CDS ->
+                run {
+                    p = ParserCds()
+                    executeParser(p, IParser::parser)
+                }
         }
     }
 
