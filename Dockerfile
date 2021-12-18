@@ -3,7 +3,7 @@ RUN apt-get update && apt-get full-upgrade -y
 RUN yes | apt-get install openjdk-8-jdk
 RUN yes | apt-get install wget
 RUN yes | apt-get install libxss1 libgconf2-4 libappindicator1 libindicator7 fonts-liberation libappindicator3-1 lsb-release xdg-utils
-RUN yes | apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic
+RUN yes | apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic gnupg2
 #RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 #RUN yes | dpkg -i --force-depends google-chrome-stable_current_amd64.deb
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
