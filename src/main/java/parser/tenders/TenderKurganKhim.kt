@@ -1,18 +1,23 @@
 package parser.tenders
 
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
-import parser.builderApp.BuilderApp
-import parser.logger.logger
-import parser.networkTools.downloadFromUrl
-import parser.tenderClasses.KurganKhim
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
+import org.openqa.selenium.By
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.support.ui.WebDriverWait
+import parser.builderApp.BuilderApp
+import parser.extensions.findElementWithoutException
+import parser.logger.logger
+import parser.networkTools.downloadFromUrl
+import parser.parsers.ParserKurganKhim
+import parser.tenderClasses.KurganKhim
 
-class TenderKurganKhim(val tn: KurganKhim) : TenderAbstract(), ITender {
+class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbstract(), ITender {
 
     init {
         etpName = "Электронная торговая площадка  ООО «Курганхиммаш»"
@@ -22,6 +27,7 @@ class TenderKurganKhim(val tn: KurganKhim) : TenderAbstract(), ITender {
     val typeFz by lazy { 265 }
 
     override fun parsing() {
+
         val dateVer = Date()
         DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
             .use(
@@ -43,13 +49,11 @@ class TenderKurganKhim(val tn: KurganKhim) : TenderAbstract(), ITender {
                     }
                     r.close()
                     stmt0.close()
-
-                    val pageTen = downloadFromUrl(tn.href)
-                    if (pageTen == "") {
-                        logger("Gets empty string ${this::class.simpleName}", tn.href)
-                        return
-                    }
-                    val htmlTen = Jsoup.parse(pageTen)
+                    driver.get(tn.href)
+                    driver.switchTo().defaultContent()
+                    val wait = WebDriverWait(driver, ParserKurganKhim.timeoutB)
+                    Thread.sleep(2000)
+                    driver.switchTo().defaultContent()
                     val (cancelstatus, updated) = updateVersion(con, dateVer)
                     var idOrganizer = 0
                     if (tn.orgName != "") {
@@ -71,14 +75,7 @@ class TenderKurganKhim(val tn: KurganKhim) : TenderAbstract(), ITender {
                             val kpp = ""
                             val email = ""
                             val phone = ""
-                            val contactPerson =
-                                htmlTen
-                                    .selectFirst(
-                                        "div.left_element:contains(Имя и должность ответственного лица заказчика) + div"
-                                    )
-                                    ?.ownText()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                            val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
                                     "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
@@ -107,11 +104,7 @@ class TenderKurganKhim(val tn: KurganKhim) : TenderAbstract(), ITender {
                     val idPlacingWay = 0
                     var idTender = 0
                     val idRegion = 0
-                    val lotName =
-                        htmlTen.selectFirst("td:contains(Описание) + td span")?.text()?.trim {
-                            it <= ' '
-                        }
-                            ?: ""
+                    val lotName = tn.purName
                     val insertTender =
                         con.prepareStatement(
                             "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?",
@@ -146,11 +139,7 @@ class TenderKurganKhim(val tn: KurganKhim) : TenderAbstract(), ITender {
                     } else {
                         AddTender++
                     }
-                    try {
-                        getAttachments(idTender, con)
-                    } catch (e: Exception) {
-                        logger("Ошибка добавления документации", e.stackTrace, e)
-                    }
+
                     var idLot = 0
                     val lotNumber = 1
                     val insertLot =
@@ -204,8 +193,72 @@ class TenderKurganKhim(val tn: KurganKhim) : TenderAbstract(), ITender {
                             stmtins.close()
                         }
                     }
-                    htmlTen.select("span:contains(Лоты) + table > tbody > tr").forEach {
-                        getPurObjs(it, con, idLot, idCustomer)
+                    con.prepareStatement(
+                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
+                    )
+                        .apply {
+                            setInt(1, idLot)
+                            setInt(2, idCustomer)
+                            setString(3, tn.purName)
+                            setString(4, "")
+                            setString(5, "")
+                            setString(6, "")
+                            setString(7, "")
+                            setString(8, "")
+                            setString(9, "")
+                            setString(10, "")
+                            executeUpdate()
+                            close()
+                        }
+                    val delivTerm0 =
+                        driver.findElementWithoutException(
+                            By.xpath(
+                                "//td[. = 'Требуемые сроки поставки']/following-sibling::td"
+                            )
+                        )
+                            ?.text
+                            ?.trim { it <= ' ' }
+                            ?: ""
+                    val delivTerm1 =
+                        driver.findElementWithoutException(
+                            By.xpath("//td[. = 'Общие условия оплаты']/following-sibling::td")
+                        )
+                            ?.text
+                            ?.trim { it <= ' ' }
+                            ?: ""
+                    val delivTerm2 =
+                        driver.findElementWithoutException(
+                            By.xpath("//td[. = 'Особые требования']/following-sibling::td")
+                        )
+                            ?.text
+                            ?.trim { it <= ' ' }
+                            ?: ""
+                    val delivTerm =
+                        "Требуемые сроки поставки: $delivTerm0\n Общие условия оплаты: $delivTerm1\n Особые требования: $delivTerm2".trim {
+                            it <= ' '
+                        }
+                    val delivPlace =
+                        driver.findElementWithoutException(
+                            By.xpath(
+                                "//td[. = 'Адрес доставки ТМЦ или оказания услуг']/following-sibling::td"
+                            )
+                        )
+                            ?.text
+                            ?.trim { it <= ' ' }
+                            ?: ""
+                    if (delivTerm0 != "" || delivTerm1 != "" || delivTerm2 != "") {
+                        val insertCusRec =
+                            con.prepareStatement(
+                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
+                            )
+                                .apply {
+                                    setInt(1, idLot)
+                                    setInt(2, idCustomer)
+                                    setString(3, delivPlace)
+                                    setString(4, delivTerm)
+                                    executeUpdate()
+                                    close()
+                                }
                     }
                     try {
                         tenderKwords(idTender, con)
