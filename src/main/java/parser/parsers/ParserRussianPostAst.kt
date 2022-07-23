@@ -127,9 +127,9 @@ class ParserRussianPostAst : IParser, ParserAbstract() {
         }
         try {
             val js = drv as JavascriptExecutor
-            js.executeScript("document.querySelectorAll('div.sendApplication + a')[$ind].click();")
+            js.executeScript("document.querySelectorAll('a.STRView')[$ind].click();")
         } catch (e: Exception) {
-            logger("document.querySelectorAll('div.sendApplication + a')[$ind].click();")
+            logger("document.querySelectorAll('a.STRView')[$ind].click();")
         }
     }
 
