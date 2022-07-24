@@ -174,7 +174,7 @@ class ParserCbrfAst : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "http://utp.sberbank-ast.ru/CBRF/List/PurchaseList"
+        const val BaseUrl = "https://utp.sberbank-ast.ru/CBRF/List/PurchaseList"
         const val timeoutB = 60L
         const val CountPage = 10
         val executor = Executors.newSingleThreadExecutor()
