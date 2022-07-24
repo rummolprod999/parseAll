@@ -52,7 +52,7 @@ class ParserVipAst : IParser, ParserAbstract() {
 
     private fun parserSelen() {
         val options = ChromeOptions()
-        // options.addArguments("headless")
+        options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         drv = ChromeDriver(options)
@@ -128,9 +128,9 @@ class ParserVipAst : IParser, ParserAbstract() {
         }
         try {
             val js = drv as JavascriptExecutor
-            js.executeScript("document.querySelectorAll('div.sendApplication + a')[$ind].click();")
+            js.executeScript("document.querySelectorAll('a.STRView')[$ind].click();")
         } catch (e: Exception) {
-            logger("document.querySelectorAll('div.sendApplication + a')[$ind].click();")
+            logger("document.querySelectorAll('a.STRView')[$ind].click();")
         }
     }
 

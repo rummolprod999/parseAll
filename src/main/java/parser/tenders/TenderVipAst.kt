@@ -29,7 +29,13 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
     override fun parsing() {
         // drv.switchTo().defaultContent()
         val wait = WebDriverWait(drv, 10)
-        val href = drv.currentUrl
+        val href =
+            try {
+                drv.currentUrl
+            } catch (e: Exception) {
+                // logger(e)
+                return
+            }
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
@@ -72,23 +78,21 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             return
         }
         val datePubTmp =
-            drv
-                .findElementWithoutException(
-                    By.xpath(
-                        "//td[contains(., 'Начало подачи заявок на участие')]/following-sibling::td/span"
-                    )
+            drv.findElementWithoutException(
+                By.xpath(
+                    "//td[contains(., 'Начало подачи заявок на участие')]/following-sibling::td/span"
                 )
+            )
                 ?.text
                 ?.trim()
                 ?.trim { it <= ' ' }
                 ?: ""
         val dateEndTmp =
-            drv
-                .findElementWithoutException(
-                    By.xpath(
-                        "//td[contains(., 'Окончание подачи заявок на участие')]/following-sibling::td/span"
-                    )
+            drv.findElementWithoutException(
+                By.xpath(
+                    "//td[contains(., 'Окончание подачи заявок на участие')]/following-sibling::td/span"
                 )
+            )
                 ?.text
                 ?.trim()
                 ?.trim { it <= ' ' }
@@ -100,24 +104,22 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             return
         }
         val dateScoringTmp =
-            drv
-                .findElementWithoutException(
-                    By.xpath(
-                        "//td[contains(., 'Окончание рассмотрения заявок на участие')]/following-sibling::td/span"
-                    )
+            drv.findElementWithoutException(
+                By.xpath(
+                    "//td[contains(., 'Окончание рассмотрения заявок на участие')]/following-sibling::td/span"
                 )
+            )
                 ?.text
                 ?.trim()
                 ?.trim { it <= ' ' }
                 ?: ""
         val dateScoring = dateScoringTmp.getDateFromString(formatterGpn)
         val dateBiddingTmp =
-            drv
-                .findElementWithoutException(
-                    By.xpath(
-                        "//td[contains(., 'Дата и время начала торгов')]/following-sibling::td/span"
-                    )
+            drv.findElementWithoutException(
+                By.xpath(
+                    "//td[contains(., 'Дата и время начала торгов')]/following-sibling::td/span"
                 )
+            )
                 ?.text
                 ?.trim()
                 ?.trim { it <= ' ' }
@@ -180,12 +182,11 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                     stmt.close()
                     var idOrganizer = 0
                     val fullnameOrg =
-                        drv
-                            .findElementWithoutException(
-                                By.xpath(
-                                    "//td[contains(., 'Наименование организатора')]/following-sibling::td"
-                                )
+                        drv.findElementWithoutException(
+                            By.xpath(
+                                "//td[contains(., 'Наименование организатора')]/following-sibling::td"
                             )
+                        )
                             ?.text
                             ?.trim()
                             ?.trim { it <= ' ' }
@@ -205,78 +206,71 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                             rso.close()
                             stmto.close()
                             val postalAdr =
-                                drv
-                                    .findElementWithoutException(
-                                        By.xpath(
-                                            "//td[contains(., 'Фактический адрес (почтовый)')]/following-sibling::td/span"
-                                        )
+                                drv.findElementWithoutException(
+                                    By.xpath(
+                                        "//td[contains(., 'Фактический адрес (почтовый)')]/following-sibling::td/span"
                                     )
+                                )
                                     ?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' }
                                     ?: ""
                             val factAdr =
-                                drv
-                                    .findElementWithoutException(
-                                        By.xpath(
-                                            "//td[contains(., 'Юридический адрес')]/following-sibling::td/span"
-                                        )
+                                drv.findElementWithoutException(
+                                    By.xpath(
+                                        "//td[contains(., 'Юридический адрес')]/following-sibling::td/span"
                                     )
+                                )
                                     ?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' }
                                     ?: ""
                             val inn =
-                                drv
-                                    .findElementWithoutException(
-                                        By.xpath(
-                                            "//td[contains(., 'ИНН организатора')]/following-sibling::td/span"
-                                        )
+                                drv.findElementWithoutException(
+                                    By.xpath(
+                                        "//td[contains(., 'ИНН организатора')]/following-sibling::td/span"
                                     )
+                                )
                                     ?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' }
                                     ?: ""
                             val kpp =
-                                drv
-                                    .findElementWithoutException(
-                                        By.xpath(
-                                            "//td[contains(., 'КПП организатора')]/following-sibling::td/span"
-                                        )
+                                drv.findElementWithoutException(
+                                    By.xpath(
+                                        "//td[contains(., 'КПП организатора')]/following-sibling::td/span"
                                     )
+                                )
                                     ?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' }
                                     ?: ""
                             val email =
-                                drv
-                                    .findElementWithoutException(
-                                        By.xpath(
-                                            "//td[contains(., 'Адрес электронной почты')]/following-sibling::td/span"
-                                        )
+                                drv.findElementWithoutException(
+                                    By.xpath(
+                                        "//td[contains(., 'Адрес электронной почты')]/following-sibling::td/span"
                                     )
+                                )
                                     ?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' }
                                     ?: ""
                             val phone =
-                                drv
-                                    .findElementWithoutException(
-                                        By.xpath(
-                                            "//td[contains(., 'Номер контактного телефона')]/following-sibling::td/span"
-                                        )
+                                drv.findElementWithoutException(
+                                    By.xpath(
+                                        "//td[contains(., 'Номер контактного телефона')]/following-sibling::td/span"
                                     )
+                                )
                                     ?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' }
                                     ?: ""
                             val contactPerson =
-                                drv
-                                    .findElementWithoutException(
-                                        By.xpath(
-                                            "//td[contains(., 'Контактное лицо')]/following-sibling::td/span"
-                                        )
+                                drv.findElementWithoutException(
+                                    By.xpath(
+                                        "//td[contains(., 'Контактное лицо')]/following-sibling::td/span"
                                     )
+                                )
                                     ?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' }
@@ -307,12 +301,11 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                     }
                     val idEtp = getEtp(con)
                     val placingWayName =
-                        drv
-                            .findElementWithoutException(
-                                By.xpath(
-                                    "//td[contains(., 'Тип процедуры')]/following-sibling::td//span"
-                                )
+                        drv.findElementWithoutException(
+                            By.xpath(
+                                "//td[contains(., 'Тип процедуры')]/following-sibling::td//span"
                             )
+                        )
                             ?.text
                             ?.trim()
                             ?.trim { it <= ' ' }
@@ -322,12 +315,11 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                         idPlacingWay = getPlacingWay(con, placingWayName)
                     }
                     val factAdrOrg =
-                        drv
-                            .findElementWithoutException(
-                                By.xpath(
-                                    "//td[contains(., 'Место нахождения')]/following-sibling::td/span"
-                                )
+                        drv.findElementWithoutException(
+                            By.xpath(
+                                "//td[contains(., 'Место нахождения')]/following-sibling::td/span"
                             )
+                        )
                             ?.text
                             ?.trim()
                             ?.trim { it <= ' ' }
@@ -396,29 +388,26 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
         drv: ChromeDriver
     ) {
         val nmck =
-            el
-                .findElementWithoutException(
-                    By.xpath(".//td[contains(., 'Начальная цена')]/following-sibling::td/span")
-                )
+            el.findElementWithoutException(
+                By.xpath(".//td[contains(., 'Начальная цена')]/following-sibling::td/span")
+            )
                 ?.text
                 ?.replace(',', '.')
                 ?.deleteAllWhiteSpace()
                 ?.trim { it <= ' ' }
                 ?: ""
         val lotName =
-            el
-                .findElementWithoutException(
-                    By.xpath(".//td[contains(., 'Наименование лота')]/following-sibling::td/span")
-                )
+            el.findElementWithoutException(
+                By.xpath(".//td[contains(., 'Наименование лота')]/following-sibling::td/span")
+            )
                 ?.text
                 ?.trim()
                 ?.trim { it <= ' ' }
                 ?: ""
         val currency =
-            el
-                .findElementWithoutException(
-                    By.xpath(".//td[contains(., 'Валюта')]/following-sibling::td/span")
-                )
+            el.findElementWithoutException(
+                By.xpath(".//td[contains(., 'Валюта')]/following-sibling::td/span")
+            )
                 ?.text
                 ?.trim()
                 ?.trim { it <= ' ' }
@@ -445,21 +434,19 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
         insertLot.close()
         var idCustomer = 0
         val cusName =
-            drv
-                .findElementWithoutException(
-                    By.xpath(
-                        "//td[contains(., 'Полное наименование заказчика')]/following-sibling::td/span"
-                    )
+            drv.findElementWithoutException(
+                By.xpath(
+                    "//td[contains(., 'Полное наименование заказчика')]/following-sibling::td/span"
                 )
+            )
                 ?.text
                 ?.trim()
                 ?.trim { it <= ' ' }
                 ?: ""
         val cusInn =
-            drv
-                .findElementWithoutException(
-                    By.xpath("//td[contains(., 'ИНН заказчика')]/following-sibling::td/span")
-                )
+            drv.findElementWithoutException(
+                By.xpath("//td[contains(., 'ИНН заказчика')]/following-sibling::td/span")
+            )
                 ?.text
                 ?.trim()
                 ?.trim { it <= ' ' }
@@ -496,34 +483,31 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             }
         }
         val delivPlace =
-            el
-                .findElementWithoutException(
-                    By.xpath(
-                        ".//td[contains(., 'Место поставки товара, выполнения работ, оказания услуг')]/following-sibling::td/span"
-                    )
+            el.findElementWithoutException(
+                By.xpath(
+                    ".//td[contains(., 'Место поставки товара, выполнения работ, оказания услуг')]/following-sibling::td/span"
                 )
+            )
                 ?.text
                 ?.trim()
                 ?.trim { it <= ' ' }
                 ?: ""
         val delivTerm =
-            el
-                .findElementWithoutException(
-                    By.xpath(
-                        ".//td[contains(., 'Сроки поставки товара, выполнения работ, оказания услуг')]/following-sibling::td/span"
-                    )
+            el.findElementWithoutException(
+                By.xpath(
+                    ".//td[contains(., 'Сроки поставки товара, выполнения работ, оказания услуг')]/following-sibling::td/span"
                 )
+            )
                 ?.text
                 ?.trim()
                 ?.trim { it <= ' ' }
                 ?: ""
         val appGuarantAmount =
-            el
-                .findElementWithoutException(
-                    By.xpath(
-                        ".//td[contains(., 'Размер обеспечения заявки (задатка) на площадке, руб')]/following-sibling::td/span"
-                    )
+            el.findElementWithoutException(
+                By.xpath(
+                    ".//td[contains(., 'Размер обеспечения заявки (задатка) на площадке, руб')]/following-sibling::td/span"
                 )
+            )
                 ?.text
                 ?.replace(',', '.')
                 ?.deleteAllWhiteSpace()
@@ -550,19 +534,17 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
         if (!purObjects.isEmpty()) {
             for (po in purObjects) {
                 val name =
-                    po
-                        .findElementWithoutException(
-                            By.xpath("./td[contains(@id, 'PositionName')]/span")
-                        )
+                    po.findElementWithoutException(
+                        By.xpath("./td[contains(@id, 'PositionName')]/span")
+                    )
                         ?.text
                         ?.trim()
                         ?.trim { it <= ' ' }
                         ?: ""
                 val quantity =
-                    po
-                        .findElementWithoutException(
-                            By.xpath("./td[contains(@id, 'tdQuantity')]/span")
-                        )
+                    po.findElementWithoutException(
+                        By.xpath("./td[contains(@id, 'tdQuantity')]/span")
+                    )
                         ?.text
                         ?.trim()
                         ?.deleteAllWhiteSpace()
@@ -570,19 +552,17 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                         ?: ""
                 val okpd2 = ""
                 val okei =
-                    po
-                        .findElementWithoutException(
-                            By.xpath("./td[contains(@id, 'tdPositionUnit')]/span")
-                        )
+                    po.findElementWithoutException(
+                        By.xpath("./td[contains(@id, 'tdPositionUnit')]/span")
+                    )
                         ?.text
                         ?.trim()
                         ?.trim { it <= ' ' }
                         ?: ""
                 val price =
-                    po
-                        .findElementWithoutException(
-                            By.xpath("./td[contains(@id, 'tdMaxPrice')]/span")
-                        )
+                    po.findElementWithoutException(
+                        By.xpath("./td[contains(@id, 'tdMaxPrice')]/span")
+                    )
                         ?.text
                         ?.trim()
                         ?.replace(',', '.')
@@ -624,8 +604,15 @@ class TenderVipAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
         // drv.switchTo().defaultContent()
         val lots =
             drv.findElements(
+                By.xpath(
+                    "//thead[.//th[ contains(.,'Сведения о лотах')]]/following-sibling::tbody/tr"
+                )
+            )
+        lots.addAll(
+            drv.findElements(
                 By.xpath("//thead[.//th[ contains(.,'Лоты')]]/following-sibling::tbody/tr")
             )
+        )
         if (lots.isEmpty()) {
             logger("Can not find lots in tender", href)
             return
