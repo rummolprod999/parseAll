@@ -30,7 +30,13 @@ class TenderCbrfAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
     override fun parsing() {
         // drv.switchTo().defaultContent()
         val wait = WebDriverWait(drv, 20)
-        val href = drv.currentUrl
+        val href =
+            try {
+                drv.currentUrl
+            } catch (e: Exception) {
+                // logger(e)
+                return
+            }
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
