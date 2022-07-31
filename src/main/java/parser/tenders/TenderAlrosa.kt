@@ -46,9 +46,9 @@ class TenderAlrosa(val tn: Alrosa) : TenderAbstract(), ITender {
                         )
                             .apply {
                                 setString(1, purNum)
-                                setInt(3, typeFz)
-                                setTimestamp(4, Timestamp(endDate.time))
-                                setString(5, status)
+                                setInt(2, typeFz)
+                                setTimestamp(3, Timestamp(endDate.time))
+                                setString(4, status)
                             }
                     val r = stmt0.executeQuery()
                     if (r.next()) {
