@@ -1,5 +1,8 @@
 package parser.parsers
 
+import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -15,9 +18,6 @@ import parser.tenderClasses.Alrosa
 import parser.tenderClasses.AlrosaProduct
 import parser.tenders.TenderAlrosa
 import parser.tools.formatterOnlyDate
-import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 
 class ParserAlrosa : IParser, ParserAbstract() {
     private val tendersList = mutableListOf<TenderAlrosa>()
@@ -32,8 +32,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl =
-            "https://zakupki.alrosa.ru/info_pur_proc?sap-return-url=%2fsap%2fbc%2fnwbc#"
+        const val BaseUrl = "https://zakupki.alrosa.ru/"
         const val timeoutB = 30L
         const val CountPage = 10
     }
@@ -71,26 +70,51 @@ class ParserAlrosa : IParser, ParserAbstract() {
             // driver.manage().window().maximize()
             val wait = WebDriverWait(driver, timeoutB)
             wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[. = 'Вход в систему']"))
+            )
+            driver.findElement(By.xpath("//input[@id = 'sap-user']")).sendKeys("enter-it_1@m")
+            driver.findElement(By.xpath("//input[@id = 'sap-password']")).sendKeys("Wr#9gWDj")
+            driver.findElement(By.xpath("//a[. = 'Вход в систему']")).click()
+            Thread.sleep(5000)
+            driver.switchTo().defaultContent()
+            if (
+                driver.pageSource.contains(
+                    "Вы уже зарегистрированы в системе со следующими сеансами:"
+                )
+            ) {
+                driver.findElement(By.xpath("//a[. = 'Дальше']")).click()
+                Thread.sleep(5000)
+                driver.switchTo().defaultContent()
+            }
+            wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//tbody[@id = 'WD0120-contentTBody']/tr[@rr and @sst and @rt]")
+                    By.xpath("//a[. = 'Найти закупку и принять участие']")
                 )
             )
+            driver.findElement(By.xpath("//a[. = 'Найти закупку и принять участие']")).click()
+            Thread.sleep(10000)
+            driver.switchTo().defaultContent()
+            driver.switchTo().frame(0)
+            wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//tbody[@id = 'WD6F-contentTBody']/tr[@rr and @sst and @rt]")
+                )
+            )
+            // driver.switchTo().defaultContent()
             try {
                 val js = driver as JavascriptExecutor
-                js.executeScript("document.querySelector('#WD24').click()")
-                Thread.sleep(10000)
                 js.executeScript(
-                    "document.querySelector('div[title = \"Дата начала приема предложений\"]').click()"
+                    "document.querySelector('div[title = \"Дата начала подачи заявок на участие в закупочной процедуре\"]').click()"
                 )
                 Thread.sleep(5000)
                 js.executeScript(
-                    "document.querySelector('div[title = \"Дата начала приема предложений\"]').click()"
+                    "document.querySelector('div[title = \"Дата начала подачи заявок на участие в закупочной процедуре\"]').click()"
                 )
                 Thread.sleep(5000)
             } catch (e: Exception) {
                 logger(e)
             }
-            driver.switchTo().defaultContent()
+            // driver.switchTo().defaultContent()
             getListTenders(driver, wait)
             tendersList.forEach {
                 try {
@@ -112,7 +136,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//tbody[@id = 'WD0120-contentTBody']/tr[@rr and @sst and @rt]")
+                    By.xpath("//tbody[@id = 'WD6F-contentTBody']/tr[@rr and @sst and @rt]")
                 )
             )
         } catch (e: Exception) {
@@ -121,10 +145,10 @@ class ParserAlrosa : IParser, ParserAbstract() {
         }
         var st = 2
         loop@ while (true) {
-            driver.switchTo().defaultContent()
+            // driver.switchTo().defaultContent()
             val tenders =
                 driver.findElements(
-                    By.xpath("//tbody[@id = 'WD0120-contentTBody']/tr[@rr and @sst and @rt]")
+                    By.xpath("//tbody[@id = 'WD6F-contentTBody']/tr[@rr and @sst and @rt]")
                 )
             for (it in tenders) {
                 try {
@@ -145,69 +169,50 @@ class ParserAlrosa : IParser, ParserAbstract() {
     }
 
     private fun parserTender(el: WebElement, driver: ChromeDriver) {
-        driver.switchTo().defaultContent()
+        // driver.switchTo().defaultContent()
         val purNum =
-            el.findElementWithoutException(By.xpath("./td[3]/a"))?.text?.trim { it <= ' ' } ?: ""
+            el.findElementWithoutException(By.xpath("./td[2]/a"))?.text?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot purNum in tender")
             throw Exception("cannot purNum in tender")
         }
         val purObj =
-            el.findElementWithoutException(By.xpath("./td[5]/a"))?.text?.trim { it <= ' ' } ?: ""
+            el.findElementWithoutException(By.xpath("./td[3]"))?.text?.trim { it <= ' ' } ?: ""
         val datePubTmp =
-            el.findElementWithoutException(By.xpath("./td[10]/span/span"))?.text?.trim()?.trim {
+            el.findElementWithoutException(By.xpath("./td[7]/span/span"))?.text?.trim()?.trim {
                 it <= ' '
             }
                 ?: ""
-        val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
+        var datePub = datePubTmp.getDateFromString(formatterOnlyDate)
         if (datePub == Date(0L)) {
-            logger("cannot find pubDate on page", datePubTmp, purNum)
-            return
+            datePub = Date()
         }
         val dateEndTmp =
-            el.findElementWithoutException(By.xpath("./td[11]/span/span"))?.text?.trim()?.trim {
+            el.findElementWithoutException(By.xpath("./td[8]/span/span"))?.text?.trim()?.trim {
                 it <= ' '
             }
                 ?: ""
-        val dateEnd = dateEndTmp.getDateFromString(formatterOnlyDate)
+        var dateEnd = dateEndTmp.getDateFromString(formatterOnlyDate)
         if (dateEnd == Date(0L)) {
-            logger("cannot find dateEnd on page", dateEndTmp, purNum)
-            return
+            dateEnd = Date(datePub.getTime() + 2 * 24 * 60 * 60 * 1000)
         }
         val status =
-            el.findElementWithoutException(By.xpath("./td[8]/span/span"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath("./td[6]/span/span"))?.text?.trim { it <= ' ' }
                 ?: ""
         val pwName =
-            el.findElementWithoutException(By.xpath("./td[7]/span/span"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath("./td[5]/span/span"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val nmckT =
-            el.findElementWithoutException(By.xpath("./td[12]/span/span"))?.text?.trim { it <= ' ' }
-                ?: ""
+        val nmckT = ""
         val nmck = nmckT.replace(".", "").replace(",", ".").deleteAllWhiteSpace()
-        val currency =
-            el.findElementWithoutException(By.xpath("./td[13]/span/span"))?.text?.trim { it <= ' ' }
-                ?: ""
-        val contactPerson =
-            el.findElementWithoutException(By.xpath("./td[14]/span/span"))?.text?.trim { it <= ' ' }
-                ?: ""
-        val phone =
-            el.findElementWithoutException(By.xpath("./td[15]/span/span"))?.text?.trim { it <= ' ' }
-                ?: ""
-        val email =
+        val currency = ""
+        val contactPerson = ""
+        val phone = ""
+        val email = ""
+        val orgName =
             el.findElementWithoutException(By.xpath("./td[16]/span/span"))?.text?.trim { it <= ' ' }
                 ?: ""
-        val orgName =
-            el.findElementWithoutException(By.xpath("./td[17]/span/span"))?.text?.trim { it <= ' ' }
-                ?: ""
-        val cusName =
-            el.findElementWithoutException(By.xpath("./td[20]/span/span"))?.text?.trim { it <= ' ' }
-                ?: ""
-        val prod =
-            try {
-                getProducts(el, driver)
-            } catch (e: Exception) {
-                mutableListOf<AlrosaProduct>()
-            }
+        val cusName = ""
+        val prod = mutableListOf<AlrosaProduct>()
         val tt =
             Alrosa(
                 purNum,
@@ -233,7 +238,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
 
     private fun getProducts(el: WebElement, driver: ChromeDriver): MutableList<AlrosaProduct> {
         val listProd: MutableList<AlrosaProduct> = mutableListOf()
-        val p = el.findElement(By.xpath("./td[3]/a"))
+        val p = el.findElement(By.xpath("./td[2]/a"))
         p.click()
         Thread.sleep(3000)
         driver.switchTo().defaultContent()

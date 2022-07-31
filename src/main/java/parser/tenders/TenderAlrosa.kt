@@ -33,7 +33,8 @@ class TenderAlrosa(val tn: Alrosa) : TenderAbstract(), ITender {
             contactPerson: String,
             phone: String,
             email: String,
-            products: MutableList<AlrosaProduct>) =
+            products: MutableList<AlrosaProduct>
+        ) =
             tn
         val dateVer = Date()
         DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
@@ -41,11 +42,10 @@ class TenderAlrosa(val tn: Alrosa) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
+                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
                         )
                             .apply {
                                 setString(1, purNum)
-                                setTimestamp(2, Timestamp(pubDate.time))
                                 setInt(3, typeFz)
                                 setTimestamp(4, Timestamp(endDate.time))
                                 setString(5, status)
@@ -224,6 +224,23 @@ class TenderAlrosa(val tn: Alrosa) : TenderAbstract(), ITender {
                             stmtins.close()
                         }
                     }
+                    con.prepareStatement(
+                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
+                    )
+                        .apply {
+                            setInt(1, idLot)
+                            setInt(2, idCustomer)
+                            setString(3, tn.purName)
+                            setString(4, "")
+                            setString(5, "")
+                            setString(6, "")
+                            setString(7, "")
+                            setString(8, tn.nmck)
+                            setString(9, "")
+                            setString(10, "")
+                            executeUpdate()
+                            close()
+                        }
                     for (po in products) {
                         if (po.prodName != "") {
                             con.prepareStatement(
