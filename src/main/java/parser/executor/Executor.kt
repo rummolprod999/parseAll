@@ -569,14 +569,22 @@ class Executor {
                     p = ParserGns()
                     executeParser(p, IParser::parser)
                 }
+
             Arguments.DSK1 ->
                 run {
                     p = ParserDsk1()
                     executeParser(p, IParser::parser)
                 }
+
             Arguments.CDS ->
                 run {
                     p = ParserCds()
+                    executeParser(p, IParser::parser)
+                }
+
+            Arguments.STROYSERV ->
+                run {
+                    p = ParserStroyServ()
                     executeParser(p, IParser::parser)
                 }
         }

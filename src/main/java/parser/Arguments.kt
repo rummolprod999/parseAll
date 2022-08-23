@@ -83,4 +83,5 @@ enum class Arguments {
     GNS,
     DSK1,
     CDS,
+    STROYSERV,
 }

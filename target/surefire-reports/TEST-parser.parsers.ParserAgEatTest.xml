@@ -23,8 +23,8 @@
     <property name="idea.io.use.nio2" value="true"/>
     <property name="java.endorsed.dirs" value="/home/alex/.jdks/adopt-openjdk-1.8.0_292/jre/lib/endorsed"/>
     <property name="os.arch" value="amd64"/>
-    <property name="visualgc.id" value="9875472787456"/>
-    <property name="visualvm.id" value="9875472816977"/>
+    <property name="visualgc.id" value="10480309927192"/>
+    <property name="visualvm.id" value="10480314354666"/>
     <property name="java.io.tmpdir" value="/tmp"/>
     <property name="line.separator" value="
 "/>
