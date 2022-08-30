@@ -144,7 +144,7 @@ class TenderMolskaz(val tn: Molskaz) : TenderAbstract(), ITender {
                     insertTender.setInt(11, cancelstatus)
                     insertTender.setTimestamp(12, Timestamp(dateVer.time))
                     insertTender.setInt(13, 1)
-                    insertTender.setString(14, "")
+                    insertTender.setString(14, tn.notice)
                     insertTender.setString(15, tn.href)
                     insertTender.setString(16, tn.href)
                     insertTender.setInt(17, 0)
