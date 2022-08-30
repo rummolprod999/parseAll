@@ -84,4 +84,5 @@ enum class Arguments {
     DSK1,
     CDS,
     STROYSERV,
+    MOLSKAZ,
 }

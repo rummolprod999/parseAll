@@ -569,7 +569,6 @@ class Executor {
                     p = ParserGns()
                     executeParser(p, IParser::parser)
                 }
-
             Arguments.DSK1 ->
                 run {
                     p = ParserDsk1()
@@ -585,6 +584,12 @@ class Executor {
             Arguments.STROYSERV ->
                 run {
                     p = ParserStroyServ()
+                    executeParser(p, IParser::parser)
+                }
+
+            Arguments.MOLSKAZ ->
+                run {
+                    p = ParserMolskaz()
                     executeParser(p, IParser::parser)
                 }
         }
