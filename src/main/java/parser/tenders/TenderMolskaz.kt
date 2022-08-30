@@ -89,12 +89,12 @@ class TenderMolskaz(val tn: Molskaz) : TenderAbstract(), ITender {
                         } else {
                             rso.close()
                             stmto.close()
-                            val postalAdr = "127282, г. Москва, ул. Чермянская, д. 2"
+                            val postalAdr = ""
                             val factAdr = ""
                             inn = ""
                             val kpp = ""
                             val email = ""
-                            val phone = "+7(495) 737-3500 (35-01)"
+                            val phone = ""
                             val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
