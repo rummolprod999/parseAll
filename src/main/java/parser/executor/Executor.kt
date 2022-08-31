@@ -574,7 +574,6 @@ class Executor {
                     p = ParserDsk1()
                     executeParser(p, IParser::parser)
                 }
-
             Arguments.CDS ->
                 run {
                     p = ParserCds()
@@ -590,6 +589,12 @@ class Executor {
             Arguments.MOLSKAZ ->
                 run {
                     p = ParserMolskaz()
+                    executeParser(p, IParser::parser)
+                }
+
+            Arguments.AKBARS ->
+                run {
+                    p = ParserAkbars()
                     executeParser(p, IParser::parser)
                 }
         }

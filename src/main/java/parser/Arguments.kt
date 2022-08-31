@@ -85,4 +85,5 @@ enum class Arguments {
     CDS,
     STROYSERV,
     MOLSKAZ,
+    AKBARS,
 }
