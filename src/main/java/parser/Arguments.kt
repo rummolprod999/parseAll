@@ -86,4 +86,5 @@ enum class Arguments {
     STROYSERV,
     MOLSKAZ,
     AKBARS,
+    SNM,
 }

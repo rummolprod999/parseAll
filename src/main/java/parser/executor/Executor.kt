@@ -579,7 +579,6 @@ class Executor {
                     p = ParserCds()
                     executeParser(p, IParser::parser)
                 }
-
             Arguments.STROYSERV ->
                 run {
                     p = ParserStroyServ()
@@ -595,6 +594,12 @@ class Executor {
             Arguments.AKBARS ->
                 run {
                     p = ParserAkbars()
+                    executeParser(p, IParser::parser)
+                }
+
+            Arguments.SNM ->
+                run {
+                    p = ParserSnm()
                     executeParser(p, IParser::parser)
                 }
         }
