@@ -584,7 +584,6 @@ class Executor {
                     p = ParserStroyServ()
                     executeParser(p, IParser::parser)
                 }
-
             Arguments.MOLSKAZ ->
                 run {
                     p = ParserMolskaz()
@@ -600,6 +599,12 @@ class Executor {
             Arguments.SNM ->
                 run {
                     p = ParserSnm()
+                    executeParser(p, IParser::parser)
+                }
+
+            Arguments.MMKCOAL ->
+                run {
+                    p = ParserMmkCoal()
                     executeParser(p, IParser::parser)
                 }
         }

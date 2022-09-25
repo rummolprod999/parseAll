@@ -87,4 +87,5 @@ enum class Arguments {
     MOLSKAZ,
     AKBARS,
     SNM,
+    MMKCOAL,
 }
