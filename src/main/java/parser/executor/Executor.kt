@@ -589,7 +589,6 @@ class Executor {
                     p = ParserMolskaz()
                     executeParser(p, IParser::parser)
                 }
-
             Arguments.AKBARS ->
                 run {
                     p = ParserAkbars()
@@ -605,6 +604,12 @@ class Executor {
             Arguments.MMKCOAL ->
                 run {
                     p = ParserMmkCoal()
+                    executeParser(p, IParser::parser)
+                }
+
+            Arguments.PRNEFT ->
+                run {
+                    p = ParserPrNeft()
                     executeParser(p, IParser::parser)
                 }
         }

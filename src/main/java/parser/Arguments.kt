@@ -88,4 +88,5 @@ enum class Arguments {
     AKBARS,
     SNM,
     MMKCOAL,
+    PRNEFT,
 }

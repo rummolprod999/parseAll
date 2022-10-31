@@ -24,7 +24,7 @@ object BuilderApp {
 }
 
 const val arguments =
-    "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu, tuva, gzalt, amurobl, dvrt, afkast, tmk, evraz, rosles, rusnano, uzex, achi, vipast, retailast, neftast, exusex, postast, cbrfast, protek, dmtu, rencredit, berel, orpnz, dellin, vgtrk, aorti, kurgankhim, oilb2b, domrfast, enplusast, kamaz, rb2b, zakazrf, bidbe, spnova, vprom, aomsz, fpk, borets, tknso, gns, dsk1, cds, stroyserv, molskaz, akbars, snm, mmkcoal"
+    "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu, tuva, gzalt, amurobl, dvrt, afkast, tmk, evraz, rosles, rusnano, uzex, achi, vipast, retailast, neftast, exusex, postast, cbrfast, protek, dmtu, rencredit, berel, orpnz, dellin, vgtrk, aorti, kurgankhim, oilb2b, domrfast, enplusast, kamaz, rb2b, zakazrf, bidbe, spnova, vprom, aomsz, fpk, borets, tknso, gns, dsk1, cds, stroyserv, molskaz, akbars, snm, mmkcoal, prneft"
 
 class Builder(args: Array<String>) {
     lateinit var arg: Arguments
@@ -135,6 +135,7 @@ class Builder(args: Array<String>) {
             "akbars" -> arg = Arguments.AKBARS
             "snm" -> arg = Arguments.SNM
             "mmkcoal" -> arg = Arguments.MMKCOAL
+            "prneft" -> arg = Arguments.PRNEFT
             else ->
                 run {
                     println(
