@@ -1,15 +1,15 @@
 package parser.parsers
 
+import java.time.ZoneId
+import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import parser.extensions.getDateFromString
 import parser.logger.logger
-import parser.networkTools.downloadWaitWithRef
+import parser.networkTools.downloadFromUrlNoSslNew
 import parser.tenderClasses.Fpk
 import parser.tenders.TenderFpk
 import parser.tools.formatterOnlyDate
-import java.time.ZoneId
-import java.util.*
 
 class ParserFpk : IParser, ParserAbstract() {
 
@@ -20,7 +20,7 @@ class ParserFpk : IParser, ParserAbstract() {
     }
 
     private fun parserFpk(url: String) {
-        val pageTen = downloadWaitWithRef(url)
+        val pageTen = downloadFromUrlNoSslNew(url)
         if (pageTen == "") {
             logger("Gets empty string ${this::class.simpleName}", url)
             return
