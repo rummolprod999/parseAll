@@ -7,13 +7,13 @@ data class Oilb2b(
     val href: String,
     val purName: String,
     val status: String,
-    val cusName: String,
+    var cusName: String,
     var pubDate: Date,
-    val endDate: Date,
+    var endDate: Date,
     var tenderDate: String,
     val endTenderDate: String,
-    val products: MutableList<Oilb2bProduct>,
-    val attachments: List<AttachOilb2b>
+    var products: MutableList<Oilb2bProduct>,
+    var attachments: MutableList<AttachOilb2b>
 ) {}
 
 data class Oilb2bProduct(

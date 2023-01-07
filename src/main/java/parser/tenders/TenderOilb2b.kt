@@ -5,11 +5,20 @@ import java.sql.DriverManager
 import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
+import org.openqa.selenium.By
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.WebDriverWait
 import parser.builderApp.BuilderApp
+import parser.extensions.findElementWithoutException
+import parser.extensions.getDateFromString
 import parser.logger.logger
+import parser.tenderClasses.AttachOilb2b
 import parser.tenderClasses.Oilb2b
+import parser.tenderClasses.Oilb2bProduct
+import parser.tools.formatter
 
-class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
+class TenderOilb2b(val tn: Oilb2b, val driver: ChromeDriver) : TenderAbstract(), ITender {
 
     init {
         etpName = "«НЕФТЬ-B2B»"
@@ -18,13 +27,82 @@ class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
 
     override fun parsing() {
         val dateVer = Date()
+        val wait = WebDriverWait(driver, 20)
+        driver.get(tn.href)
+        driver.switchTo().defaultContent()
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//h1[contains(., 'Сведения о закупке')]")
+            )
+        )
+        val pubDateT =
+            driver
+                .findElementWithoutException(
+                    By.xpath("//div[. = 'дата публикации заявки']/following-sibling::div")
+                )
+                ?.text
+                ?.trim { it <= ' ' }
+                ?: run {
+                    logger("pubDateT not found")
+                    return
+                }
+        tn.pubDate = pubDateT.getDateFromString(formatter)
+        val endDateT =
+            driver
+                .findElementWithoutException(
+                    By.xpath("//div[. = 'окончание приема предложений']/following-sibling::div")
+                )
+                ?.text
+                ?.trim { it <= ' ' }
+                ?: run {
+                    logger("endDateT not found")
+                    return
+                }
+        tn.endDate = endDateT.getDateFromString(formatter)
+        tn.cusName =
+            driver
+                .findElementWithoutException(
+                    By.xpath("//div[. = 'заказчик']/following-sibling::div")
+                )
+                ?.text
+                ?.trim { it <= ' ' }
+                ?: ""
+        driver.findElements(By.xpath("//div/a[contains(@href, '/PlanClaimFiles')]")).forEach { at ->
+            val hrefAtt = at.getAttribute("href") ?: return@forEach
+            val nameAtt = at.text?.trim { it <= ' ' } ?: return@forEach
+            tn.attachments.add(
+                AttachOilb2b(
+                    hrefAtt,
+                    if (nameAtt == "") {
+                        "Документация"
+                    } else {
+                        nameAtt
+                    }
+                )
+            )
+        }
+        driver.findElements(By.xpath("//ul[@id = 'specData']/li[position() > 1]")).forEach { prod ->
+            val prodName =
+                prod.findElementWithoutException(By.xpath("./div[2]"))?.text?.trim { it <= ' ' }
+                    ?: return@forEach
+            val quant =
+                prod.findElementWithoutException(By.xpath("./div[3]"))?.text?.trim { it <= ' ' }
+                    ?: ""
+            val okei =
+                prod.findElementWithoutException(By.xpath("./div[4]"))?.text?.trim { it <= ' ' }
+                    ?: ""
+            val extDef =
+                prod.findElementWithoutException(By.xpath("./div[5]"))?.text?.trim { it <= ' ' }
+                    ?: ""
+            if (prodName != "") tn.products.add(Oilb2bProduct(prodName, quant, okei, extDef))
+        }
         DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
             .use(
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setTimestamp(2, Timestamp(tn.pubDate.time))
@@ -44,8 +122,8 @@ class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
                     var updated = false
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
@@ -57,8 +135,8 @@ class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
                         val dateB: Timestamp = rs.getTimestamp(2)
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             con.prepareStatement(
-                                "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                            )
+                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                )
                                 .apply {
                                     setInt(1, idT)
                                     execute()
@@ -95,9 +173,9 @@ class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
                             val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
@@ -154,9 +232,9 @@ class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
                     var idLot = 0
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, 1)
@@ -208,8 +286,8 @@ class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
                         val delivTerm =
                             "Срок закупки: ${tn.tenderDate}\nСрок исполнения договора (поставки): ${tn.endTenderDate}"
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)
@@ -222,8 +300,8 @@ class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
                     tn.attachments.forEach { (Url, Name) ->
                         val insertDoc =
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
-                            )
+                                    "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
+                                )
                                 .also {
                                     it.setInt(1, idTender)
                                     it.setString(2, Name)
@@ -235,8 +313,8 @@ class TenderOilb2b(val tn: Oilb2b) : TenderAbstract(), ITender {
                     tn.products.forEach {
                         val insertPurObj =
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?, okpd_name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?"
-                            )
+                                    "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?, okpd_name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?"
+                                )
                                 .apply {
                                     setInt(1, idLot)
                                     setInt(2, idCustomer)
