@@ -78,8 +78,8 @@ class ParserZakazRf : IParser, ParserAbstract() {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id = 'userName']"))
             )
-            driver.findElement(By.xpath("//input[@id = 'userName']")).sendKeys("Morozova_777")
-            driver.findElement(By.xpath("//input[@id = 'password']")).sendKeys("Adv66%EgRt")
+            driver.findElement(By.xpath("//input[@id = 'userName']")).sendKeys("enter-it_1@mail.ru")
+            driver.findElement(By.xpath("//input[@id = 'password']")).sendKeys("aa!rVdW8M8vEcE")
             driver.findElement(By.xpath("//button[@type = 'submit']")).click()
             Thread.sleep(5000)
             try {
@@ -186,7 +186,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
         val purName =
             el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
                 ?: el.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
-                ?: run {
+                    ?: run {
                     logger("purName not found ${href}")
                     return
                 }
