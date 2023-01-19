@@ -5,6 +5,7 @@ import java.util.logging.Level
 import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.remote.CapabilityType
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.deleteAllWhiteSpace
@@ -53,10 +54,15 @@ class ParserZakazRf : IParser, ParserAbstract() {
         options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
+
         // options.addArguments("user-agent=${RandomUserAgent.randomUserAgent}")
-        // options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR,
-        // UnexpectedAlertBehaviour.IGNORE)
+        options.setCapability(
+            CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR,
+            UnexpectedAlertBehaviour.IGNORE
+        )
         val driver = ChromeDriver(options)
+        driver.manage().window().size = Dimension(1280, 1024)
+        driver.manage().window().fullscreen()
         try {
             driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
             driver.manage().deleteAllCookies()
@@ -100,14 +106,21 @@ class ParserZakazRf : IParser, ParserAbstract() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+            driver.get(BaseUrl)
             Thread.sleep(5000)
             driver.switchTo().defaultContent()
             // driver.manage().window().maximize()
-            wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//table[@objecttype]/tbody/tr[@id]")
+            try {
+                wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath("//table[@objecttype]/tbody/tr[@id]")
+                    )
                 )
-            )
+            } catch (e: Exception) {
+                println(driver.pageSource)
+                driver.getScreenshotAs(OutputType.FILE)
+                throw e
+            }
             Thread.sleep(5000)
             driver.switchTo().defaultContent()
             getListTenders(driver, wait)

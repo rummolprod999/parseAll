@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="parser.parsers.ParserAgEatTest" time="0.02" errors="0" skipped="0">
+<testsuite tests="1" failures="0" name="parser.parsers.ParserAgEatTest" time="0.007" errors="0" skipped="0">
   <properties>
     <property name="idea.plugins.compatible.build" value="999.SNAPSHOT"/>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
@@ -23,8 +23,8 @@
     <property name="idea.io.use.nio2" value="true"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.endorsed.dirs" value="/home/alex/.jdks/adopt-openjdk-1.8.0_292/jre/lib/endorsed"/>
-    <property name="visualvm.id" value="4185139732433"/>
-    <property name="visualgc.id" value="4185139675788"/>
+    <property name="visualvm.id" value="2214464259560"/>
+    <property name="visualgc.id" value="2214464218053"/>
     <property name="line.separator" value="
 "/>
     <property name="java.io.tmpdir" value="/tmp"/>
@@ -74,5 +74,5 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="parser.parsers.ParserAgEatTest" name="parser" time="0.02"/>
+  <testcase classname="parser.parsers.ParserAgEatTest" name="parser" time="0.007"/>
 </testsuite>
