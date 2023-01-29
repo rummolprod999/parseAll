@@ -594,22 +594,24 @@ class Executor {
                     p = ParserAkbars()
                     executeParser(p, IParser::parser)
                 }
-
             Arguments.SNM ->
                 run {
                     p = ParserSnm()
                     executeParser(p, IParser::parser)
                 }
-
             Arguments.MMKCOAL ->
                 run {
                     p = ParserMmkCoal()
                     executeParser(p, IParser::parser)
                 }
-
             Arguments.PRNEFT ->
                 run {
                     p = ParserPrNeft()
+                    executeParser(p, IParser::parser)
+                }
+            Arguments.ZAKAZRFEX ->
+                run {
+                    p = ParserZakazRfEx()
                     executeParser(p, IParser::parser)
                 }
         }

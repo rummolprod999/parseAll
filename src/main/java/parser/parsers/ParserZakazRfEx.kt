@@ -10,17 +10,14 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.deleteAllWhiteSpace
 import parser.extensions.findElementWithoutException
-import parser.extensions.getDataFromRegexp
 import parser.extensions.getDateFromString
 import parser.logger.logger
 import parser.tenderClasses.ZakazRf
-import parser.tenders.TenderZakazRf
+import parser.tenders.TenderZakazRfEx
 import parser.tools.formatterEtpRfN
+import parser.tools.formatterOnlyDate
 
-class ParserZakazRf : IParser, ParserAbstract() {
-
-    private val tendersS = mutableListOf<TenderZakazRf>()
-
+class ParserZakazRfEx : IParser, ParserAbstract() {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
@@ -29,6 +26,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
+    private val tendersS = mutableListOf<TenderZakazRfEx>()
 
     override fun parser() = parse { parserZakazRf() }
     private fun parserZakazRf() {
@@ -48,7 +46,6 @@ class ParserZakazRf : IParser, ParserAbstract() {
             }
         }
     }
-
     private fun parserSelen() {
         val options = ChromeOptions()
         options.addArguments("headless")
@@ -66,49 +63,20 @@ class ParserZakazRf : IParser, ParserAbstract() {
         try {
             driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
             driver.manage().deleteAllCookies()
+
+            driver.get(BaseUrl)
             try {
-                driver.get("http://bp.zakazrf.ru/Logon/Customers")
-                driver.switchTo().defaultContent()
-            } catch (f: UnhandledAlertException) {
-                try {
-                    val alert: Alert = driver.switchTo().alert()
-                    val alertText: String = alert.getText()
-                    println("Alert data: $alertText")
-                    alert.accept()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                val alert: Alert = driver.switchTo().alert()
+                val alertText: String = alert.getText()
+                println("Alert data: $alertText")
+                alert.accept()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
+            driver.get(BaseUrl)
+            Thread.sleep(5000)
             driver.switchTo().defaultContent()
             val wait = WebDriverWait(driver, timeoutB)
-            wait.until(
-                ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id = 'userName']"))
-            )
-            driver.findElement(By.xpath("//input[@id = 'userName']")).sendKeys("enter-it_1@mail.ru")
-            driver.findElement(By.xpath("//input[@id = 'password']")).sendKeys("aa!rVdW8M8vEcE")
-            driver.findElement(By.xpath("//button[@type = 'submit']")).click()
-            Thread.sleep(5000)
-            try {
-                val alert: Alert = driver.switchTo().alert()
-                val alertText: String = alert.getText()
-                println("Alert data: $alertText")
-                alert.accept()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            Thread.sleep(5000)
-            driver.get(BaseUrl)
-            try {
-                val alert: Alert = driver.switchTo().alert()
-                val alertText: String = alert.getText()
-                println("Alert data: $alertText")
-                alert.accept()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            driver.get(BaseUrl)
-            Thread.sleep(5000)
-            driver.switchTo().defaultContent()
             // driver.manage().window().maximize()
             try {
                 wait.until(
@@ -117,8 +85,6 @@ class ParserZakazRf : IParser, ParserAbstract() {
                     )
                 )
             } catch (e: Exception) {
-                println(driver.pageSource)
-                driver.getScreenshotAs(OutputType.FILE)
                 throw e
             }
             Thread.sleep(5000)
@@ -203,47 +169,29 @@ class ParserZakazRf : IParser, ParserAbstract() {
                     logger("purName not found ${href}")
                     return
                 }
-        val purNum = href.getDataFromRegexp("/id/([\\d.]+)")
+        val purNum =
+            el.findElementWithoutException(By.xpath("./td[2]/a"))?.text?.trim { it <= ' ' } ?: ""
         val status =
-            el.findElementWithoutException(By.xpath("./td[16]"))?.text?.trim { it <= ' ' } ?: ""
-        val okei =
-            el.findElementWithoutException(By.xpath("./td[6]"))?.text?.trim { it <= ' ' } ?: ""
+            el.findElementWithoutException(By.xpath("./td[3]"))?.text?.trim { it <= ' ' } ?: ""
+        val okei = ""
         val price =
-            el.findElementWithoutException(By.xpath("./td[7]"))
-                ?.text
-                ?.trim { it <= ' ' }
-                ?.replace(",", "")
-                ?.deleteAllWhiteSpace()
-                ?: ""
-        val quantity =
-            el.findElementWithoutException(By.xpath("./td[8]"))
-                ?.text
-                ?.trim { it <= ' ' }
-                ?.replace(",", "")
-                ?.deleteAllWhiteSpace()
-                ?: ""
-        val sum =
-            el.findElementWithoutException(By.xpath("./td[9]"))
+            el.findElementWithoutException(By.xpath("./td[6]"))
                 ?.text
                 ?.trim { it <= ' ' }
                 ?.replace(",", ".")
                 ?.deleteAllWhiteSpace()
                 ?: ""
         val orgName =
-            el.findElementWithoutException(By.xpath("./td[10]"))?.text?.trim { it <= ' ' } ?: ""
-        val region =
-            el.findElementWithoutException(By.xpath("./td[11]"))?.text?.trim { it <= ' ' } ?: ""
-        val delivPlace =
-            el.findElementWithoutException(By.xpath("./td[14]"))?.text?.trim { it <= ' ' } ?: ""
+            el.findElementWithoutException(By.xpath("./td[7]"))?.text?.trim { it <= ' ' } ?: ""
         val pubDateT =
-            el.findElementWithoutException(By.xpath("./td[12]"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath("./td[10]"))?.text?.trim { it <= ' ' }
                 ?: run {
                     logger("pubDateT not found ${href}")
                     return
                 }
-        val datePub = pubDateT.getDateFromString(formatterEtpRfN)
+        val datePub = pubDateT.getDateFromString(formatterOnlyDate)
         val endDateT =
-            el.findElementWithoutException(By.xpath("./td[13]"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath("./td[12]"))?.text?.trim { it <= ' ' }
                 ?: run {
                     logger("endDateT not found ${href}")
                     return
@@ -258,19 +206,19 @@ class ParserZakazRf : IParser, ParserAbstract() {
                 dateEnd,
                 okei,
                 price,
-                quantity,
-                sum,
+                "",
+                "",
                 orgName,
-                region,
-                delivPlace,
+                "",
+                "",
                 status
             )
-        val t = TenderZakazRf(tt)
+        val t = TenderZakazRfEx(tt)
         tendersS.add(t)
     }
 
     companion object WebCl {
-        const val BaseUrl = "http://bp.zakazrf.ru/DeliveryRequest"
+        const val BaseUrl = "http://zakazrf.ru/NotificationEx"
         const val timeoutB = 30L
         const val CountPage = 80
     }
