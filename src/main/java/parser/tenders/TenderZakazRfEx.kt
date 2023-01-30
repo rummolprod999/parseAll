@@ -47,7 +47,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                     }
                     r.close()
                     stmt0.close()
-                    val stPage = downloadFromUrl(tn.href, i = 2)
+                    val stPage = downloadFromUrl(tn.href, i = 1)
                     if (stPage == "") {
                         logger("Gets empty string TenderEtpRf", tn.href)
                         return
