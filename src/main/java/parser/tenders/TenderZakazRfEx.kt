@@ -14,7 +14,9 @@ import parser.extensions.getDateFromString
 import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.ZakazRf
+import parser.tools.formatterEtpRf
 import parser.tools.formatterEtpRfN
+import parser.tools.formatterOnlyDate
 
 class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
     init {
@@ -169,7 +171,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                     try {
                         val stmto =
                             con.prepareStatement(
-                                "SELECT id_etp FROM ${BuilderApp.Prefix}etp WHERE name = ? AND tn.url = ? LIMIT 1"
+                                "SELECT id_etp FROM ${BuilderApp.Prefix}etp WHERE name = ? AND url = ? LIMIT 1"
                             )
                         stmto.setString(1, etpName)
                         stmto.setString(2, etpUrl)
@@ -183,7 +185,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                             stmto.close()
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}etp SET name = ?, tn.url = ?, conf=0",
+                                    "INSERT INTO ${BuilderApp.Prefix}etp SET name = ?, url = ?, conf=0",
                                     Statement.RETURN_GENERATED_KEYS
                                 )
                             stmtins.setString(1, etpName)
@@ -253,10 +255,50 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                 ?: ""
                         scoringDate = scoringDT.getDateFromString(formatterEtpRfN)
                     }
+                    if (scoringDate == Date(0L)) {
+                        scoringDT =
+                            html
+                                .selectFirst(
+                                    "td:containsOwn(Дата рассмотрения первых частей заявок) ~ td"
+                                )
+                                ?.ownText()
+                                ?.trim { it <= ' ' }
+                                ?: ""
+                        scoringDate = scoringDT.getDateFromString(formatterOnlyDate)
+                    }
+                    val dateBiddingT =
+                        html
+                            .selectFirst("td:containsOwn(Дата и время проведения торгов) ~ td")
+                            ?.ownText()
+                            ?.trim { it <= ' ' }
+                            ?: ""
+                    val dateBidding = dateBiddingT.getDateFromString(formatterEtpRf)
+                    val extendScoringDate =
+                        html
+                            .selectFirst(
+                                "td:containsOwn(Дата рассмотрения вторых частей заявок) ~ td"
+                            )
+                            ?.ownText()
+                            ?.trim { it <= ' ' }
+                            ?: ""
+
+                    val extendBiddingDate =
+                        html
+                            .selectFirst("td:containsOwn(Дата подведения итогов) ~ td")
+                            ?.ownText()
+                            ?.trim { it <= ' ' }
+                            ?: ""
+                    var region =
+                        html
+                            .selectFirst("td:containsOwn(Место поставки (субъект РФ)) ~ td")
+                            ?.ownText()
+                            ?.trim { it <= ' ' }
+                            ?: ""
+                    val idRegion = getIdRegion(con, region)
 
                     val insertTender =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}tender SET id_region = 0, id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, scoring_date = ?",
+                            "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, scoring_date = ?, bidding_date = ?, extend_scoring_date = ?, extend_bidding_date  = ?, id_region = ?",
                             Statement.RETURN_GENERATED_KEYS
                         )
                     insertTender.setString(1, tn.purNum)
@@ -276,6 +318,10 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                     insertTender.setString(15, tn.href)
                     insertTender.setString(16, printForm)
                     insertTender.setTimestamp(17, Timestamp(scoringDate.time))
+                    insertTender.setTimestamp(18, Timestamp(dateBidding.time))
+                    insertTender.setString(19, extendScoringDate)
+                    insertTender.setString(20, extendBiddingDate)
+                    insertTender.setInt(21, idRegion)
                     insertTender.executeUpdate()
                     val rt = insertTender.generatedKeys
                     if (rt.next()) {
@@ -432,7 +478,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                 close()
                             }
                     }
-                    val delivPlace =
+                    var delivPlace =
                         html
                             .selectFirst(
                                 "td:containsOwn(Место поставки, выполнения работ, оказания услуг) ~ td"
@@ -440,6 +486,22 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                             ?.ownText()
                             ?.trim { it <= ' ' }
                             ?: ""
+                    if (delivPlace == "") {
+                        val delivPlace1 =
+                            html
+                                .selectFirst(
+                                    "td:containsOwn(Место поставки товаров, выполнения работ, оказания услуг) ~ td"
+                                )
+                                ?.ownText()
+                                ?.trim { it <= ' ' }
+                                ?: ""
+                        delivPlace =
+                            "Регион: " +
+                                region +
+                                " " +
+                                "Место поставки товаров, выполнения работ, оказания услуг: " +
+                                delivPlace1
+                    }
                     val delivTerm =
                         html
                             .selectFirst("td:containsOwn(Дополнительные комментарии) ~ td")
