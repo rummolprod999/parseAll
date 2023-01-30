@@ -18,14 +18,14 @@ import parser.tools.formatterEtpRf
 import parser.tools.formatterEtpRfN
 import parser.tools.formatterOnlyDate
 
-class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
+class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
     init {
-        etpName = "Zakaz RF"
-        etpUrl = "http://zakazrf.ru/NotificationEx"
+        etpName = "Zakaz RF Удмуртия"
+        etpUrl = "http://udmurtia.zakazrf.ru/DeliveryRequest"
     }
 
     companion object TypeFz {
-        const val typeFz = 375
+        const val typeFz = 376
     }
 
     override fun parsing() {
@@ -92,22 +92,16 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                     }
                     rs.close()
                     stmt.close()
-                    var IdOrganizer = 0
-                    var fullNameOrg = tn.orgName
-                    val innOrg =
-                        html.selectFirst("td:containsOwn(ИНН) ~ td")?.ownText()?.trim() ?: ""
-                    val kppOrg =
-                        html.selectFirst("td:containsOwn(КПП) ~ td")?.ownText()?.trim() ?: ""
-                    if (innOrg != "") {
+                    var idOrganizer = 0
+                    if (tn.orgName != "") {
                         val stmto =
                             con.prepareStatement(
-                                "SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE inn = ? AND kpp = ?"
+                                "SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?"
                             )
-                        stmto.setString(1, innOrg)
-                        stmto.setString(2, kppOrg)
+                        stmto.setString(1, tn.orgName)
                         val rso = stmto.executeQuery()
                         if (rso.next()) {
-                            IdOrganizer = rso.getInt(1)
+                            idOrganizer = rso.getInt(1)
                             rso.close()
                             stmto.close()
                         } else {
@@ -115,53 +109,45 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                             stmto.close()
                             val postalAdr =
                                 html
-                                    .selectFirst("td:containsOwn(Почтовый адрес организации) ~ td")
+                                    .selectFirst("td:contains(Почтовый адрес) + td")
                                     ?.ownText()
-                                    ?.trim()
+                                    ?.trim { it <= ' ' }
                                     ?: ""
+                            val factAdr = ""
+                            val inn = ""
+                            val kpp = ""
                             val email =
                                 html
-                                    .selectFirst(
-                                        "td:containsOwn(e-mail адрес контактного лица) ~ td"
-                                    )
+                                    .selectFirst("td:contains(Адрес электронной почты) + td a")
                                     ?.ownText()
-                                    ?.trim()
+                                    ?.trim { it <= ' ' }
                                     ?: ""
                             val phone =
                                 html
-                                    .selectFirst("td:containsOwn(Телефон контактного лица) ~ td")
+                                    .selectFirst("td:contains(Номер контактного телефона) + td")
                                     ?.ownText()
-                                    ?.trim()
+                                    ?.trim { it <= ' ' }
                                     ?: ""
-                            val fax =
-                                html
-                                    .selectFirst("td:containsOwn(Факс контактного лица) ~ td")
-                                    ?.ownText()
-                                    ?.trim()
-                                    ?: ""
-                            val contactPerson =
-                                html
-                                    .selectFirst("td:containsOwn(Контактное лицо) ~ td")
-                                    ?.ownText()
-                                    ?.trim()
-                                    ?: ""
+                            val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, inn = ?, kpp = ?, post_address = ?, contact_person = ?, contact_email = ?, contact_phone = ?, contact_fax = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
-                            stmtins.setString(1, fullNameOrg)
-                            stmtins.setString(2, innOrg)
-                            stmtins.setString(3, kppOrg)
-                            stmtins.setString(4, postalAdr)
-                            stmtins.setString(5, contactPerson)
-                            stmtins.setString(6, email)
-                            stmtins.setString(7, phone)
-                            stmtins.setString(8, fax)
-                            stmtins.executeUpdate()
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
+                                    .apply {
+                                        setString(1, tn.orgName)
+                                        setString(2, postalAdr)
+                                        setString(3, email)
+                                        setString(4, phone)
+                                        setString(5, factAdr)
+                                        setString(6, contactPerson)
+                                        setString(7, inn)
+                                        setString(8, kpp)
+                                        executeUpdate()
+                                    }
                             val rsoi = stmtins.generatedKeys
                             if (rsoi.next()) {
-                                IdOrganizer = rsoi.getInt(1)
+                                idOrganizer = rsoi.getInt(1)
                             }
                             rsoi.close()
                             stmtins.close()
@@ -202,7 +188,10 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
 
                     var IdPlacingWay = 0
                     val placingWay =
-                        html.selectFirst("td:containsOwn(Способ закупки) ~ td")?.ownText()?.trim()
+                        html
+                            .selectFirst("td:containsOwn(Тип закупочной процедуры) ~ td")
+                            ?.ownText()
+                            ?.trim()
                             ?: ""
                     if (placingWay != "") {
                         val stmto =
@@ -275,26 +264,20 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                     val dateBidding = dateBiddingT.getDateFromString(formatterEtpRf)
                     val extendScoringDate =
                         html
-                            .selectFirst(
-                                "td:containsOwn(Дата рассмотрения вторых частей заявок) ~ td"
-                            )
+                            .selectFirst("td:containsOwn(Окончание определения лучшей цены) ~ td")
                             ?.ownText()
                             ?.trim { it <= ' ' }
                             ?: ""
 
                     val extendBiddingDate =
                         html
-                            .selectFirst("td:containsOwn(Дата подведения итогов) ~ td")
+                            .selectFirst(
+                                "td:containsOwn(Окончание определения лучшего предложения) ~ td"
+                            )
                             ?.ownText()
                             ?.trim { it <= ' ' }
                             ?: ""
-                    var region =
-                        html
-                            .selectFirst("td:containsOwn(Место поставки (субъект РФ)) ~ td")
-                            ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
-                    val idRegion = getIdRegion(con, region)
+                    val idRegion = getIdRegion(con, "Удмурт")
 
                     val insertTender =
                         con.prepareStatement(
@@ -307,7 +290,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                     insertTender.setString(4, tn.href)
                     insertTender.setString(5, tn.purName)
                     insertTender.setInt(6, typeFz)
-                    insertTender.setInt(7, IdOrganizer)
+                    insertTender.setInt(7, idOrganizer)
                     insertTender.setInt(8, IdPlacingWay)
                     insertTender.setInt(9, IdEtp)
                     insertTender.setTimestamp(10, Timestamp(tn.endDate.time))
@@ -344,6 +327,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                             "table[data-orm-table-id = HistoryFilesFiltered] tbody tr[style]"
                         )
                     )
+
                     if (documents.count() > 0) {
                         documents.forEach { doc ->
                             val href =
@@ -391,28 +375,28 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                     rl.close()
                     insertLot.close()
                     var idCustomer = 0
-                    if (innOrg != "") {
-                        val stmto =
+                    if (tn.orgName != "") {
+                        val stmtoc =
                             con.prepareStatement(
-                                "SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE inn = ? LIMIT 1"
+                                "SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1"
                             )
-                        stmto.setString(1, innOrg)
-                        val rso = stmto.executeQuery()
-                        if (rso.next()) {
-                            idCustomer = rso.getInt(1)
-                            rso.close()
-                            stmto.close()
+                        stmtoc.setString(1, tn.orgName)
+                        val rsoc = stmtoc.executeQuery()
+                        if (rsoc.next()) {
+                            idCustomer = rsoc.getInt(1)
+                            rsoc.close()
+                            stmtoc.close()
                         } else {
-                            rso.close()
-                            stmto.close()
+                            rsoc.close()
+                            stmtoc.close()
                             val stmtins =
                                 con.prepareStatement(
                                     "INSERT INTO ${BuilderApp.Prefix}customer SET full_name = ?, is223=1, reg_num = ?, inn = ?",
                                     Statement.RETURN_GENERATED_KEYS
                                 )
-                            stmtins.setString(1, fullNameOrg)
+                            stmtins.setString(1, tn.orgName)
                             stmtins.setString(2, java.util.UUID.randomUUID().toString())
-                            stmtins.setString(3, innOrg)
+                            stmtins.setString(3, "")
                             stmtins.executeUpdate()
                             val rsoi = stmtins.generatedKeys
                             if (rsoi.next()) {
@@ -486,14 +470,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                 close()
                             }
                     }
-                    var delivPlace =
-                        html
-                            .selectFirst(
-                                "td:containsOwn(Место поставки, выполнения работ, оказания услуг) ~ td"
-                            )
-                            ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                    var delivPlace = tn.delivPlace
                     if (delivPlace == "") {
                         val delivPlace1 =
                             html
@@ -505,7 +482,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                 ?: ""
                         delivPlace =
                             "Регион: " +
-                                region +
+                                tn.delivPlace +
                                 " " +
                                 "Место поставки товаров, выполнения работ, оказания услуг: " +
                                 delivPlace1

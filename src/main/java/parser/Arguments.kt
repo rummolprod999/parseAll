@@ -90,4 +90,5 @@ enum class Arguments {
     MMKCOAL,
     PRNEFT,
     ZAKAZRFEX,
+    ZAKAZRFUDMURT,
 }

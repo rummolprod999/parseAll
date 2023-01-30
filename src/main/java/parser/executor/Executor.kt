@@ -614,6 +614,11 @@ class Executor {
                     p = ParserZakazRfEx()
                     executeParser(p, IParser::parser)
                 }
+            Arguments.ZAKAZRFUDMURT ->
+                run {
+                    p = ParserZakazRfUdmurt()
+                    executeParser(p, IParser::parser)
+                }
         }
     }
 
