@@ -91,4 +91,5 @@ enum class Arguments {
     PRNEFT,
     ZAKAZRFEX,
     ZAKAZRFUDMURT,
+    ETPAGRO,
 }

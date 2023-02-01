@@ -619,6 +619,11 @@ class Executor {
                     p = ParserZakazRfUdmurt()
                     executeParser(p, IParser::parser)
                 }
+            Arguments.ETPAGRO ->
+                run {
+                    p = ParserEtpAgro()
+                    executeParser(p, IParser::parser)
+                }
         }
     }
 
