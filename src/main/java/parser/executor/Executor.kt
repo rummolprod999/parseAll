@@ -571,7 +571,7 @@ class Executor {
                 }
             Arguments.DSK1 ->
                 run {
-                    p = ParserDsk1()
+                    p = ParserDsk1New()
                     executeParser(p, IParser::parser)
                 }
             Arguments.CDS ->
