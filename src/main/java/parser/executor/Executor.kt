@@ -632,6 +632,12 @@ class Executor {
                     p = ParserKblutch()
                     executeParser(p, IParser::parser)
                 }
+
+            Arguments.PSFOND ->
+                run {
+                    p = ParserPsfond()
+                    executeParser(p, IParser::parser)
+                }
         }
     }
 

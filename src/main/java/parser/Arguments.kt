@@ -93,5 +93,5 @@ enum class Arguments {
     ZAKAZRFUDMURT,
     ETPAGRO,
     KBLUTCH,
-
+    PSFOND,
 }
