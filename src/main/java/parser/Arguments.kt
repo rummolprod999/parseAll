@@ -92,4 +92,6 @@ enum class Arguments {
     ZAKAZRFEX,
     ZAKAZRFUDMURT,
     ETPAGRO,
+    KBLUTCH,
+
 }

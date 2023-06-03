@@ -614,14 +614,22 @@ class Executor {
                     p = ParserZakazRfEx()
                     executeParser(p, IParser::parser)
                 }
+
             Arguments.ZAKAZRFUDMURT ->
                 run {
                     p = ParserZakazRfUdmurt()
                     executeParser(p, IParser::parser)
                 }
+
             Arguments.ETPAGRO ->
                 run {
                     p = ParserEtpAgro()
+                    executeParser(p, IParser::parser)
+                }
+
+            Arguments.KBLUTCH ->
+                run {
+                    p = ParserKblutch()
                     executeParser(p, IParser::parser)
                 }
         }
