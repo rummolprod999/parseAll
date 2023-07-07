@@ -638,6 +638,12 @@ class Executor {
                     p = ParserPsfond()
                     executeParser(p, IParser::parser)
                 }
+
+            Arguments.RUSSALT ->
+                run {
+                    p = ParserRusSalt()
+                    executeParser(p, IParser::parser)
+                }
         }
     }
 

@@ -94,4 +94,5 @@ enum class Arguments {
     ETPAGRO,
     KBLUTCH,
     PSFOND,
+    RUSSALT,
 }
