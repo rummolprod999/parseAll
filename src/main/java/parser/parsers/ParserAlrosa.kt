@@ -97,7 +97,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
             driver.switchTo().frame(0)
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//tbody[@id = 'WD6F-contentTBody']/tr[@rr and @sst and @rt]")
+                    By.xpath("//tbody[@id = 'WD6C-contentTBody']/tr[@rr and @sst and @rt]")
                 )
             )
             // driver.switchTo().defaultContent()
