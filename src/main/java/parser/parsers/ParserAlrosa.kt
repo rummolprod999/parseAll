@@ -1,8 +1,5 @@
 package parser.parsers
 
-import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -18,6 +15,9 @@ import parser.tenderClasses.Alrosa
 import parser.tenderClasses.AlrosaProduct
 import parser.tenders.TenderAlrosa
 import parser.tools.formatterOnlyDate
+import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserAlrosa : IParser, ParserAbstract() {
     private val tendersList = mutableListOf<TenderAlrosa>()
@@ -73,7 +73,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
                 ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[. = 'Вход в систему']"))
             )
             driver.findElement(By.xpath("//input[@id = 'sap-user']")).sendKeys("enter-it_1@m")
-            driver.findElement(By.xpath("//input[@id = 'sap-password']")).sendKeys("Wr#9gWDj")
+            driver.findElement(By.xpath("//input[@id = 'sap-password']")).sendKeys("E4HxeUbeu-aB8P3")
             driver.findElement(By.xpath("//a[. = 'Вход в систему']")).click()
             Thread.sleep(5000)
             driver.switchTo().defaultContent()
