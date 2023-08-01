@@ -1,11 +1,6 @@
 package parser.tenders
 
 import com.google.gson.GsonBuilder
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.json.XML
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
@@ -18,6 +13,12 @@ import parser.extensions.findElementWithoutException
 import parser.extensions.getDateFromString
 import parser.logger.logger
 import parser.tools.formatterGpn
+import parser.tools.formatterOnlyDate
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
 
@@ -101,6 +102,18 @@ class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                     ?.trim { it <= ' ' }
                     ?: ""
         }
+        if (datePubTmp == "") {
+            datePubTmp =
+                drv.findElementWithoutException(
+                    By.xpath(
+                        "//td[contains(., 'Дата начала срока подачи заявок на участие')]/following-sibling::td/span"
+                    )
+                )
+                    ?.text
+                    ?.trim()
+                    ?.trim { it <= ' ' }
+                    ?: ""
+        }
         var dateEndTmp =
             drv.findElementWithoutException(
                 By.xpath(
@@ -123,10 +136,10 @@ class TenderRussianPostAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                     ?.trim { it <= ' ' }
                     ?: ""
         }
-        val pubDate = datePubTmp.getDateFromString(formatterGpn)
-        val endDate = dateEndTmp.getDateFromString(formatterGpn)
-        if (pubDate == Date(0L) || endDate == Date(0L)) {
-            logger("can not find pubDate or dateEnd on page", href, purNum)
+        val pubDate = if (datePubTmp.length <11) datePubTmp.getDateFromString(formatterOnlyDate) else datePubTmp.getDateFromString(formatterGpn)
+        val endDate = if (dateEndTmp.length <11) dateEndTmp.getDateFromString(formatterOnlyDate) else dateEndTmp.getDateFromString(formatterGpn)
+        if (pubDate == Date(0L) && endDate == Date(0L)) {
+            logger("can not find pubDate and dateEnd on page", href, purNum)
             return
         }
         val dateScoringTmp =

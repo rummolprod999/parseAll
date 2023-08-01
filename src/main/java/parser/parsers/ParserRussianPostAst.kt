@@ -1,8 +1,5 @@
 package parser.parsers
 
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -13,6 +10,9 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenders.TenderRussianPostAst
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserRussianPostAst : IParser, ParserAbstract() {
 
@@ -51,7 +51,7 @@ class ParserRussianPostAst : IParser, ParserAbstract() {
 
     private fun parserSelen() {
         val options = ChromeOptions()
-        options.addArguments("headless")
+        //options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         drv = ChromeDriver(options)
