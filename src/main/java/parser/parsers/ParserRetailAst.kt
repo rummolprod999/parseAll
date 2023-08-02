@@ -1,8 +1,5 @@
 package parser.parsers
 
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -13,6 +10,9 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenders.TenderRetailAst
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserRetailAst : IParser, ParserAbstract() {
 
@@ -51,7 +51,7 @@ class ParserRetailAst : IParser, ParserAbstract() {
 
     private fun parserSelen() {
         val options = ChromeOptions()
-        options.addArguments("headless")
+        //options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         drv = ChromeDriver(options)
@@ -174,9 +174,9 @@ class ParserRetailAst : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "http://utp.sberbank-ast.ru/Retail/List/PurchaseList"
+        const val BaseUrl = "https://utp.sberbank-ast.ru/Retail/List/PurchaseList/"
         const val timeoutB = 60L
-        const val CountPage = 10
+        const val CountPage = 20
         val executor = Executors.newSingleThreadExecutor()
     }
 }
