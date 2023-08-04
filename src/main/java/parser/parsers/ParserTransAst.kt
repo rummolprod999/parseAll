@@ -1,7 +1,5 @@
 package parser.parsers
 
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -12,6 +10,8 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenders.TenderTransAst
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserTransAst : IParser, ParserAbstract() {
 
@@ -50,18 +50,51 @@ class ParserTransAst : IParser, ParserAbstract() {
 
     private fun parserSelen(urlPage: String) {
         val options = ChromeOptions()
-        options.addArguments("headless")
+        // options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         drv = ChromeDriver(options)
         drv.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         drv.manage().deleteAllCookies()
+        val wait = WebDriverWait(drv, 5)
+        drv.get("https://login.sberbank-ast.ru/Login.aspx")
+        Thread.sleep(5000)
+        try {
+            val alert = wait.until(ExpectedConditions.alertIsPresent())
+            alert.accept()
+        } catch (e: Exception) {}
+
+        drv.switchTo().defaultContent()
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//input[@id = 'mainContent_txtLoginName']")
+            )
+        )
+        drv.findElement(By.xpath("//input[@id = 'mainContent_txtLoginName']"))
+            .sendKeys("114049225022048885")
+        drv.findElement(By.xpath("//input[@id = 'mainContent_txtPassword']"))
+            .sendKeys("Wsy74FC4yLjuMBJ")
+        try {
+            val alert1 = wait.until(ExpectedConditions.alertIsPresent())
+            alert1.accept()
+        } catch (e: Exception) {}
+
+        // driver.findElement(By.xpath("//button[@pbutton]")).click()
+        /*val js = drv as JavascriptExecutor
+        js.executeScript("document.querySelectorAll('#btnSignInLogin')[1].click()")*/
+        try {
+            drv.findElement(By.cssSelector("#btnSignInLogin")).click()
+            val alert1 = wait.until(ExpectedConditions.alertIsPresent())
+            alert1.accept()
+        } catch (e: Exception) {}
+
+        Thread.sleep(5000)
         drv.get(urlPage)
         try {
             for (i in 1..CountPage) {
                 parserList(urlPage)
+                parserPageS()
             }
-            parserPageS()
         } catch (e: Exception) {
             logger("Error in parser function", e.stackTrace, e)
         } finally {
@@ -96,8 +129,7 @@ class ParserTransAst : IParser, ParserAbstract() {
             js.executeScript(
                 "var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();"
             )
-        } catch (e: Exception) {
-        }
+        } catch (e: Exception) {}
     }
 
     private fun parserTender(el: WebElement, ind: Int) {
@@ -120,33 +152,51 @@ class ParserTransAst : IParser, ParserAbstract() {
         }
         try {
             val js = drv as JavascriptExecutor
-            js.executeScript("document.querySelectorAll('div.sendApplication + a')[$ind].click();")
+            js.executeScript("document.querySelectorAll('a.STRView')[$ind].click();")
         } catch (e: Exception) {
-            logger("document.querySelectorAll('div.sendApplication + a')[$ind].click();")
+            logger("document.querySelectorAll('a.STRView')[$ind].click();")
         }
+        Thread.sleep(1000)
     }
 
     private fun parserPageS() {
         val windowHandlers = drv.windowHandles
-        windowHandlers.removeAll(windowsSet)
-        windowHandlers.forEach {
+        // windowHandlers.removeAll(windowsSet)
+        windowHandlers.forEach { t ->
+            if (t == windowsSet.elementAt(0)) {
+                return@forEach
+            }
             try {
-                parserPage(it)
+                /*val future: Future<Boolean> = executor.submit(Callable<Boolean> { parserPage(t) }) as Future<Boolean>
+                try {
+                    val s: Boolean = future.get(30, TimeUnit.SECONDS)
+                } catch (ex: Exception) {
+                    future.cancel(true)
+                    throw ex
+                } finally {
+                    future.cancel(true)
+                }*/
+                parserPage(t)
             } catch (e: Exception) {
                 logger(e)
             }
         }
     }
 
-    private fun parserPage(window: String) {
+    private fun parserPage(window: String): Boolean {
         drv.switchTo().window(window)
         val tnd = TenderTransAst(drv)
         try {
-            // println(it)
             ParserTender(tnd)
         } catch (e: Exception) {
             logger("error in ParserTender", e.stackTrace, e)
         }
+        try {
+            drv.close()
+        } catch (e: Exception) {
+            logger(e)
+        }
+        return true
     }
 
     companion object WebCl {

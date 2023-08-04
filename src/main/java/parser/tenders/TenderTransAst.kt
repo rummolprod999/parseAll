@@ -554,20 +554,22 @@ class TenderTransAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                         it <= ' '
                     }
                         ?: ""
-                con.prepareStatement(
-                    "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, okpd2_code = ?"
-                )
-                    .apply {
-                        setInt(1, idLot)
-                        setInt(2, idCustomer)
-                        setString(3, name)
-                        setString(4, okei)
-                        setString(5, quantity)
-                        setString(6, quantity)
-                        setString(7, okpd2)
-                        executeUpdate()
-                        close()
-                    }
+                if(name != null && name != ""){
+                    con.prepareStatement(
+                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, okpd2_code = ?"
+                    )
+                        .apply {
+                            setInt(1, idLot)
+                            setInt(2, idCustomer)
+                            setString(3, name)
+                            setString(4, okei)
+                            setString(5, quantity)
+                            setString(6, quantity)
+                            setString(7, okpd2)
+                            executeUpdate()
+                            close()
+                        }
+                }
             }
         } else {
             val insertPurObj =
