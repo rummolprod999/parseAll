@@ -95,4 +95,5 @@ enum class Arguments {
     KBLUTCH,
     PSFOND,
     RUSSALT,
+    BIDAST,
 }

@@ -438,9 +438,18 @@ abstract class TenderAbstract {
         var fileid: String? = null
     }
 
+    class FileAstNew {
+        var filename: String? = null
+        var fileName: String? = null
+        var url: String? = null
+    }
+
     class Docs {
         var file: ArrayList<FileAst>? = null
         var AuctionDocs: AuctionDocs? = null
+    }
+    class DocFiles {
+        var document: ArrayList<FileAstNew>? = null
     }
 
     class Docs1 {
@@ -492,6 +501,7 @@ abstract class TenderAbstract {
 
     class PurchaseDocumentationDocsInfo {
         var Docs: Docs? = null
+        var DocFiles: DocFiles? = null
     }
 
     protected open fun getDocsAst(

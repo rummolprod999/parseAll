@@ -644,6 +644,11 @@ class Executor {
                     p = ParserRusSalt()
                     executeParser(p, IParser::parser)
                 }
+            Arguments.BIDAST ->
+                run {
+                    p = ParserBidAst()
+                    executeParser(p, IParser::parser)
+                }
         }
     }
 
