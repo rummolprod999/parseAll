@@ -115,7 +115,7 @@ class TenderTransAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             drv
                 .findElementWithoutException(
                     By.xpath(
-                        "//tbody[@content = 'other:TenderInfobody']//td[contains(., 'Дата и время начала торгов')]/following-sibling::td/span"
+                        "//tbody[@content = 'other:TenderInfobody']//td[contains(., 'Дата и время подведения итогов')]/following-sibling::td/span"
                     )
                 )
                 ?.text
@@ -545,12 +545,12 @@ class TenderTransAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                         ?.trim { it <= ' ' }
                         ?: ""
                 val okpd2 =
-                    po.findElementWithoutException(By.xpath("./td[5]/span"))?.text?.trim()?.trim {
+                    po.findElementWithoutException(By.xpath("./td[6]/span"))?.text?.trim()?.trim {
                         it <= ' '
                     }
                         ?: ""
                 val okei =
-                    po.findElementWithoutException(By.xpath("./td[7]/span"))?.text?.trim()?.trim {
+                    po.findElementWithoutException(By.xpath("./td[8]/span"))?.text?.trim()?.trim {
                         it <= ' '
                     }
                         ?: ""
