@@ -1,11 +1,5 @@
 package parser.tenders
 
-import java.lang.Thread.sleep
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
@@ -20,6 +14,12 @@ import parser.logger.logger
 import parser.parsers.ParserAgEat
 import parser.tenderClasses.AgEat
 import parser.tools.formatterGpn
+import java.lang.Thread.sleep
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), ITender {
 
@@ -438,7 +438,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                     purObjts.forEach { element ->
                         val purName =
                             element
-                                .findElementWithoutException(By.xpath(".//td[2]/span"))
+                                .findElementWithoutException(By.xpath(".//td[2]/app-lot-name/span"))
                                 ?.text
                                 ?.trim()
                                 ?.trim { it <= ' ' }
