@@ -1,8 +1,5 @@
 package parser.parsers
 
-import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.Dimension
 import org.openqa.selenium.WebElement
@@ -17,6 +14,9 @@ import parser.logger.logger
 import parser.tenderClasses.Tmk
 import parser.tenders.TenderTmk
 import parser.tools.formatterGpn
+import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserTmk : IParser, ParserAbstract() {
     private val tendersList = mutableListOf<TenderTmk>()
@@ -199,14 +199,14 @@ class ParserTmk : IParser, ParserAbstract() {
             }
                 ?: ""
         val datePubTmp =
-            el.findElementWithoutException(By.xpath(".//td[9]/div"))?.text?.trim { it <= ' ' } ?: ""
+            el.findElementWithoutException(By.xpath(".//td[10]/div"))?.text?.trim { it <= ' ' } ?: ""
         val datePub = datePubTmp.getDateFromString(formatterGpn)
         if (datePub == Date(0L)) {
             logger("cannot find datePub on page", href, purNum)
             return
         }
         val dateEndTmp =
-            el.findElementWithoutException(By.xpath(".//td[11]/div"))?.text?.trim { it <= ' ' }
+            el.findElementWithoutException(By.xpath(".//td[12]/div"))?.text?.trim { it <= ' ' }
                 ?: ""
         val dateEndR = dateEndTmp.getDataFromRegexp("""(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")
         val dateEnd = dateEndR.getDateFromString(formatterGpn)
