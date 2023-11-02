@@ -73,7 +73,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
                 ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[. = 'Вход в систему']"))
             )
             driver.findElement(By.xpath("//input[@id = 'sap-user']")).sendKeys("enter-it_1@m")
-            driver.findElement(By.xpath("//input[@id = 'sap-password']")).sendKeys("E4HxeUbeu-aB8P3")
+            driver.findElement(By.xpath("//input[@id = 'sap-password']")).sendKeys("Wr#9gWDj*)Mav11")
             driver.findElement(By.xpath("//a[. = 'Вход в систему']")).click()
             Thread.sleep(5000)
             driver.switchTo().defaultContent()
