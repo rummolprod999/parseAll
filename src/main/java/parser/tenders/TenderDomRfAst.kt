@@ -74,7 +74,7 @@ class TenderDomRfAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             logger("cannot purName in tender", href)
             return
         }
-        val datePubTmp =
+        var datePubTmp =
             drv
                 .findElementWithoutException(
                     By.xpath(
@@ -85,7 +85,19 @@ class TenderDomRfAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 ?.trim()
                 ?.trim { it <= ' ' }
                 ?: ""
-        val dateEndTmp =
+        if (datePubTmp == "") {
+            datePubTmp =
+                drv.findElementWithoutException(
+                    By.xpath(
+                        "//td[contains(., 'Дата начала срока подачи предложений')]/following-sibling::td/span"
+                    )
+                )
+                    ?.text
+                    ?.trim()
+                    ?.trim { it <= ' ' }
+                    ?: ""
+        }
+        var dateEndTmp =
             drv
                 .findElementWithoutException(
                     By.xpath(
@@ -96,6 +108,18 @@ class TenderDomRfAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 ?.trim()
                 ?.trim { it <= ' ' }
                 ?: ""
+        if (dateEndTmp == "") {
+            dateEndTmp =
+                drv.findElementWithoutException(
+                    By.xpath(
+                        "//td[contains(., 'Дата и время окончания срока подачи предложений')]/following-sibling::td/span"
+                    )
+                )
+                    ?.text
+                    ?.trim()
+                    ?.trim { it <= ' ' }
+                    ?: ""
+        }
         val pubDate = datePubTmp.getDateFromString(formatterOnlyDate)
         val endDate = dateEndTmp.getDateFromString(formatterGpn)
         if (pubDate == Date(0L) || endDate == Date(0L)) {

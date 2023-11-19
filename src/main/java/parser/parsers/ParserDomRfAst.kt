@@ -54,6 +54,9 @@ class ParserDomRfAst : IParser, ParserAbstract() {
         //options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
+        options.addArguments("disable-infobars");
+        options.addArguments("lang=ru, ru-RU");
+        options.addArguments("disable-blink-features=AutomationControlled");
         drv = ChromeDriver(options)
         drv.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         drv.manage().timeouts().setScriptTimeout(timeoutB, TimeUnit.SECONDS)
