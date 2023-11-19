@@ -12,7 +12,7 @@ import parser.tools.formatterOnlyDate
 
 class ParserPrNeft : IParser, ParserAbstract() {
     companion object WebCl {
-        const val BaseUrl = "http://www.prneft.ru/tendery/obyavlennyie-tenderyi/"
+        const val BaseUrl = "https://www.prneft.ru/tendery/obyavlennyie-tenderyi/"
     }
 
     override fun parser() = parse { parserPrNeft() }
