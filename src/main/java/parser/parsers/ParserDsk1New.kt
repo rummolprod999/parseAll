@@ -1,9 +1,7 @@
 package parser.parsers
 
-import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
+import org.openqa.selenium.PageLoadStrategy
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -18,6 +16,9 @@ import parser.tenderClasses.Dsk1
 import parser.tenders.TenderDsk1New
 import parser.tools.formatterGpn
 import parser.tools.formatterOnlyDate
+import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserDsk1New : IParser, ParserAbstract() {
     private val tendersS = mutableListOf<TenderDsk1New>()
@@ -55,7 +56,16 @@ class ParserDsk1New : IParser, ParserAbstract() {
         options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
+        options.addArguments("disable-infobars")
+        options.addArguments("lang=ru, ru-RU")
+        options.addArguments("disable-blink-features=AutomationControlled")
+        options.addArguments("disable-dev-shm-usage")
+        options.addArguments("disable-browser-side-navigation")
+        options.addArguments("start-maximized")
+        options.setPageLoadStrategy(PageLoadStrategy.NONE)
         val driver = ChromeDriver(options)
+        driver.manage().timeouts().pageLoadTimeout(ParserCbrfAst.timeoutB, TimeUnit.SECONDS)
+        driver.manage().timeouts().setScriptTimeout(ParserCbrfAst.timeoutB, TimeUnit.SECONDS)
         try {
             driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
             driver.manage().deleteAllCookies()
@@ -155,7 +165,7 @@ class ParserDsk1New : IParser, ParserAbstract() {
     }
 
     companion object WebCl {
-        const val BaseUrl = "https://www.dsk1.ru/about/tenders"
+        const val BaseUrl = "https://www.dsk1.ru/about/tenders/active"
         const val timeoutB = 30L
         const val CountPage = 10
         var i = 2
