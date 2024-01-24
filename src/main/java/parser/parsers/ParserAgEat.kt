@@ -1,9 +1,8 @@
 package parser.parsers
 
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.Dimension
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -14,6 +13,8 @@ import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenderClasses.AgEat
 import parser.tenders.TenderAgEat
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserAgEat : IParser, ParserAbstract() {
     private val tendersList = mutableListOf<TenderAgEat>()
@@ -52,6 +53,74 @@ class ParserAgEat : IParser, ParserAbstract() {
                 driver = ChromeDriver(options)
                 driver.manage().window().size = Dimension(1280, 1024)
                 driver.manage().window().fullscreen()
+                try {
+                    val js = driver as JavascriptExecutor
+                    js.executeScript(
+                        "Object.defineProperty(navigator, 'languages', {\n" +
+                            "  get: function() {\n" +
+                            "    return ['ru-RU', 'ru'];\n" +
+                            "  },\n" +
+                            "});\n" +
+                            "\n" +
+                            "// overwrite the `plugins` property to use a custom getter\n" +
+                            "Object.defineProperty(navigator, 'plugins', {\n" +
+                            "  get: function() {\n" +
+                            "    // this just needs to have `length > 0`, but we could mock the plugins too\n" +
+                            "    return [1, 2, 3, 4, 5];\n" +
+                            "  },\n" +
+                            "});"
+                    )
+                    js.executeScript(
+                        "const getParameter = WebGLRenderingContext.getParameter;\n" +
+                            "WebGLRenderingContext.prototype.getParameter = function(parameter) {\n" +
+                            "  // UNMASKED_VENDOR_WEBGL\n" +
+                            "  if (parameter === 37445) {\n" +
+                            "    return 'Intel Open Source Technology Center';\n" +
+                            "  }\n" +
+                            "  // UNMASKED_RENDERER_WEBGL\n" +
+                            "  if (parameter === 37446) {\n" +
+                            "    return 'Mesa DRI Intel(R) Ivybridge Mobile ';\n" +
+                            "  }\n" +
+                            "\n" +
+                            "  return getParameter(parameter);\n" +
+                            "};"
+                    )
+                    js.executeScript(
+                        "['height', 'width'].forEach(property => {\n" +
+                            "  // store the existing descriptor\n" +
+                            "  const imageDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, property);\n" +
+                            "\n" +
+                            "  // redefine the property with a patched descriptor\n" +
+                            "  Object.defineProperty(HTMLImageElement.prototype, property, {\n" +
+                            "    ...imageDescriptor,\n" +
+                            "    get: function() {\n" +
+                            "      // return an arbitrary non-zero dimension if the image failed to load\n" +
+                            "      if (this.complete && this.naturalHeight == 0) {\n" +
+                            "        return 20;\n" +
+                            "      }\n" +
+                            "      // otherwise, return the actual dimension\n" +
+                            "      return imageDescriptor.get.apply(this);\n" +
+                            "    },\n" +
+                            "  });\n" +
+                            "});"
+                    )
+                    js.executeScript(
+                        "const elementDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');\n" +
+                            "\n" +
+                            "// redefine the property with a patched descriptor\n" +
+                            "Object.defineProperty(HTMLDivElement.prototype, 'offsetHeight', {\n" +
+                            "  ...elementDescriptor,\n" +
+                            "  get: function() {\n" +
+                            "    if (this.id === 'modernizr') {\n" +
+                            "        return 1;\n" +
+                            "    }\n" +
+                            "    return elementDescriptor.get.apply(this);\n" +
+                            "  },\n" +
+                            "});"
+                    )
+                } catch (e: Exception) {
+                    logger(e)
+                }
                 parserSelen()
                 break
             } catch (e: Exception) {
@@ -116,9 +185,19 @@ class ParserAgEat : IParser, ParserAbstract() {
 
     private fun getchromeOptions(): ChromeOptions {
         val options = ChromeOptions()
-        options.addArguments("headless")
+        // options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
+        options.addArguments("disable-infobars")
+        options.addArguments("lang=ru, ru-RU")
+        options.addArguments("disable-blink-features=AutomationControlled")
+        options.addArguments("disable-dev-shm-usage")
+        options.addArguments("disable-browser-side-navigation")
+        options.setExperimentalOption("excludeSwitches", arrayOf("enable-automation"))
+        options.addArguments(
+            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36"
+        )
+        options.setCapability("useAutomationExtension", false)
         return options
     }
 
@@ -163,32 +242,27 @@ class ParserAgEat : IParser, ParserAbstract() {
         val purNum =
             el.findElementWithoutException(By.xpath(".//h3[@id = 'tradeNumber']/a"))?.text?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         if (purNum == "") {
             logger("cannot purNum in tender")
             return
         }
         val purObj =
             el.findElementWithoutException(
-                By.xpath(".//label[. = 'Наименование']/following-sibling::p")
-            )
+                    By.xpath(".//label[. = 'Наименование']/following-sibling::p")
+                )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val status =
             el.findElementWithoutException(
-                By.xpath(".//div[@id = 'purchaseStateDescription']//span")
-            )
+                    By.xpath(".//div[@id = 'purchaseStateDescription']//span")
+                )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val urlT =
-            el
-                .findElementWithoutException(By.xpath(".//a[@id = 'tradeInfoLink']"))
+            el.findElementWithoutException(By.xpath(".//a[@id = 'tradeInfoLink']"))
                 ?.getAttribute("href")
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (urlT == "") {
             logger("cannot urlT in tender", purNum)
             return
