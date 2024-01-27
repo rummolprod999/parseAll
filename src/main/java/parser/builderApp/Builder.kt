@@ -167,8 +167,10 @@ class Builder(args: Array<String>) {
         PassDb = doc.passdb ?: throw IllegalArgumentException("bad passdb")
         Server = doc.server ?: throw IllegalArgumentException("bad server")
         Port = doc.port ?: 3306
-        TempPath = "$executePath${File.separator}tempdir_tenders_${arg.name.toLowerCase()}"
-        LogPath = "$executePath${File.separator}logdir_tenders_${arg.name.toLowerCase()}"
+        TempPath =
+            "$executePath${File.separator}tempdir_tenders_${arg.name.lowercase(Locale.getDefault())}"
+        LogPath =
+            "$executePath${File.separator}logdir_tenders_${arg.name.lowercase(Locale.getDefault())}"
     }
 
     private fun createDirs() {

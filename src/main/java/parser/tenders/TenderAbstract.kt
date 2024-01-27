@@ -11,6 +11,7 @@ import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import java.lang.reflect.Type
 import java.sql.*
+import java.util.*
 import java.util.Date
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -34,8 +35,8 @@ abstract class TenderAbstract {
         var cancelstatus1 = 0
         val stmt =
             con.prepareStatement(
-                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-            )
+                    "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                )
                 .apply {
                     setString(1, purNum)
                     setInt(2, typeFz)
@@ -47,8 +48,8 @@ abstract class TenderAbstract {
             val dateB: Timestamp = rs.getTimestamp(2)
             if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                 con.prepareStatement(
-                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                )
+                        "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                    )
                     .apply {
                         setInt(1, idT)
                         execute()
@@ -168,8 +169,8 @@ abstract class TenderAbstract {
         while (r1.next()) {
             val IdTender = r1.getInt(1)
             con.prepareStatement(
-                "UPDATE ${BuilderApp.Prefix}tender SET num_version = ? WHERE id_tender = ? AND type_fz = ?"
-            )
+                    "UPDATE ${BuilderApp.Prefix}tender SET num_version = ? WHERE id_tender = ? AND type_fz = ?"
+                )
                 .apply {
                     setInt(1, verNum)
                     setInt(2, IdTender)
@@ -314,8 +315,7 @@ abstract class TenderAbstract {
                 val okpd2GroupCodeTemp = s.slice(0 until dot)
                 try {
                     okpd2GroupCode = Integer.parseInt(okpd2GroupCodeTemp)
-                } catch (e: Exception) {
-                }
+                } catch (e: Exception) {}
             }
         }
         if (s.length > 3) {
@@ -422,7 +422,7 @@ abstract class TenderAbstract {
     }
 
     fun getConformity(conf: String): Int {
-        val s = conf.toLowerCase()
+        val s = conf.lowercase(Locale.getDefault())
         return when {
             s.contains("открыт") -> 5
             s.contains("аукцион") -> 1
@@ -448,6 +448,7 @@ abstract class TenderAbstract {
         var file: ArrayList<FileAst>? = null
         var AuctionDocs: AuctionDocs? = null
     }
+
     class DocFiles {
         var document: ArrayList<FileAstNew>? = null
     }
@@ -591,8 +592,8 @@ abstract class TenderAbstract {
         docs.forEach {
             if (it.FileName != null && it.Url != null) {
                 con.prepareStatement(
-                    "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
-                )
+                        "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
+                    )
                     .apply {
                         setInt(1, idTender)
                         setString(2, it.FileName)
