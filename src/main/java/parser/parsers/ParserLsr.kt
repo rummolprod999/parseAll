@@ -1,8 +1,5 @@
 package parser.parsers
 
-import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.Dimension
 import org.openqa.selenium.JavascriptExecutor
@@ -17,6 +14,8 @@ import parser.logger.logger
 import parser.tenderClasses.Lsr
 import parser.tenders.TenderLsr
 import parser.tools.formatterGpn
+import java.util.*
+import java.util.logging.Level
 
 class ParserLsr : IParser, ParserAbstract() {
     init {
@@ -60,8 +59,8 @@ class ParserLsr : IParser, ParserAbstract() {
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         val driver = ChromeDriver(options)
-        // val wait = WebDriverWait(driver, timeoutB)
-        driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
+        // val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
+        // driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         driver.manage().deleteAllCookies()
         driver.manage().window().size = Dimension(1280, 1024)
         driver.manage().window().fullscreen()
@@ -84,7 +83,7 @@ class ParserLsr : IParser, ParserAbstract() {
     }
 
     private fun parserNextPage(driver: ChromeDriver) {
-        val wait = WebDriverWait(driver, timeoutB)
+        val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
@@ -100,7 +99,7 @@ class ParserLsr : IParser, ParserAbstract() {
     }
 
     private fun parserList(driver: ChromeDriver) {
-        val wait = WebDriverWait(driver, timeoutB)
+        val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         Thread.sleep(5000)
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
@@ -134,13 +133,11 @@ class ParserLsr : IParser, ParserAbstract() {
         val hrefL =
             el.findElementWithoutException(By.xpath(".//td[3]/a"))?.getAttribute("href")?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         val hrefT =
             el.findElementWithoutException(By.xpath(".//td[2]/a"))?.getAttribute("href")?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         if (hrefL == "" || hrefT == "") {
             logger("cannot find hrefs in tender", purNum)
             return
@@ -164,13 +161,12 @@ class ParserLsr : IParser, ParserAbstract() {
         if (endDateT == "") {
             endDateT =
                 el.findElementWithoutException(
-                    By.xpath(
-                        "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Окончание приема заявок')]/following-sibling::span"
+                        By.xpath(
+                            "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Окончание приема заявок')]/following-sibling::span"
+                        )
                     )
-                )
                     ?.text
-                    ?.trim { it <= ' ' }
-                    ?: ""
+                    ?.trim { it <= ' ' } ?: ""
         }
         val endDate = endDateT.getDateFromString(formatterGpn)
         if (endDate == Date(0L)) {
@@ -182,40 +178,36 @@ class ParserLsr : IParser, ParserAbstract() {
         if (status == "") {
             status =
                 el.findElementWithoutException(
-                    By.xpath(
-                        "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Статус лота')]/following-sibling::span"
+                        By.xpath(
+                            "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Статус лота')]/following-sibling::span"
+                        )
                     )
-                )
                     ?.text
-                    ?.trim { it <= ' ' }
-                    ?: ""
+                    ?.trim { it <= ' ' } ?: ""
         }
         var placingWayName =
             el.findElementWithoutException(By.xpath(".//td[8]"))?.text?.trim { it <= ' ' } ?: ""
         if (placingWayName == "") {
             placingWayName =
                 el.findElementWithoutException(
-                    By.xpath(
-                        "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Способ проведения закупки')]/following-sibling::span"
+                        By.xpath(
+                            "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Способ проведения закупки')]/following-sibling::span"
+                        )
                     )
-                )
                     ?.text
-                    ?.trim { it <= ' ' }
-                    ?: ""
+                    ?.trim { it <= ' ' } ?: ""
         }
         var nameCus =
             el.findElementWithoutException(By.xpath(".//td[6]"))?.text?.trim { it <= ' ' } ?: ""
         if (nameCus == "") {
             nameCus =
-                el
-                    .findElementWithoutException(
+                el.findElementWithoutException(
                         By.xpath(
                             "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Заказчик')]/following-sibling::span"
                         )
                     )
                     ?.getAttribute("href")
-                    ?.trim { it <= ' ' }
-                    ?: ""
+                    ?.trim { it <= ' ' } ?: ""
         }
         val tn =
             Lsr(purNum, hrefT, hrefL, purName, pubDate, endDate, status, placingWayName, nameCus)

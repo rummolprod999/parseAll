@@ -17,7 +17,7 @@ fun ChromeDriver.clickerExp(xpath: String) {
     for (i in 1..20) {
         this.switchTo().defaultContent()
         try {
-            val el = this.findElementByXPath(xpath)
+            val el = this.findElement(By.xpath(xpath))
             el.click()
             return
         } catch (e: Exception) {

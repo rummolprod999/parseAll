@@ -1,10 +1,5 @@
 package parser.tenders
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.openqa.selenium.By
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -13,6 +8,11 @@ import parser.builderApp.BuilderApp
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenderClasses.Dsk1
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderDsk1New(val tn: Dsk1, val driver: ChromeDriver) : TenderAbstract(), ITender {
     init {
@@ -24,7 +24,7 @@ class TenderDsk1New(val tn: Dsk1, val driver: ChromeDriver) : TenderAbstract(), 
 
     override fun parsing() {
         val dateVer = Date()
-        val wait = WebDriverWait(driver, 20)
+        val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
             .use(
                 fun(con: Connection) {
@@ -79,8 +79,7 @@ class TenderDsk1New(val tn: Dsk1, val driver: ChromeDriver) : TenderAbstract(), 
                                         )
                                     )
                                     ?.text
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val phone = ""
                             val contactPerson =
                                 driver
@@ -90,8 +89,7 @@ class TenderDsk1New(val tn: Dsk1, val driver: ChromeDriver) : TenderAbstract(), 
                                         )
                                     )
                                     ?.text
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val stmtins =
                                 con.prepareStatement(
                                         "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
@@ -230,14 +228,12 @@ class TenderDsk1New(val tn: Dsk1, val driver: ChromeDriver) : TenderAbstract(), 
                             val href =
                                 it.findElementWithoutException(By.xpath(".//a"))
                                     ?.getAttribute("href")
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
 
                             val nameDoc =
                                 it.findElementWithoutException(By.xpath(".//p"))?.text?.trim {
                                     it <= ' '
-                                }
-                                    ?: ""
+                                } ?: ""
                             if (href != "") {
                                 val insertDoc =
                                     con.prepareStatement(

@@ -30,6 +30,7 @@ class ParserDomRfAst : IParser, ParserAbstract() {
     }
 
     override fun parser() = parse { parseDomRfAst() }
+
     private fun parseDomRfAst() {
         var tr = 0
         while (true) {
@@ -51,12 +52,12 @@ class ParserDomRfAst : IParser, ParserAbstract() {
 
     private fun parserSelen() {
         val options = ChromeOptions()
-        //options.addArguments("headless")
+        // options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
-        options.addArguments("disable-infobars");
-        options.addArguments("lang=ru, ru-RU");
-        options.addArguments("disable-blink-features=AutomationControlled");
+        options.addArguments("disable-infobars")
+        options.addArguments("lang=ru, ru-RU")
+        options.addArguments("disable-blink-features=AutomationControlled")
         drv = ChromeDriver(options)
         drv.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         drv.manage().timeouts().setScriptTimeout(timeoutB, TimeUnit.SECONDS)
@@ -81,7 +82,7 @@ class ParserDomRfAst : IParser, ParserAbstract() {
         } else {
             drv.switchTo().defaultContent()
         }
-        val wait = WebDriverWait(drv, timeoutB)
+        val wait = WebDriverWait(drv, java.time.Duration.ofSeconds(30L))
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]")
@@ -105,16 +106,14 @@ class ParserDomRfAst : IParser, ParserAbstract() {
             js.executeScript(
                 "var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();"
             )
-        } catch (e: Exception) {
-        }
+        } catch (e: Exception) {}
     }
 
     private fun parserTender(el: WebElement, ind: Int) {
         val eis =
             el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         if (eis != "") {
             // logger("This tender exist on EIS, return")
             // return
@@ -122,8 +121,7 @@ class ParserDomRfAst : IParser, ParserAbstract() {
         val purNum =
             el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot find purNum in tender", el.text)
             return

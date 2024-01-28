@@ -1,7 +1,5 @@
 package parser.parsers
 
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -15,6 +13,8 @@ import parser.logger.logger
 import parser.tenderClasses.EtpAgro
 import parser.tenders.TenderEtpAgro
 import parser.tools.formatterGpn
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserEtpAgro : IParser, ParserAbstract() {
     private val tendersS = mutableListOf<TenderEtpAgro>()
@@ -27,6 +27,7 @@ class ParserEtpAgro : IParser, ParserAbstract() {
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
+
     override fun parser() = parse { parserEtpAgro() }
 
     private fun parserEtpAgro() {
@@ -55,7 +56,7 @@ class ParserEtpAgro : IParser, ParserAbstract() {
 
         // options.addArguments("user-agent=${RandomUserAgent.randomUserAgent}")
         options.setCapability(
-            CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR,
+            CapabilityType.UNHANDLED_PROMPT_BEHAVIOUR,
             UnexpectedAlertBehaviour.IGNORE
         )
         val driver = ChromeDriver(options)
@@ -64,7 +65,7 @@ class ParserEtpAgro : IParser, ParserAbstract() {
         try {
             driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
             driver.manage().deleteAllCookies()
-            val wait = WebDriverWait(driver, timeoutB)
+            val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             driver.get("https://zakupka.etpagro.ru/user/login")
             Thread.sleep(5000)
             driver.switchTo().defaultContent()
@@ -201,8 +202,7 @@ class ParserEtpAgro : IParser, ParserAbstract() {
                     )
                 )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val endDateT =
             el.findElementWithoutException(
                     By.xpath(

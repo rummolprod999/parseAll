@@ -1,7 +1,5 @@
 package parser.parsers
 
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
@@ -15,6 +13,8 @@ import parser.logger.logger
 import parser.tenderClasses.BidBe
 import parser.tenders.TenderBidBe
 import parser.tools.formatterGpn
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserBidBe : IParser, ParserAbstract() {
 
@@ -30,6 +30,7 @@ class ParserBidBe : IParser, ParserAbstract() {
     }
 
     override fun parser() = parse { parserBidBe() }
+
     private fun parserBidBe() {
         var tr = 0
         while (true) {
@@ -59,7 +60,7 @@ class ParserBidBe : IParser, ParserAbstract() {
             driver.manage().deleteAllCookies()
             driver.get(BaseUrl)
             driver.switchTo().defaultContent()
-            val wait = WebDriverWait(driver, timeoutB)
+            val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
                     By.xpath(
@@ -116,8 +117,7 @@ class ParserBidBe : IParser, ParserAbstract() {
 
     private fun parserTender(el: WebElement) {
         val href =
-            el
-                .findElementWithoutException(By.xpath(".//a[@class = 'с-link--line']"))
+            el.findElementWithoutException(By.xpath(".//a[@class = 'с-link--line']"))
                 ?.getAttribute("href")
                 ?.trim { it <= ' ' }
                 ?: run {
@@ -134,8 +134,8 @@ class ParserBidBe : IParser, ParserAbstract() {
                 }
         val purNumT =
             el.findElementWithoutException(
-                By.xpath(".//div[@class = 'col col-auto' and contains(., 'Заказ')]")
-            )
+                    By.xpath(".//div[@class = 'col col-auto' and contains(., 'Заказ')]")
+                )
                 ?.text
                 ?.trim { it <= ' ' }
                 ?: run {
@@ -145,29 +145,26 @@ class ParserBidBe : IParser, ParserAbstract() {
         val purNum = purNumT.getDataFromRegexp("Заказ #(\\d+)")
         val payMethod =
             el.findElementWithoutException(
-                By.xpath(".//div[. = 'Способ оплаты']/following-sibling::div")
-            )
+                    By.xpath(".//div[. = 'Способ оплаты']/following-sibling::div")
+                )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val status =
             el.findElementWithoutException(
-                By.xpath(".//div[. = 'Статус заказа']/following-sibling::div")
-            )
+                    By.xpath(".//div[. = 'Статус заказа']/following-sibling::div")
+                )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val delivPlace =
             el.findElementWithoutException(
-                By.xpath(".//div[. = 'Регион доставки']/following-sibling::div")
-            )
+                    By.xpath(".//div[. = 'Регион доставки']/following-sibling::div")
+                )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val pubDateT =
             el.findElementWithoutException(
-                By.xpath(".//div[. = 'Опубликовано (Мск)']/following-sibling::div")
-            )
+                    By.xpath(".//div[. = 'Опубликовано (Мск)']/following-sibling::div")
+                )
                 ?.text
                 ?.trim { it <= ' ' }
                 ?: run {
@@ -177,10 +174,10 @@ class ParserBidBe : IParser, ParserAbstract() {
         val datePub = pubDateT.getDateFromString(formatterGpn)
         val endDateT =
             el.findElementWithoutException(
-                By.xpath(
-                    ".//div[@class = 'grey--text text--darken-1' and contains(. , 'Окончание приёма (Мск)')]/following-sibling::div"
+                    By.xpath(
+                        ".//div[@class = 'grey--text text--darken-1' and contains(. , 'Окончание приёма (Мск)')]/following-sibling::div"
+                    )
                 )
-            )
                 ?.text
                 ?.trim { it <= ' ' }
                 ?: run {

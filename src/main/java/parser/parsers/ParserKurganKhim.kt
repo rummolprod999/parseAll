@@ -1,7 +1,5 @@
 package parser.parsers
 
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -15,6 +13,8 @@ import parser.logger.logger
 import parser.tenderClasses.KurganKhim
 import parser.tenders.TenderKurganKhim
 import parser.tools.formatterGpn
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserKurganKhim : IParser, ParserAbstract() {
 
@@ -67,7 +67,7 @@ class ParserKurganKhim : IParser, ParserAbstract() {
             driver.get(BaseUrl)
             driver.switchTo().defaultContent()
             // driver.manage().window().maximize()
-            val wait = WebDriverWait(driver, timeoutB)
+            val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("//tbody/tr/div[contains(@class, 'v-card')]")
@@ -153,19 +153,16 @@ class ParserKurganKhim : IParser, ParserAbstract() {
         val purNum =
             el.findElementWithoutException(By.xpath(".//div/b[@class = 'font_size16']"))
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot purNum in tender")
             throw Exception("cannot purNum in tender")
         }
 
         val urlTender =
-            el
-                .findElementWithoutException(By.xpath(".//div/b[@class = 'font_size16']/a"))
+            el.findElementWithoutException(By.xpath(".//div/b[@class = 'font_size16']/a"))
                 ?.getAttribute("href")
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (urlTender == "") {
             logger("cannot urlT in tender", purNum)
             throw Exception("cannot urlT in tender")
@@ -173,35 +170,27 @@ class ParserKurganKhim : IParser, ParserAbstract() {
         val purName =
             el.findElementWithoutException(By.xpath(".//div/b[@class = 'font_size16']/a"))
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val orgName =
             el.findElementWithoutException(
-                By.xpath(".//div[b[@class = 'font_size16']]/following-sibling::div")
-            )
-                ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
-        val datePubTmp =
-            el
-                .findElementWithoutException(
-                    By.xpath(".//div[b[. = 'Дата начала подачи заявок:']]")
+                    By.xpath(".//div[b[@class = 'font_size16']]/following-sibling::div")
                 )
+                ?.text
+                ?.trim { it <= ' ' } ?: ""
+        val datePubTmp =
+            el.findElementWithoutException(By.xpath(".//div[b[. = 'Дата начала подачи заявок:']]"))
                 ?.text
                 ?.replace("Дата начала подачи заявок:", "")
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val dateEndTmp =
-            el
-                .findElementWithoutException(
+            el.findElementWithoutException(
                     By.xpath(".//div[b[. = 'Дата окончания подачи заявок:']]")
                 )
                 ?.text
                 ?.replace("Дата окончания подачи заявок:", "")
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val datePub = datePubTmp.getDateFromString(formatterGpn)
         val dateEnd = dateEndTmp.getDateFromString(formatterGpn)
         val attachments = mutableMapOf<String, String>()

@@ -1,10 +1,5 @@
 package parser.tenders
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.openqa.selenium.By
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -14,9 +9,13 @@ import parser.extensions.findElementWithoutException
 import parser.extensions.getDataFromRegexp
 import parser.extensions.getDateFromString
 import parser.logger.logger
-import parser.parsers.ParserEtpAgro
 import parser.tenderClasses.EtpAgro
 import parser.tools.formatterOnlyDate
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(), ITender {
     init {
@@ -27,6 +26,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
     companion object TypeFz {
         const val typeFz = 377
     }
+
     override fun parsing() {
         val dateVer = Date()
         DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
@@ -82,7 +82,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                     stmt.close()
                     driver.get(tn.href)
                     driver.switchTo().defaultContent()
-                    val wait = WebDriverWait(driver, ParserEtpAgro.timeoutB)
+                    val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
                     wait.until(
                         ExpectedConditions.visibilityOfElementLocated(
                             By.xpath("//span[. = 'Сведения о процедуре']")
@@ -97,8 +97,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val pubDate = datePubTmp.getDateFromString(formatterOnlyDate)
                     if (pubDate == Date(0L)) {
                         logger("can not find pubDate on page", datePubTmp, tn.href)
@@ -113,8 +112,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                                 )
                             )
                             ?.text
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (fullnameOrg != "") {
                         val stmto =
                             con.prepareStatement(
@@ -139,8 +137,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val kpp =
                                 driver
                                     .findElementWithoutException(
@@ -148,8 +145,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val email =
                                 driver
                                     .findElementWithoutException(
@@ -159,8 +155,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val phone =
                                 driver
                                     .findElementWithoutException(
@@ -170,8 +165,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val contactPerson =
                                 driver
                                     .findElementWithoutException(
@@ -181,8 +175,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val stmtins =
                                 con.prepareStatement(
                                         "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
@@ -219,8 +212,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (placingWayName != "") {
                         idPlacingWay = getPlacingWay(con, placingWayName)
                     }
@@ -233,8 +225,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val idRegion = getIdRegion(con, regionName)
                     var idTender = 0
                     val insertTender =
@@ -291,8 +282,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val insertLot =
                         con.prepareStatement(
                                 "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?, lot_name = ?",
@@ -322,8 +312,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (cusName != "") {
                         val stmtoc =
                             con.prepareStatement(
@@ -368,8 +357,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                                 )
                                 ?.text
                                 ?.trim()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         val okeiT =
                             element
                                 .findElementWithoutException(
@@ -377,8 +365,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                                 )
                                 ?.text
                                 ?.trim()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         val okei = okeiT.getDataFromRegexp("""\d+\s*(.+)""")
                         val quant = okeiT.getDataFromRegexp("""(\d+)""")
                         val price = ""

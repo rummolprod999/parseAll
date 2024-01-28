@@ -1,10 +1,5 @@
 package parser.tenders
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.openqa.selenium.By
@@ -14,8 +9,12 @@ import parser.builderApp.BuilderApp
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.networkTools.downloadFromUrl
-import parser.parsers.ParserKurganKhim
 import parser.tenderClasses.KurganKhim
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbstract(), ITender {
 
@@ -34,8 +33,8 @@ class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbs
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
@@ -51,7 +50,7 @@ class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbs
                     stmt0.close()
                     driver.get(tn.href)
                     driver.switchTo().defaultContent()
-                    val wait = WebDriverWait(driver, ParserKurganKhim.timeoutB)
+                    val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
                     Thread.sleep(2000)
                     driver.switchTo().defaultContent()
                     val (cancelstatus, updated) = updateVersion(con, dateVer)
@@ -78,9 +77,9 @@ class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbs
                             val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, tn.orgName)
                                         setString(2, postalAdr)
@@ -144,9 +143,9 @@ class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbs
                     val lotNumber = 1
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?, lot_name = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?, lot_name = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
@@ -194,8 +193,8 @@ class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbs
                         }
                     }
                     con.prepareStatement(
-                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
-                    )
+                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
+                        )
                         .apply {
                             setInt(1, idLot)
                             setInt(2, idCustomer)
@@ -211,46 +210,45 @@ class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbs
                             close()
                         }
                     val delivTerm0 =
-                        driver.findElementWithoutException(
-                            By.xpath(
-                                "//td[. = 'Требуемые сроки поставки']/following-sibling::td"
+                        driver
+                            .findElementWithoutException(
+                                By.xpath(
+                                    "//td[. = 'Требуемые сроки поставки']/following-sibling::td"
+                                )
                             )
-                        )
                             ?.text
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val delivTerm1 =
-                        driver.findElementWithoutException(
-                            By.xpath("//td[. = 'Общие условия оплаты']/following-sibling::td")
-                        )
-                            ?.text
-                            ?.trim { it <= ' ' }
-                            ?: ""
-                    val delivTerm2 =
-                        driver.findElementWithoutException(
-                            By.xpath("//td[. = 'Особые требования']/following-sibling::td")
-                        )
-                            ?.text
-                            ?.trim { it <= ' ' }
-                            ?: ""
-                    val delivTerm =
-                        "Требуемые сроки поставки: $delivTerm0\n Общие условия оплаты: $delivTerm1\n Особые требования: $delivTerm2".trim {
-                            it <= ' '
-                        }
-                    val delivPlace =
-                        driver.findElementWithoutException(
-                            By.xpath(
-                                "//td[. = 'Адрес доставки ТМЦ или оказания услуг']/following-sibling::td"
+                        driver
+                            .findElementWithoutException(
+                                By.xpath("//td[. = 'Общие условия оплаты']/following-sibling::td")
                             )
-                        )
                             ?.text
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
+                    val delivTerm2 =
+                        driver
+                            .findElementWithoutException(
+                                By.xpath("//td[. = 'Особые требования']/following-sibling::td")
+                            )
+                            ?.text
+                            ?.trim { it <= ' ' } ?: ""
+                    val delivTerm =
+                        "Требуемые сроки поставки: $delivTerm0\n Общие условия оплаты: $delivTerm1\n Особые требования: $delivTerm2"
+                            .trim { it <= ' ' }
+                    val delivPlace =
+                        driver
+                            .findElementWithoutException(
+                                By.xpath(
+                                    "//td[. = 'Адрес доставки ТМЦ или оказания услуг']/following-sibling::td"
+                                )
+                            )
+                            ?.text
+                            ?.trim { it <= ' ' } ?: ""
                     if (delivTerm0 != "" || delivTerm1 != "" || delivTerm2 != "") {
                         val insertCusRec =
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
-                            )
+                                    "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
+                                )
                                 .apply {
                                     setInt(1, idLot)
                                     setInt(2, idCustomer)
@@ -279,8 +277,8 @@ class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbs
         val name = it.selectFirst("td:eq(0) span a")?.ownText()?.trim { it <= ' ' } ?: ""
         if (name != "") {
             con.prepareStatement(
-                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
-            )
+                    "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
+                )
                 .apply {
                     setInt(1, idLot)
                     setInt(2, idCustomer)
@@ -312,27 +310,23 @@ class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbs
         val delivTerm0 =
             htmlTen.selectFirst("td:contains(Требуемые сроки поставки) + td span")?.text()?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         val delivTerm1 =
             htmlTen.selectFirst("td:contains(Общие условия оплаты) + td span")?.text()?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         val delivTerm2 =
             htmlTen.selectFirst("td:contains(Особые требования) + td span")?.text()?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         val delivTerm =
-            "Требуемые сроки поставки: $delivTerm0\n Общие условия оплаты: $delivTerm1\n Особые требования: $delivTerm2".trim {
-                it <= ' '
-            }
+            "Требуемые сроки поставки: $delivTerm0\n Общие условия оплаты: $delivTerm1\n Особые требования: $delivTerm2"
+                .trim { it <= ' ' }
         if (delivTerm0 != "" || delivTerm1 != "" || delivTerm2 != "") {
             val insertCusRec =
                 con.prepareStatement(
-                    "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
-                )
+                        "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
+                    )
                     .apply {
                         setInt(1, idLot)
                         setInt(2, idCustomer)
@@ -349,8 +343,8 @@ class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbs
         var cancelstatus1 = 0
         val stmt =
             con.prepareStatement(
-                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-            )
+                    "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                )
                 .apply {
                     setString(1, tn.purNum)
                     setInt(2, typeFz)
@@ -362,8 +356,8 @@ class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbs
             val dateB: Timestamp = rs.getTimestamp(2)
             if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                 con.prepareStatement(
-                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                )
+                        "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                    )
                     .apply {
                         setInt(1, idT)
                         execute()
@@ -382,8 +376,8 @@ class TenderKurganKhim(val tn: KurganKhim, val driver: ChromeDriver) : TenderAbs
 
         tn.attachments.forEach {
             con.prepareStatement(
-                "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
-            )
+                    "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
+                )
                 .apply {
                     setInt(1, idTender)
                     setString(2, it.key)

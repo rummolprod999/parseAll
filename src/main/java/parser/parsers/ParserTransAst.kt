@@ -29,6 +29,7 @@ class ParserTransAst : IParser, ParserAbstract() {
     }
 
     override fun parser() = parse { parserTransAst() }
+
     private fun parserTransAst() {
         var tr = 0
         while (true) {
@@ -56,7 +57,7 @@ class ParserTransAst : IParser, ParserAbstract() {
         drv = ChromeDriver(options)
         drv.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         drv.manage().deleteAllCookies()
-        val wait = WebDriverWait(drv, 5)
+        val wait = WebDriverWait(drv, java.time.Duration.ofSeconds(30L))
         drv.get("https://login.sberbank-ast.ru/Login.aspx")
         Thread.sleep(5000)
         try {
@@ -105,7 +106,7 @@ class ParserTransAst : IParser, ParserAbstract() {
     private fun parserList(urlPage: String) {
         Thread.sleep(5000)
         drv.switchTo().defaultContent()
-        val wait = WebDriverWait(drv, timeoutB)
+        val wait = WebDriverWait(drv, java.time.Duration.ofSeconds(30L))
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]")
@@ -136,16 +137,14 @@ class ParserTransAst : IParser, ParserAbstract() {
         val eis =
             el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         if (eis != "") {
             logger("This tender exist on EIS")
         }
         val purNum =
             el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot find purNum in tender", el.text)
             return

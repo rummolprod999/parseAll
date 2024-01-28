@@ -30,6 +30,7 @@ class ParserBidAst : IParser, ParserAbstract() {
     }
 
     override fun parser() = parse { parserRetailAst() }
+
     private fun parserRetailAst() {
         var tr = 0
         while (true) {
@@ -51,12 +52,12 @@ class ParserBidAst : IParser, ParserAbstract() {
 
     private fun parserSelen() {
         val options = ChromeOptions()
-        //options.addArguments("headless")
+        // options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         drv = ChromeDriver(options)
-        drv.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
-        drv.manage().timeouts().setScriptTimeout(timeoutB, TimeUnit.SECONDS)
+        drv.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS)
+        drv.manage().timeouts().setScriptTimeout(30, TimeUnit.SECONDS)
         drv.manage().deleteAllCookies()
         drv.get(BaseUrl)
         try {
@@ -102,21 +103,18 @@ class ParserBidAst : IParser, ParserAbstract() {
             js.executeScript(
                 "var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();"
             )
-        } catch (e: Exception) {
-        }
+        } catch (e: Exception) {}
     }
 
     private fun parserTender(el: WebElement, ind: Int) {
         val eis =
             el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         val purNum =
             el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot find purNum in tender", el.text)
             return
@@ -171,7 +169,7 @@ class ParserBidAst : IParser, ParserAbstract() {
 
     companion object WebCl {
         const val BaseUrl = "https://utp.sberbank-ast.ru/Trade/List/BidList"
-        const val timeoutB = 60L
+        val timeoutB = java.time.Duration.ofSeconds(30L)
         const val CountPage = 30
         val executor = Executors.newSingleThreadExecutor()
     }

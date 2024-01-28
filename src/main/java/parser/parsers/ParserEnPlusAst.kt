@@ -1,8 +1,5 @@
 package parser.parsers
 
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -13,6 +10,9 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenders.TenderEnPlusAst
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserEnPlusAst : IParser, ParserAbstract() {
     lateinit var drv: ChromeDriver
@@ -30,6 +30,7 @@ class ParserEnPlusAst : IParser, ParserAbstract() {
     }
 
     override fun parser() = parse { parseEnPlusAst() }
+
     private fun parseEnPlusAst() {
         var tr = 0
         while (true) {
@@ -78,7 +79,7 @@ class ParserEnPlusAst : IParser, ParserAbstract() {
         } else {
             drv.switchTo().defaultContent()
         }
-        val wait = WebDriverWait(drv, timeoutB)
+        val wait = WebDriverWait(drv, java.time.Duration.ofSeconds(30L))
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]")
@@ -102,16 +103,14 @@ class ParserEnPlusAst : IParser, ParserAbstract() {
             js.executeScript(
                 "var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();"
             )
-        } catch (e: Exception) {
-        }
+        } catch (e: Exception) {}
     }
 
     private fun parserTender(el: WebElement, ind: Int) {
         val eis =
             el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         if (eis != "") {
             // logger("This tender exist on EIS, return")
             // return
@@ -119,8 +118,7 @@ class ParserEnPlusAst : IParser, ParserAbstract() {
         val purNum =
             el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot find purNum in tender", el.text)
             return

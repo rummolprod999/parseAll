@@ -62,7 +62,7 @@ class ParserRusSalt : IParser, ParserAbstract() {
                 options = getchromeOptions()
                 driver = ChromeDriver(options)
                 driver.manage().window().size = Dimension(1920, 1080)
-                //driver.manage().window().fullscreen()
+                // driver.manage().window().fullscreen()
                 parserSelen()
                 break
             } catch (e: Exception) {
@@ -104,7 +104,7 @@ class ParserRusSalt : IParser, ParserAbstract() {
         driver.manage().deleteAllCookies()
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
-        wait = WebDriverWait(driver, timeoutB)
+        wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         Thread.sleep(3000)
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
@@ -129,8 +129,7 @@ class ParserRusSalt : IParser, ParserAbstract() {
             )
         )
         try {
-            val paginator =
-                driver.findElementByXPath("//a[@class = 'next page-numbers']")
+            val paginator = driver.findElement(By.xpath("//a[@class = 'next page-numbers']"))
             paginator.click()
             Thread.sleep(3000)
             getListTenders()
@@ -142,12 +141,7 @@ class ParserRusSalt : IParser, ParserAbstract() {
     private fun getListTenders() {
         Thread.sleep(2000)
         driver.switchTo().defaultContent()
-        val tenders =
-            driver.findElements(
-                By.xpath(
-                    "//div[@class = 'tenders-item tenders-grid']"
-                )
-            )
+        val tenders = driver.findElements(By.xpath("//div[@class = 'tenders-item tenders-grid']"))
         tenders.forEach {
             try {
                 parserTender(it)
@@ -160,19 +154,20 @@ class ParserRusSalt : IParser, ParserAbstract() {
 
     private fun parserTender(el: WebElement) {
         val href =
-            el.findElementWithoutException(By.xpath(".//a"))
-                ?.getAttribute("href")
-                ?.trim { it <= ' ' }
-                ?: ""
+            el.findElementWithoutException(By.xpath(".//a"))?.getAttribute("href")?.trim {
+                it <= ' '
+            } ?: ""
         if (href == "") {
             logger("cannot href in tender")
             return
         }
         val purNum =
-            el.findElementWithoutException(By.xpath(".//div[@class = 'tenders-item__text tenders-number']"))?.text?.replace(
-                "№",
-                ""
-            )?.trim { it <= ' ' } ?: ""
+            el.findElementWithoutException(
+                    By.xpath(".//div[@class = 'tenders-item__text tenders-number']")
+                )
+                ?.text
+                ?.replace("№", "")
+                ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot purNum in tender $href")
             return
@@ -184,26 +179,26 @@ class ParserRusSalt : IParser, ParserAbstract() {
             return
         }
         val status =
-            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-status')]"))?.text?.trim {
-                it <= ' '
-            }
-                ?: ""
+            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-status')]"))
+                ?.text
+                ?.trim { it <= ' ' } ?: ""
         val divT =
-            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-curator')]"))?.text?.trim {
-                it <= ' '
-            }
-                ?: ""
+            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-curator')]"))
+                ?.text
+                ?.trim { it <= ' ' } ?: ""
         val datePubTmp =
-            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-start')]"))?.text?.trim { it <= ' ' }
-                ?: ""
+            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-start')]"))
+                ?.text
+                ?.trim { it <= ' ' } ?: ""
         val datePub = datePubTmp.getDateFromString(formatterRs)
         if (datePub == Date(0L)) {
             logger("cannot find datePub on page", href, purNum)
             return
         }
         val dateEndTmp =
-            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-finish')]"))?.text?.trim { it <= ' ' }
-                ?: ""
+            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-finish')]"))
+                ?.text
+                ?.trim { it <= ' ' } ?: ""
         val dateEndR = dateEndTmp.getDataFromRegexp("""(\d{2}\.\d{2}\.\d{2})""")
         val dateEnd = dateEndR.getDateFromString(formatterRs)
         val tt = RusSalt(purNum, href, purName, dateEnd, datePub, status, divT)

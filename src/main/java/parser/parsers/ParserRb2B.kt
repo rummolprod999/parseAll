@@ -17,12 +17,16 @@ class ParserRb2B : IParser, ParserAbstract() {
     private val tendersS = mutableListOf<TenderRb2B>()
 
     init {
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog")
+        System.setProperty(
+            "org.apache.commons.logging.Log",
+            "org.apache.commons.logging.impl.NoOpLog"
+        )
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
     override fun parser() = parse { parserRb2b() }
+
     private fun parserRb2b() {
         var tr = 0
         while (true) {
@@ -44,7 +48,7 @@ class ParserRb2B : IParser, ParserAbstract() {
 
     private fun parserSelen(changeTab: (JavascriptExecutor) -> Any) {
         val options = ChromeOptions()
-        //options.addArguments("headless")
+        // options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         val driver = ChromeDriver(options)
@@ -53,9 +57,13 @@ class ParserRb2B : IParser, ParserAbstract() {
             driver.manage().deleteAllCookies()
             driver.get(BaseUrl)
             driver.switchTo().defaultContent()
-            //driver.manage().window().maximize()
-            val wait = WebDriverWait(driver, timeoutB)
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[. = 'Торговые процедуры ККЗ 1885']")))
+            // driver.manage().window().maximize()
+            val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
+            wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//span[. = 'Торговые процедуры ККЗ 1885']")
+                )
+            )
             Thread.sleep(7000)
             driver.switchTo().defaultContent()
             val js = driver as JavascriptExecutor
@@ -84,7 +92,7 @@ class ParserRb2B : IParser, ParserAbstract() {
             }
             tendersS.forEach {
                 try {
-                    //println(it)
+                    // println(it)
                     ParserTender(it)
                 } catch (e: Exception) {
                     logger("error in parserPageN()", e.stackTrace, e, it.tn.href)
@@ -99,13 +107,19 @@ class ParserRb2B : IParser, ParserAbstract() {
 
     private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait): Boolean {
         try {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(@href, 'javascript:loadPage')]")))
+            wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//a[contains(@href, 'javascript:loadPage')]")
+                )
+            )
         } catch (e: Exception) {
             logger("next page not found")
             return false
         }
         val js = driver as JavascriptExecutor
-        js.executeScript("document.querySelectorAll('a[href=\"javascript:loadPage(${i})\"]')[0].click()")
+        js.executeScript(
+            "document.querySelectorAll('a[href=\"javascript:loadPage(${i})\"]')[0].click()"
+        )
         i++
         return getListTenders(driver, wait)
     }
@@ -113,7 +127,11 @@ class ParserRb2B : IParser, ParserAbstract() {
     private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait): Boolean {
         Thread.sleep(5000)
         try {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id = 'proc-list']/div[contains(@class, 'proc')][1]")))
+            wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//div[@id = 'proc-list']/div[contains(@class, 'proc')][1]")
+                )
+            )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
             return false
@@ -125,20 +143,21 @@ class ParserRb2B : IParser, ParserAbstract() {
                     it.click()
                     Thread.sleep(100)
                 } catch (e: Exception) {
-                    //logger("element is not clickable")
+                    // logger("element is not clickable")
                 }
-
             }
             driver.findElements(By.xpath("//a[span[contains(., 'Показать')]]")).forEach {
                 try {
                     it.click()
                     Thread.sleep(100)
                 } catch (e: Exception) {
-                    //logger("element is not clickable")
+                    // logger("element is not clickable")
                 }
-
             }
-            val tenders = driver.findElements(By.xpath("//div[@id = 'proc-list']/div[contains(@class, 'proc')]"))
+            val tenders =
+                driver.findElements(
+                    By.xpath("//div[@id = 'proc-list']/div[contains(@class, 'proc')]")
+                )
             for (it in tenders) {
                 try {
                     parserTender(it)
@@ -169,8 +188,21 @@ class ParserRb2B : IParser, ParserAbstract() {
 
         val funs =
             listOf(
-                { js: JavascriptExecutor -> js.executeScript("document.querySelectorAll('span.x-tab-strip-text.icon-information')[0].click()"); },
-                { js: JavascriptExecutor -> js.executeScript("document.querySelectorAll('span.x-tab-strip-text.icon-information')[1].click()"); },
-                { js: JavascriptExecutor -> js.executeScript("document.querySelectorAll('span.x-tab-strip-text.icon-information')[2].click()"); })
+                { js: JavascriptExecutor ->
+                    js.executeScript(
+                        "document.querySelectorAll('span.x-tab-strip-text.icon-information')[0].click()"
+                    )
+                },
+                { js: JavascriptExecutor ->
+                    js.executeScript(
+                        "document.querySelectorAll('span.x-tab-strip-text.icon-information')[1].click()"
+                    )
+                },
+                { js: JavascriptExecutor ->
+                    js.executeScript(
+                        "document.querySelectorAll('span.x-tab-strip-text.icon-information')[2].click()"
+                    )
+                }
+            )
     }
 }

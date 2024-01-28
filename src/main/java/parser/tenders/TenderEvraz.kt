@@ -1,11 +1,5 @@
 package parser.tenders
 
-import java.lang.Thread.sleep
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
@@ -15,10 +9,15 @@ import parser.builderApp.BuilderApp
 import parser.extensions.findElementWithoutException
 import parser.extensions.getDateFromString
 import parser.logger.logger
-import parser.parsers.ParserEvraz
 import parser.tenderClasses.Evraz
 import parser.tools.formatter
 import parser.tools.formatterOnlyDate
+import java.lang.Thread.sleep
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), ITender {
     companion object TypeFz {
@@ -34,7 +33,7 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
         val (purNum, url, purObj) = tn
         driver.get(url)
         driver.switchTo().defaultContent()
-        val wait = WebDriverWait(driver, ParserEvraz.timeoutB)
+        val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         sleep(2000)
         driver.switchTo().defaultContent()
         val datePubTmp =
@@ -44,8 +43,7 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         var pubDate = datePubTmp.getDateFromString(formatterOnlyDate)
         if (pubDate == Date(0L)) {
             pubDate = Date()
@@ -67,8 +65,7 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (dateEndTmp == "") {
             dateEndTmp =
                 driver
@@ -77,8 +74,7 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                     )
                     ?.text
                     ?.trim()
-                    ?.trim { it <= ' ' }
-                    ?: ""
+                    ?.trim { it <= ' ' } ?: ""
         }
         if (dateEndTmp == "") {
             dateEndTmp =
@@ -88,8 +84,7 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                     )
                     ?.text
                     ?.trim()
-                    ?.trim { it <= ' ' }
-                    ?: ""
+                    ?.trim { it <= ' ' } ?: ""
         }
         var endDate = dateEndTmp.getDateFromString(formatter)
         if (endDate == Date(0L)) {
@@ -105,8 +100,8 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?"
+                            )
                             .apply {
                                 setString(1, purNum)
                                 setInt(2, typeFz)
@@ -124,8 +119,8 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                     var updated = false
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, purNum)
                                 setInt(2, typeFz)
@@ -137,8 +132,8 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                         val dateB: Timestamp = rs.getTimestamp(2)
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             con.prepareStatement(
-                                "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                            )
+                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                )
                                 .apply {
                                     setInt(1, idT)
                                     execute()
@@ -175,9 +170,9 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                             val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
@@ -206,8 +201,7 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val idRegion = 0
                     var idTender = 0
                     val insertTender =
@@ -250,9 +244,9 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                     val currency = ""
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
@@ -286,8 +280,8 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                         "Дата начала работ: $delivTerm1 Дата окончания работ: $delivTerm2".trim()
                     if (delivTerm != "") {
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_term = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_term = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)
@@ -297,8 +291,8 @@ class TenderEvraz(val tn: Evraz, val driver: ChromeDriver) : TenderAbstract(), I
                             }
                     }
                     con.prepareStatement(
-                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?"
-                    )
+                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?"
+                        )
                         .apply {
                             setInt(1, idLot)
                             setInt(2, idCustomer)

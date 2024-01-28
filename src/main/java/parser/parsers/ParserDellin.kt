@@ -91,7 +91,7 @@ class ParserDellin : IParser, ParserAbstract() {
         driver.manage().deleteAllCookies()
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
-        wait = WebDriverWait(driver, timeoutB)
+        wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//table[@__gwtcellbasedwidgetimpldispatchingfocus]/tbody/tr")

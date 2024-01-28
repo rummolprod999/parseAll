@@ -1,8 +1,5 @@
 package parser.parsers
 
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -13,6 +10,9 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenders.TenderAfkAst
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserAfkAst : IParser, ParserAbstract() {
 
@@ -31,6 +31,7 @@ class ParserAfkAst : IParser, ParserAbstract() {
     }
 
     override fun parser() = parse { parserAfkAst() }
+
     private fun parserAfkAst() {
         var tr = 0
         while (true) {
@@ -56,8 +57,8 @@ class ParserAfkAst : IParser, ParserAbstract() {
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         drv = ChromeDriver(options)
-        drv.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
-        drv.manage().timeouts().setScriptTimeout(timeoutB, TimeUnit.SECONDS)
+        drv.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS)
+        drv.manage().timeouts().setScriptTimeout(60, TimeUnit.SECONDS)
         drv.manage().deleteAllCookies()
         drv.get(BaseUrl)
         try {
@@ -103,16 +104,14 @@ class ParserAfkAst : IParser, ParserAbstract() {
             js.executeScript(
                 "var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();"
             )
-        } catch (e: Exception) {
-        }
+        } catch (e: Exception) {}
     }
 
     private fun parserTender(el: WebElement, ind: Int) {
         val eis =
             el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         if (eis != "") {
             // logger("This tender exist on EIS, return")
             return
@@ -120,8 +119,7 @@ class ParserAfkAst : IParser, ParserAbstract() {
         val purNum =
             el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot find purNum in tender", el.text)
             return
@@ -176,7 +174,7 @@ class ParserAfkAst : IParser, ParserAbstract() {
 
     companion object WebCl {
         const val BaseUrl = "http://utp.sberbank-ast.ru/AFK/List/PurchaseList/"
-        const val timeoutB = 60L
+        val timeoutB = java.time.Duration.ofSeconds(60L)
         const val CountPage = 10
     }
 }

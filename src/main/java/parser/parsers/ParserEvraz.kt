@@ -91,18 +91,18 @@ class ParserEvraz : IParser, ParserAbstract() {
         driver.manage().deleteAllCookies()
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
-        wait = WebDriverWait(driver, timeoutB)
+        wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[contains(@class, 'company-name')]")
             )
         )
-        val collapsed = driver.findElementsByXPath("//div[contains(@class, 'company-name')]")
+        val collapsed = driver.findElements(By.xpath("//div[contains(@class, 'company-name')]"))
         collapsed.forEach {
             it.click()
             Thread.sleep(10000)
         }
-        val collapsed1 = driver.findElementsByXPath("//div[contains(@class, 'plot-name')]")
+        val collapsed1 = driver.findElements(By.xpath("//div[contains(@class, 'plot-name')]"))
         collapsed1.forEach {
             try {
                 it.click()

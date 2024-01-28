@@ -33,11 +33,12 @@ class ParserAlrosa : IParser, ParserAbstract() {
 
     companion object WebCl {
         const val BaseUrl = "https://zakupki.alrosa.ru/"
-        const val timeoutB = 30L
+        val timeoutB = java.time.Duration.ofSeconds(30L)
         const val CountPage = 10
     }
 
     override fun parser() = parse { parserAlrosa() }
+
     private fun parserAlrosa() {
         var tr = 0
         while (true) {
@@ -63,17 +64,19 @@ class ParserAlrosa : IParser, ParserAbstract() {
         options.addArguments("no-sandbox")
         val driver = ChromeDriver(options)
         try {
-            driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
+            driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS)
             driver.manage().deleteAllCookies()
             driver.get(BaseUrl)
             driver.switchTo().defaultContent()
             // driver.manage().window().maximize()
-            val wait = WebDriverWait(driver, timeoutB)
+            val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[. = 'Вход в систему']"))
             )
             driver.findElement(By.xpath("//input[@id = 'sap-user']")).sendKeys("enter-it_1@m")
-            driver.findElement(By.xpath("//input[@id = 'sap-password']")).sendKeys("Wr#9gWDj*)Mav11")
+            driver
+                .findElement(By.xpath("//input[@id = 'sap-password']"))
+                .sendKeys("Wr#9gWDj*)Mav11")
             driver.findElement(By.xpath("//a[. = 'Вход в систему']")).click()
             Thread.sleep(5000)
             driver.switchTo().defaultContent()
@@ -181,8 +184,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
         val datePubTmp =
             el.findElementWithoutException(By.xpath("./td[7]/span/span"))?.text?.trim()?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         var datePub = datePubTmp.getDateFromString(formatterOnlyDate)
         if (datePub == Date(0L)) {
             datePub = Date()
@@ -190,8 +192,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
         val dateEndTmp =
             el.findElementWithoutException(By.xpath("./td[8]/span/span"))?.text?.trim()?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         var dateEnd = dateEndTmp.getDateFromString(formatterOnlyDate)
         if (dateEnd == Date(0L)) {
             dateEnd = Date(datePub.getTime() + 2 * 24 * 60 * 60 * 1000)
@@ -250,20 +251,17 @@ class ParserAlrosa : IParser, ParserAbstract() {
             val pName =
                 prod.findElementWithoutException(By.xpath("./td[3]/span/span"))?.text?.trim {
                     it <= ' '
-                }
-                    ?: ""
+                } ?: ""
             if (pName == "") continue
             val quantT =
                 prod.findElementWithoutException(By.xpath("./td[4]/span/span"))?.text?.trim {
                     it <= ' '
-                }
-                    ?: ""
+                } ?: ""
             val quant = quantT.replace(".", "").replace(",", ".").deleteAllWhiteSpace()
             val okei =
                 prod.findElementWithoutException(By.xpath("./td[5]/span/span"))?.text?.trim {
                     it <= ' '
-                }
-                    ?: ""
+                } ?: ""
             val pr = AlrosaProduct(pName, quant, okei)
             listProd.add(pr)
         }

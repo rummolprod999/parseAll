@@ -1,9 +1,5 @@
 package parser.parsers
 
-import java.time.ZoneId
-import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -19,6 +15,10 @@ import parser.logger.logger
 import parser.tenderClasses.Cds
 import parser.tenders.TenderCds
 import parser.tools.formatterOnlyDate
+import java.time.ZoneId
+import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserCds : IParser, ParserAbstract() {
 
@@ -73,7 +73,7 @@ class ParserCds : IParser, ParserAbstract() {
             driver.get(BaseUrl)
             driver.switchTo().defaultContent()
             // driver.manage().window().maximize()
-            val wait = WebDriverWait(driver, timeoutB)
+            val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("//tr[contains(@id, 'gvTendersGrid')][position() > 2]")

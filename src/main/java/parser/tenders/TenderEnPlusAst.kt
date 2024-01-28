@@ -30,7 +30,7 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
     }
 
     override fun parsing() {
-        val wait = WebDriverWait(drv, 10)
+        val wait = WebDriverWait(drv, java.time.Duration.ofSeconds(30L))
         val href = drv.currentUrl
         if (href.contains("/VIP/")) return
         try {
@@ -45,82 +45,71 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
         }
         val purNum =
             drv.findElementWithoutException(
-                By.xpath("//td[contains(., 'Номер процедуры')]/following-sibling::td/span")
-            )
+                    By.xpath("//td[contains(., 'Номер процедуры')]/following-sibling::td/span")
+                )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot purNum in tender", href)
             return
         }
         val status =
             drv.findElementWithoutException(
-                By.xpath("//td[contains(., 'Статус')]/following-sibling::td/span")
-            )
+                    By.xpath("//td[contains(., 'Статус')]/following-sibling::td/span")
+                )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val purName =
             drv.findElementWithoutException(
-                By.xpath(
-                    "//td[contains(., 'Наименование процедуры')]/following-sibling::td/span"
+                    By.xpath(
+                        "//td[contains(., 'Наименование процедуры')]/following-sibling::td/span"
+                    )
                 )
-            )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (purName == "") {
             logger("cannot purName in tender", href)
             return
         }
         var datePubTmp =
-            drv
-                .findElementWithoutException(
+            drv.findElementWithoutException(
                     By.xpath(
                         "//td[contains(., 'Дата и время начала срока подачи заявок на участие')]/following-sibling::td/span"
                     )
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (datePubTmp == "") {
             datePubTmp =
-                drv
-                    .findElementWithoutException(
+                drv.findElementWithoutException(
                         By.xpath(
                             "//td[contains(., 'Начало подачи заявок на участие')]/following-sibling::td/span"
                         )
                     )
                     ?.text
                     ?.trim()
-                    ?.trim { it <= ' ' }
-                    ?: ""
+                    ?.trim { it <= ' ' } ?: ""
         }
         var dateEndTmp =
-            drv
-                .findElementWithoutException(
+            drv.findElementWithoutException(
                     By.xpath(
                         "//td[contains(., 'Дата и время окончания срока подачи заявок на участие')]/following-sibling::td/span"
                     )
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (dateEndTmp == "") {
             dateEndTmp =
-                drv
-                    .findElementWithoutException(
+                drv.findElementWithoutException(
                         By.xpath(
                             "//td[contains(., 'Окончание подачи заявок на участие')]/following-sibling::td/span"
                         )
                     )
                     ?.text
                     ?.trim()
-                    ?.trim { it <= ' ' }
-                    ?: ""
+                    ?.trim { it <= ' ' } ?: ""
         }
         val pubDate = datePubTmp.getDateFromString(formatterGpn)
         val endDate = dateEndTmp.getDateFromString(formatterGpn)
@@ -129,28 +118,24 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             return
         }
         val dateScoringTmp =
-            drv
-                .findElementWithoutException(
+            drv.findElementWithoutException(
                     By.xpath(
                         "//tbody[@content = 'other:TenderInfobody']//td[contains(., 'Дата и время рассмотрения заявок')]/following-sibling::td/span"
                     )
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val dateScoring = dateScoringTmp.getDateFromString(formatterGpn)
         val dateBiddingTmp =
-            drv
-                .findElementWithoutException(
+            drv.findElementWithoutException(
                     By.xpath(
                         "//tbody[@content = 'other:TenderInfobody']//td[contains(., 'Дата и время начала торгов')]/following-sibling::td/span"
                     )
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val dateBidding = dateBiddingTmp.getDateFromString(formatterGpn)
         val dateVer = Date()
         DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
@@ -158,8 +143,8 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ? AND scoring_date = ? AND bidding_date = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ? AND scoring_date = ? AND bidding_date = ?"
+                            )
                             .apply {
                                 setString(1, purNum)
                                 setTimestamp(2, Timestamp(pubDate.time))
@@ -181,8 +166,8 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                     var updated = false
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, purNum)
                                 setInt(2, typeFz)
@@ -194,8 +179,8 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                         val dateB: Timestamp = rs.getTimestamp(2)
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             con.prepareStatement(
-                                "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                            )
+                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                )
                                 .apply {
                                     setInt(1, idT)
                                     execute()
@@ -209,16 +194,14 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                     stmt.close()
                     var idOrganizer = 0
                     val fullnameOrg =
-                        drv
-                            .findElementWithoutException(
+                        drv.findElementWithoutException(
                                 By.xpath(
                                     "//td[contains(., 'Наименование Организатора')]/following-sibling::td"
                                 )
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (fullnameOrg != "") {
                         val stmto =
                             con.prepareStatement(
@@ -234,87 +217,73 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                             rso.close()
                             stmto.close()
                             val postalAdr =
-                                drv
-                                    .findElementWithoutException(
+                                drv.findElementWithoutException(
                                         By.xpath(
                                             "//td[contains(., 'Место нахождения')]/following-sibling::td/span"
                                         )
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val factAdr =
-                                drv
-                                    .findElementWithoutException(
+                                drv.findElementWithoutException(
                                         By.xpath(
                                             "//td[contains(., 'Почтовый адрес')]/following-sibling::td/span"
                                         )
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val inn =
-                                drv
-                                    .findElementWithoutException(
+                                drv.findElementWithoutException(
                                         By.xpath(
                                             "//td[contains(., 'ИНН Организатора')]/following-sibling::td/span"
                                         )
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val kpp =
-                                drv
-                                    .findElementWithoutException(
+                                drv.findElementWithoutException(
                                         By.xpath(
                                             "//td[contains(., 'КПП Организатора')]/following-sibling::td/span"
                                         )
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val email =
-                                drv
-                                    .findElementWithoutException(
+                                drv.findElementWithoutException(
                                         By.xpath(
                                             "//td[contains(., 'Адрес электронной почты')]/following-sibling::td/span"
                                         )
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val phone =
-                                drv
-                                    .findElementWithoutException(
+                                drv.findElementWithoutException(
                                         By.xpath(
                                             "//td[contains(., 'Номер контактного телефона')]/following-sibling::td/span"
                                         )
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val contactPerson =
-                                drv
-                                    .findElementWithoutException(
+                                drv.findElementWithoutException(
                                         By.xpath(
                                             "//td[contains(., 'Контактное лицо')]/following-sibling::td/span"
                                         )
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
@@ -336,31 +305,27 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                     }
                     val idEtp = getEtp(con)
                     val placingWayName =
-                        drv
-                            .findElementWithoutException(
+                        drv.findElementWithoutException(
                                 By.xpath(
                                     "//td[contains(., 'Тип процедуры')]/following-sibling::td//span"
                                 )
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var idPlacingWay = 0
                     if (placingWayName != "") {
                         idPlacingWay = getPlacingWay(con, placingWayName)
                     }
                     val factAdrOrg =
-                        drv
-                            .findElementWithoutException(
+                        drv.findElementWithoutException(
                                 By.xpath(
                                     "//td[contains(., 'Место нахождения')]/following-sibling::td/span"
                                 )
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val idRegion = getIdRegion(con, factAdrOrg)
 
                     val insertTender =
@@ -419,8 +384,7 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
 
     private fun parserLot(el: WebElement, con: Connection, href: String, lotNum: Int) {
         val nmck =
-            el
-                .findElementWithoutException(
+            el.findElementWithoutException(
                     By.xpath(
                         ".//td[contains(., 'Начальная (максимальная) цена')]/following-sibling::td/span"
                     )
@@ -428,32 +392,27 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 ?.text
                 ?.replace(',', '.')
                 ?.deleteAllWhiteSpace()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val lotName =
-            el
-                .findElementWithoutException(
+            el.findElementWithoutException(
                     By.xpath(".//td[contains(., 'Наименование лота')]/following-sibling::td/span")
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val currency =
-            el
-                .findElementWithoutException(
+            el.findElementWithoutException(
                     By.xpath(".//td[contains(., 'Сведения о валюте')]/following-sibling::td/span")
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         var idLot = 0
         val insertLot =
             con.prepareStatement(
-                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                Statement.RETURN_GENERATED_KEYS
-            )
+                    "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                    Statement.RETURN_GENERATED_KEYS
+                )
                 .apply {
                     setInt(1, idTender)
                     setInt(2, lotNum)
@@ -478,15 +437,13 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                     .findElementWithoutException(By.xpath("./td[3]/span"))
                     ?.text
                     ?.trim()
-                    ?.trim { it <= ' ' }
-                    ?: ""
+                    ?.trim { it <= ' ' } ?: ""
             val cusInn =
                 customers[0]
                     .findElementWithoutException(By.xpath("./td[4]/span"))
                     ?.text
                     ?.trim()
-                    ?.trim { it <= ' ' }
-                    ?: ""
+                    ?.trim { it <= ' ' } ?: ""
             if (cusName != "") {
                 val stmtoc =
                     con.prepareStatement(
@@ -520,32 +477,28 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
             }
         }
         val delivPlace =
-            el
-                .findElementWithoutException(
+            el.findElementWithoutException(
                     By.xpath(
                         ".//td[contains(., 'Количество, место, сроки (период)')]/following-sibling::td/span"
                     )
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val delivTerm =
-            el
-                .findElementWithoutException(
+            el.findElementWithoutException(
                     By.xpath(
                         ".//td[contains(., 'Условие подачи заявки на участие')]/following-sibling::td/span"
                     )
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (delivPlace != "" || delivTerm != "") {
             val insertCusRec =
                 con.prepareStatement(
-                    "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
-                )
+                        "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
+                    )
                     .apply {
                         setInt(1, idLot)
                         setInt(2, idCustomer)
@@ -564,38 +517,31 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
                 val name =
                     po.findElementWithoutException(By.xpath("./td[4]/span"))?.text?.trim()?.trim {
                         it <= ' '
-                    }
-                        ?: ""
+                    } ?: ""
                 val quantity =
-                    po
-                        .findElementWithoutException(By.xpath("./td[5]/span"))
+                    po.findElementWithoutException(By.xpath("./td[5]/span"))
                         ?.text
                         ?.trim()
                         ?.deleteAllWhiteSpace()
-                        ?.trim { it <= ' ' }
-                        ?: ""
+                        ?.trim { it <= ' ' } ?: ""
                 val okpd2 =
                     po.findElementWithoutException(By.xpath("./td[7]/span"))?.text?.trim()?.trim {
                         it <= ' '
-                    }
-                        ?: ""
+                    } ?: ""
                 val okei =
                     po.findElementWithoutException(By.xpath("./td[9]/span"))?.text?.trim()?.trim {
                         it <= ' '
-                    }
-                        ?: ""
+                    } ?: ""
                 val price =
-                    po
-                        .findElementWithoutException(By.xpath("./td[6]/span"))
+                    po.findElementWithoutException(By.xpath("./td[6]/span"))
                         ?.text
                         ?.trim()
                         ?.replace(',', '.')
                         ?.deleteAllWhiteSpace()
-                        ?.trim { it <= ' ' }
-                        ?: ""
+                        ?.trim { it <= ' ' } ?: ""
                 con.prepareStatement(
-                    "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, okpd_name = ?, price = ?"
-                )
+                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, okpd_name = ?, price = ?"
+                    )
                     .apply {
                         setInt(1, idLot)
                         setInt(2, idCustomer)
@@ -612,8 +558,8 @@ class TenderEnPlusAst(val drv: ChromeDriver) : TenderAbstract(), ITender {
         } else {
             val insertPurObj =
                 con.prepareStatement(
-                    "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?"
-                )
+                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?"
+                    )
                     .apply {
                         setInt(1, idLot)
                         setInt(2, idCustomer)

@@ -65,7 +65,7 @@ class ParserUmzMark : IParser, ParserAbstract() {
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         val driver = ChromeDriver(options)
-        val wait = WebDriverWait(driver, timeoutB)
+        val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         driver.manage().deleteAllCookies()
         driver.manage().window().maximize()
@@ -150,8 +150,8 @@ class ParserUmzMark : IParser, ParserAbstract() {
                     } catch (e: JavascriptException) {
                         c++
                         driver
-                            .findElementByXPath(
-                                "//div[@class = 'dataPager']/div/span[. = '${np + 1}']"
+                            .findElement(
+                                By.xpath("//div[@class = 'dataPager']/div/span[. = '${np + 1}']")
                             )
                             .click()
                         break
@@ -188,8 +188,7 @@ class ParserUmzMark : IParser, ParserAbstract() {
         val urlT =
             el.findElementWithoutException(By.xpath("."))?.getAttribute("data-load")?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         if (urlT == "") {
             logger("cannot urlT in tender")
             return

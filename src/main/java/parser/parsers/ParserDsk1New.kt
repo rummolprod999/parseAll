@@ -33,6 +33,7 @@ class ParserDsk1New : IParser, ParserAbstract() {
     }
 
     override fun parser() = parse { parserDsk1() }
+
     private fun parserDsk1() {
         var tr = 0
         while (true) {
@@ -72,7 +73,7 @@ class ParserDsk1New : IParser, ParserAbstract() {
             driver.get(BaseUrl)
             driver.switchTo().defaultContent()
             // driver.manage().window().maximize()
-            val wait = WebDriverWait(driver, timeoutB)
+            val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[. = 'Тендеры']"))
             )
@@ -138,8 +139,7 @@ class ParserDsk1New : IParser, ParserAbstract() {
             el.findElementWithoutException(By.xpath(".//time[1]"))
                 ?.text
                 ?.trim { it <= ' ' }
-                ?.deleteDoubleWhiteSpace()
-                ?: ""
+                ?.deleteDoubleWhiteSpace() ?: ""
         var datePubR = datePubT.getDataFromRegexp("""c\s+(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")
         var datePub = datePubR.getDateFromString(formatterGpn)
         if (datePub == Date(0L)) {
@@ -151,8 +151,7 @@ class ParserDsk1New : IParser, ParserAbstract() {
             el.findElementWithoutException(By.xpath(".//time[2]"))
                 ?.text
                 ?.trim { it <= ' ' }
-                ?.deleteDoubleWhiteSpace()
-                ?: ""
+                ?.deleteDoubleWhiteSpace() ?: ""
         var dateEndR = dateEndT.getDataFromRegexp("""до\s+(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")
         var dateEnd = dateEndR.getDateFromString(formatterGpn)
         if (dateEnd == Date(0L)) {

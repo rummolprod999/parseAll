@@ -1,8 +1,5 @@
 package parser.parsers
 
-import java.lang.Thread.sleep
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -18,6 +15,9 @@ import parser.tenderClasses.Oilb2b
 import parser.tenderClasses.Oilb2bProduct
 import parser.tenders.TenderOilb2b
 import parser.tools.formatterGpn
+import java.lang.Thread.sleep
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserOilb2b : IParser, ParserAbstract() {
 
@@ -33,6 +33,7 @@ class ParserOilb2b : IParser, ParserAbstract() {
     }
 
     override fun parser() = parse { parserOilb2b() }
+
     private fun parserOilb2b() {
         var tr = 0
         while (true) {
@@ -63,7 +64,7 @@ class ParserOilb2b : IParser, ParserAbstract() {
             driver.get(BaseUrl)
             driver.switchTo().defaultContent()
             // driver.manage().window().maximize()
-            val wait = WebDriverWait(driver, timeoutB)
+            val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("//span[. = 'Опубликована']")
@@ -173,39 +174,34 @@ class ParserOilb2b : IParser, ParserAbstract() {
         val status =
             el.findElementWithoutException(By.xpath(".//span[contains(@class, 'status')]"))
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val cusName = ""
         val pubDateT =
             el.findElementWithoutException(
                     By.xpath(".//div[. = 'Сформирована:']/following-sibling::div")
                 )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val datePub = pubDateT.getDateFromString(formatterGpn)
         val endDateT =
             el.findElementWithoutException(
                     By.xpath(".//div[contains(., 'Окончание приема предложений ')]/p")
                 )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val dateEnd = endDateT.getDateFromString(formatterGpn)
         val tenderDate =
             el.findElementWithoutException(
                     By.xpath(".//div[. = 'Срок закупки:']/following-sibling::div")
                 )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val endTenderDate =
             el.findElementWithoutException(
                     By.xpath(".//div[. = 'Срок исполнения договора:']/following-sibling::div")
                 )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val attachments = mutableListOf<AttachOilb2b>()
         el.findElements(By.xpath(".//div/a[contains(@href, '/PlanClaimFiles')]")).forEach { at ->
             val hrefAtt = at.getAttribute("href") ?: return@forEach

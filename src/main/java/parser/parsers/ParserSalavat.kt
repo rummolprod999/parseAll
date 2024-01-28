@@ -1,8 +1,5 @@
 package parser.parsers
 
-import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
@@ -16,6 +13,9 @@ import parser.logger.logger
 import parser.tenderClasses.Salavat
 import parser.tenders.TenderSalavat
 import parser.tools.formatterGpn
+import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserSalavat : IParser, ParserAbstract() {
     init {
@@ -59,7 +59,7 @@ class ParserSalavat : IParser, ParserAbstract() {
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         val driver = ChromeDriver(options)
-        val wait = WebDriverWait(driver, timeoutB)
+        val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
         driver.manage().deleteAllCookies()
         try {
@@ -90,8 +90,7 @@ class ParserSalavat : IParser, ParserAbstract() {
                 js.executeScript(
                     "document.querySelectorAll('div.dataTables_paginate span[data-href = \"$np\"]')[0].click()"
                 )
-            } catch (e: Exception) {
-            }
+            } catch (e: Exception) {}
         }
         Thread.sleep(5000)
         driver.switchTo().defaultContent()
@@ -129,8 +128,7 @@ class ParserSalavat : IParser, ParserAbstract() {
         val urlT =
             el.findElementWithoutException(By.xpath("./td[2]/p/a"))?.getAttribute("href")?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         if (urlT == "") {
             logger("cannot urlT in tender", purNum)
             return
@@ -140,16 +138,13 @@ class ParserSalavat : IParser, ParserAbstract() {
         val pwName =
             el.findElementWithoutException(By.xpath("./td[2]/p/span[@class = 'tender_type']"))
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val dateEndTmp =
-            el
-                .findElementWithoutException(By.xpath("./td[1]/p/span"))
+            el.findElementWithoutException(By.xpath("./td[1]/p/span"))
                 ?.text
                 ?.trim()
                 ?.replace("в ", "")
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val dateEnd = dateEndTmp.getDateFromString(formatterGpn)
         if (dateEnd == Date(0L)) {
             logger("cannot find dateEnd on page", urlT, purNum)

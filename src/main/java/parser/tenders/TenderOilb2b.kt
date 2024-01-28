@@ -1,10 +1,5 @@
 package parser.tenders
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.openqa.selenium.By
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -17,6 +12,11 @@ import parser.tenderClasses.AttachOilb2b
 import parser.tenderClasses.Oilb2b
 import parser.tenderClasses.Oilb2bProduct
 import parser.tools.formatter
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderOilb2b(val tn: Oilb2b, val driver: ChromeDriver) : TenderAbstract(), ITender {
 
@@ -27,7 +27,7 @@ class TenderOilb2b(val tn: Oilb2b, val driver: ChromeDriver) : TenderAbstract(),
 
     override fun parsing() {
         val dateVer = Date()
-        val wait = WebDriverWait(driver, 20)
+        val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         driver.get(tn.href)
         driver.switchTo().defaultContent()
         wait.until(
@@ -65,8 +65,7 @@ class TenderOilb2b(val tn: Oilb2b, val driver: ChromeDriver) : TenderAbstract(),
                     By.xpath("//div[. = 'заказчик']/following-sibling::div")
                 )
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         driver.findElements(By.xpath("//div/a[contains(@href, '/PlanClaimFiles')]")).forEach { at ->
             val hrefAtt = at.getAttribute("href") ?: return@forEach
             val nameAtt = at.text?.trim { it <= ' ' } ?: return@forEach

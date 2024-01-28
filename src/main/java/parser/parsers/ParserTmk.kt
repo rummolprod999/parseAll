@@ -104,7 +104,7 @@ class ParserTmk : IParser, ParserAbstract() {
         driver.manage().deleteAllCookies()
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
-        wait = WebDriverWait(driver, timeoutB)
+        wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         Thread.sleep(5000)
         clickException()
         wait.until(
@@ -125,7 +125,7 @@ class ParserTmk : IParser, ParserAbstract() {
 
     private fun clickException() {
         try {
-            val el = driver.findElementByXPath("//button[. = 'OK']")
+            val el = driver.findElement(By.xpath("//button[. = 'OK']"))
             el.click()
         } catch (e: Exception) {
             Thread.sleep(1000)
@@ -140,7 +140,7 @@ class ParserTmk : IParser, ParserAbstract() {
         )
         try {
             val paginator =
-                driver.findElementByXPath("//button[contains(@class, 'x-tbar-page-next')]")
+                driver.findElement(By.xpath("//button[contains(@class, 'x-tbar-page-next')]"))
             paginator.click()
             Thread.sleep(5000)
             clickException()
@@ -173,8 +173,7 @@ class ParserTmk : IParser, ParserAbstract() {
         val href =
             el.findElementWithoutException(By.xpath(".//td[last()]/div/a[1]"))
                 ?.getAttribute("href")
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (href == "") {
             logger("cannot href in tender")
             return
@@ -196,10 +195,10 @@ class ParserTmk : IParser, ParserAbstract() {
         val status =
             el.findElementWithoutException(By.xpath(".//td[last()-1]/div"))?.text?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         val datePubTmp =
-            el.findElementWithoutException(By.xpath(".//td[10]/div"))?.text?.trim { it <= ' ' } ?: ""
+            el.findElementWithoutException(By.xpath(".//td[10]/div"))?.text?.trim { it <= ' ' }
+                ?: ""
         val datePub = datePubTmp.getDateFromString(formatterGpn)
         if (datePub == Date(0L)) {
             logger("cannot find datePub on page", href, purNum)

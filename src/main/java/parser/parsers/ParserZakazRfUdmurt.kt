@@ -1,7 +1,5 @@
 package parser.parsers
 
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -16,6 +14,8 @@ import parser.logger.logger
 import parser.tenderClasses.ZakazRf
 import parser.tenders.TenderZakazRfUdmurt
 import parser.tools.formatterEtpRfN
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserZakazRfUdmurt : IParser, ParserAbstract() {
     private val tendersS = mutableListOf<TenderZakazRfUdmurt>()
@@ -30,6 +30,7 @@ class ParserZakazRfUdmurt : IParser, ParserAbstract() {
     }
 
     override fun parser() = parse { parserZakazRf() }
+
     private fun parserZakazRf() {
         var tr = 0
         while (true) {
@@ -56,7 +57,7 @@ class ParserZakazRfUdmurt : IParser, ParserAbstract() {
 
         // options.addArguments("user-agent=${RandomUserAgent.randomUserAgent}")
         options.setCapability(
-            CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR,
+            CapabilityType.UNHANDLED_PROMPT_BEHAVIOUR,
             UnexpectedAlertBehaviour.IGNORE
         )
         val driver = ChromeDriver(options)
@@ -66,7 +67,7 @@ class ParserZakazRfUdmurt : IParser, ParserAbstract() {
             driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
             driver.manage().deleteAllCookies()
             driver.switchTo().defaultContent()
-            val wait = WebDriverWait(driver, timeoutB)
+            val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             Thread.sleep(5000)
             driver.get(BaseUrl)
             try {
@@ -170,7 +171,7 @@ class ParserZakazRfUdmurt : IParser, ParserAbstract() {
         val purName =
             el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
                 ?: el.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
-                    ?: run {
+                ?: run {
                     logger("purName not found ${href}")
                     return
                 }
@@ -184,22 +185,19 @@ class ParserZakazRfUdmurt : IParser, ParserAbstract() {
                 ?.text
                 ?.trim { it <= ' ' }
                 ?.replace(",", "")
-                ?.deleteAllWhiteSpace()
-                ?: ""
+                ?.deleteAllWhiteSpace() ?: ""
         val quantity =
             el.findElementWithoutException(By.xpath("./td[8]"))
                 ?.text
                 ?.trim { it <= ' ' }
                 ?.replace(",", "")
-                ?.deleteAllWhiteSpace()
-                ?: ""
+                ?.deleteAllWhiteSpace() ?: ""
         val sum =
             el.findElementWithoutException(By.xpath("./td[9]"))
                 ?.text
                 ?.trim { it <= ' ' }
                 ?.replace(",", ".")
-                ?.deleteAllWhiteSpace()
-                ?: ""
+                ?.deleteAllWhiteSpace() ?: ""
         val orgName =
             el.findElementWithoutException(By.xpath("./td[10]"))?.text?.trim { it <= ' ' } ?: ""
         val region =

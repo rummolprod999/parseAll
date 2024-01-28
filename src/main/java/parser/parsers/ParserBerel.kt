@@ -32,7 +32,7 @@ class ParserBerel : IParser, ParserAbstract() {
 
     companion object WebCl {
         const val BaseUrl = "https://berelcomp.ru/purchase/purchase-list/"
-        const val timeoutB = 30L
+        val timeoutB = java.time.Duration.ofSeconds(30L)
     }
 
     override fun parser() = parse {
@@ -89,11 +89,11 @@ class ParserBerel : IParser, ParserAbstract() {
     }
 
     private fun createTenderList() {
-        driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
+        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS)
         driver.manage().deleteAllCookies()
         driver.get(BaseUrl)
         driver.switchTo().defaultContent()
-        wait = WebDriverWait(driver, timeoutB)
+        wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[contains(@class, 'purchase_item')]")
@@ -120,20 +120,17 @@ class ParserBerel : IParser, ParserAbstract() {
         val purNum =
             el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_num']"))
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot purNum in tender")
             return
         }
         val urlT =
-            el
-                .findElementWithoutException(
+            el.findElementWithoutException(
                     By.xpath(".//a[@class = 'purchase_item_attachment left']")
                 )
                 ?.getAttribute("href")
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (urlT == "") {
             logger("cannot urlT in tender", purNum)
             throw Exception("cannot urlT in tender")
@@ -141,24 +138,19 @@ class ParserBerel : IParser, ParserAbstract() {
         val purObj =
             el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_text']"))
                 ?.text
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val datePubTmp =
-            el
-                .findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_date']/span"))
+            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_date']/span"))
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val dateEndTmp =
-            el
-                .findElementWithoutException(
+            el.findElementWithoutException(
                     By.xpath(".//div[@class = 'purchase_item_date purchase_item_marg']/span")
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
         val dateEnd = dateEndTmp.getDateFromString(formatterOnlyDate)
         val tt = Berel(purNum, urlT, purObj, datePub, dateEnd)

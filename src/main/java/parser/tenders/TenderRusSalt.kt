@@ -7,7 +7,6 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import parser.builderApp.BuilderApp
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
-import parser.parsers.ParserRusSalt
 import parser.tenderClasses.RusSalt
 import java.sql.Connection
 import java.sql.DriverManager
@@ -28,8 +27,8 @@ class TenderRusSalt(val tn: RusSalt, val driver: ChromeDriver) : TenderAbstract(
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setTimestamp(2, Timestamp(tn.pubDate.time))
@@ -49,11 +48,11 @@ class TenderRusSalt(val tn: RusSalt, val driver: ChromeDriver) : TenderAbstract(
                     var updated = false
                     driver.get(tn.href)
                     driver.switchTo().defaultContent()
-                    val wait = WebDriverWait(driver, ParserRusSalt.timeoutB)
+                    val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
@@ -65,8 +64,8 @@ class TenderRusSalt(val tn: RusSalt, val driver: ChromeDriver) : TenderAbstract(
                         val dateB: Timestamp = rs.getTimestamp(2)
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             con.prepareStatement(
-                                "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                            )
+                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                )
                                 .apply {
                                     setInt(1, idT)
                                     execute()
@@ -107,8 +106,7 @@ class TenderRusSalt(val tn: RusSalt, val driver: ChromeDriver) : TenderAbstract(
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val inn = ""
                             val kpp = ""
                             val email = ""
@@ -116,9 +114,9 @@ class TenderRusSalt(val tn: RusSalt, val driver: ChromeDriver) : TenderAbstract(
                             val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
@@ -147,8 +145,7 @@ class TenderRusSalt(val tn: RusSalt, val driver: ChromeDriver) : TenderAbstract(
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (placingWayName != "") {
                         idPlacingWay = getPlacingWay(con, placingWayName)
                     }
@@ -188,8 +185,8 @@ class TenderRusSalt(val tn: RusSalt, val driver: ChromeDriver) : TenderAbstract(
                         val name = it?.text?.trim { it <= ' ' } ?: ""
                         val hatt = it?.getAttribute("href")?.trim { it <= ' ' } ?: ""
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setString(2, name)
@@ -203,9 +200,9 @@ class TenderRusSalt(val tn: RusSalt, val driver: ChromeDriver) : TenderAbstract(
                     val currency = ""
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
@@ -251,8 +248,8 @@ class TenderRusSalt(val tn: RusSalt, val driver: ChromeDriver) : TenderAbstract(
                             stmtins.close()
                         }
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)
@@ -270,8 +267,8 @@ class TenderRusSalt(val tn: RusSalt, val driver: ChromeDriver) : TenderAbstract(
                     }
 
                     con.prepareStatement(
-                        "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
-                    )
+                            "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
+                        )
                         .apply {
                             setInt(1, idLot)
                             setInt(2, idCustomer)

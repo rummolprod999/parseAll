@@ -1,7 +1,5 @@
 package parser.parsers
 
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -16,6 +14,8 @@ import parser.tenderClasses.ZakazRf
 import parser.tenders.TenderZakazRfEx
 import parser.tools.formatterEtpRfN
 import parser.tools.formatterOnlyDate
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 class ParserZakazRfEx : IParser, ParserAbstract() {
     init {
@@ -26,9 +26,11 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
+
     private val tendersS = mutableListOf<TenderZakazRfEx>()
 
     override fun parser() = parse { parserZakazRf() }
+
     private fun parserZakazRf() {
         var tr = 0
         while (true) {
@@ -46,6 +48,7 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
             }
         }
     }
+
     private fun parserSelen() {
         val options = ChromeOptions()
         options.addArguments("headless")
@@ -54,7 +57,7 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
 
         // options.addArguments("user-agent=${RandomUserAgent.randomUserAgent}")
         options.setCapability(
-            CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR,
+            CapabilityType.UNHANDLED_PROMPT_BEHAVIOUR,
             UnexpectedAlertBehaviour.IGNORE
         )
         val driver = ChromeDriver(options)
@@ -76,7 +79,7 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
             driver.get(BaseUrl)
             Thread.sleep(5000)
             driver.switchTo().defaultContent()
-            val wait = WebDriverWait(driver, timeoutB)
+            val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             // driver.manage().window().maximize()
             try {
                 wait.until(
@@ -165,7 +168,7 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
         val purName =
             el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
                 ?: el.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
-                    ?: run {
+                ?: run {
                     logger("purName not found ${href}")
                     return
                 }
@@ -179,8 +182,7 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
                 ?.text
                 ?.trim { it <= ' ' }
                 ?.replace(",", ".")
-                ?.deleteAllWhiteSpace()
-                ?: ""
+                ?.deleteAllWhiteSpace() ?: ""
         val orgName =
             el.findElementWithoutException(By.xpath("./td[7]"))?.text?.trim { it <= ' ' } ?: ""
         val pubDateT =
