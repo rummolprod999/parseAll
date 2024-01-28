@@ -35,7 +35,7 @@ class ParserAgEat : IParser, ParserAbstract() {
     companion object WebCl {
         const val BaseUrl = "https://agregatoreat.ru/purchases/all"
         val timeoutB = java.time.Duration.ofSeconds(30L)
-        const val CountPage = 50
+        const val CountPage = 100
     }
 
     override fun parser() = parse {
@@ -111,7 +111,7 @@ class ParserAgEat : IParser, ParserAbstract() {
         tendersList.forEach {
             try {
                 ParserTender(it)
-                Thread.sleep(5000)
+                // Thread.sleep(5000)
             } catch (e: Exception) {
                 logger("error in TenderAgEat.parsing()", e.stackTrace, e)
             }
