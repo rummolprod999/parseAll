@@ -12,7 +12,9 @@ import parser.tools.formatter
 
 class ParserVgtrk : IParser, ParserAbstract() {
     val url = "https://tendering.vgtrk.com/orders/working"
+
     override fun parser() = parse { parserRusNano() }
+
     private fun parserRusNano() {
         val pageTen = downloadFromUrl(url)
         if (pageTen == "") {

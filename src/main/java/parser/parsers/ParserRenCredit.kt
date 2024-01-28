@@ -12,7 +12,9 @@ import parser.tools.formatterOnlyDate
 
 class ParserRenCredit : IParser, ParserAbstract() {
     val url = "https://rencredit.ru/about/tenders/"
+
     override fun parser() = parse { parserRenCredit() }
+
     private fun parserRenCredit() {
         val pageTen = downloadFromUrlNoSsl(url)
         if (pageTen == "") {

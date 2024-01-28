@@ -60,8 +60,7 @@ class ParserTknso : IParser, ParserAbstract() {
                 }
         val urlTend = "http://tknso.ru$urlT"
         val dates =
-            e
-                .selectFirst("span:contains(Прием заявок:)")
+            e.selectFirst("span:contains(Прием заявок:)")
                 ?.ownText()
                 ?.replace("Прием заявок:", "")
                 ?.trim { it <= ' ' }

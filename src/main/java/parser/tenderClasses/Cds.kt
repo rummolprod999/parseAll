@@ -11,4 +11,4 @@ data class Cds(
     val endDate: Date,
     val delivTerm: String,
     val delivPlace: String
-) {}
+)

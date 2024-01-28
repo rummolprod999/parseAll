@@ -76,8 +76,7 @@ class ParserVprom : IParser, ParserAbstract() {
         val dateEndTmp =
             el.selectFirst("span:contains(Дата окончания приема заявок:) + span")?.ownText()?.trim {
                 it <= ' '
-            }
-                ?: ""
+            } ?: ""
         var dateEnd = dateEndTmp.getDateFromString(formatterOnlyDate)
         if (dateEnd == Date(0L)) {
             dateEnd =

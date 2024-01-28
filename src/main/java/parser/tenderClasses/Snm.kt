@@ -9,4 +9,4 @@ data class Snm(
     var pubDate: Date,
     var endDate: Date,
     val delivTerm: String,
-) {}
+)

@@ -8,4 +8,4 @@ data class OrPnz(
     val purName: String,
     val pubDate: Date,
     val endDate: Date
-) {}
+)

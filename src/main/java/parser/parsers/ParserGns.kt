@@ -98,8 +98,7 @@ class ParserGns : IParser, ParserAbstract() {
         val datePubT = "$pubDay$pubMounth$pubYear".replaceDateBoretsEnd()
         val datePub = Date()
         val dateEndT =
-            e
-                .selectFirst("div.tender-info:contains(Дата окончания приема заявок на участие:)")
+            e.selectFirst("div.tender-info:contains(Дата окончания приема заявок на участие:)")
                 ?.ownText()
                 ?.trim { it <= ' ' }
                 ?: run {

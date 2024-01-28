@@ -11,6 +11,6 @@ data class Psfond(
     val delivPlace: String,
     val attachments: List<AttachPsfond>,
     val status: String
-) {}
+)
 
 data class AttachPsfond(val Url: String, val Name: String)

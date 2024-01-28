@@ -27,8 +27,8 @@ class TenderRusNano(val tn: RusNano) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setTimestamp(2, Timestamp(tn.pubDate.time))
@@ -53,8 +53,8 @@ class TenderRusNano(val tn: RusNano) : TenderAbstract(), ITender {
                     val htmlTen = Jsoup.parse(pageTen)
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
@@ -67,8 +67,8 @@ class TenderRusNano(val tn: RusNano) : TenderAbstract(), ITender {
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             val preparedStatement =
                                 con.prepareStatement(
-                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                                )
+                                        "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                    )
                                     .apply {
                                         setInt(1, idT)
                                         execute()
@@ -105,13 +105,12 @@ class TenderRusNano(val tn: RusNano) : TenderAbstract(), ITender {
                                 htmlTen
                                     .selectFirst("td:contains(Ответственное лицо:) + td")
                                     ?.ownText()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, tn.orgName)
                                         setString(2, postalAdr)
@@ -195,19 +194,18 @@ class TenderRusNano(val tn: RusNano) : TenderAbstract(), ITender {
                     val currency =
                         htmlTen.selectFirst("td:contains(Вид валюты:) + td")?.ownText()?.trim {
                             it <= ' '
-                        }
-                            ?: ""
+                        } ?: ""
                     val nmck =
                         (htmlTen
-                            .selectFirst("td:contains(Общая стоимость:) + td")
-                            ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: "").extractPrice()
+                                .selectFirst("td:contains(Общая стоимость:) + td")
+                                ?.ownText()
+                                ?.trim { it <= ' ' } ?: "")
+                            .extractPrice()
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
@@ -257,18 +255,16 @@ class TenderRusNano(val tn: RusNano) : TenderAbstract(), ITender {
                         htmlTen
                             .selectFirst("td:contains(Адрес места поставки товара) + td")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val delivTerm =
                         htmlTen.selectFirst("td:contains(Условия поставки) + td")?.ownText()?.trim {
                             it <= ' '
-                        }
-                            ?: ""
+                        } ?: ""
                     if (delivPlace != "" || delivTerm != "") {
                         val insertCusRec =
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
-                            )
+                                    "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
+                                )
                                 .apply {
                                     setInt(1, idLot)
                                     setInt(2, idCustomer)
@@ -281,12 +277,11 @@ class TenderRusNano(val tn: RusNano) : TenderAbstract(), ITender {
                     val okpdName =
                         htmlTen.selectFirst("td:contains(Категория ОКПД2) + td")?.text()?.trim {
                             it <= ' '
-                        }
-                            ?: ""
+                        } ?: ""
                     val insertPurObj =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?, okpd_name = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?, okpd_name = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)

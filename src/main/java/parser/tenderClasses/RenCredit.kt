@@ -8,4 +8,4 @@ data class RenCredit(
     val purName: String,
     val pubDate: Date,
     val endDate: Date
-) {}
+)

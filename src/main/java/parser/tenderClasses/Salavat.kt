@@ -10,4 +10,4 @@ data class Salavat(
     val placingWayName: String,
     val nameCus: String,
     val nameOrg: String
-) {}
+)

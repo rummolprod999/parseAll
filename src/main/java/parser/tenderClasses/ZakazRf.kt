@@ -16,4 +16,4 @@ data class ZakazRf(
     val region: String,
     val delivPlace: String,
     val status: String
-) {}
+)

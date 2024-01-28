@@ -14,7 +14,9 @@ import parser.tools.formatterOnlyDate
 
 class ParserPsfond : IParser, ParserAbstract() {
     val url = "https://psfond.ru/about/tenders/"
+
     override fun parser() = parse { parserPsfond() }
+
     private fun parserPsfond() {
         val pageTen = downloadFromUrl(url)
         if (pageTen == "") {
@@ -46,12 +48,13 @@ class ParserPsfond : IParser, ParserAbstract() {
                     logger("status not found")
                     return
                 }
-        val dates = e.selectFirst("div.item.col3")?.ownText()?.trim { it <= ' ' }
-            ?: run {
-                logger("dates not found")
-                return
-            }
-        val purNum = (dates + purName).md5();
+        val dates =
+            e.selectFirst("div.item.col3")?.ownText()?.trim { it <= ' ' }
+                ?: run {
+                    logger("dates not found")
+                    return
+                }
+        val purNum = (dates + purName).md5()
         val pubDateT = dates.getDataFromRegexp("""^(\d{2}\.\d{2}\.\d{4})""")
         val datePub = pubDateT.getDateFromString(formatterOnlyDate)
         val dateEndT = dates.getDataFromRegexp("""(\d{2}\.\d{2}\.\d{4})$""")
@@ -63,9 +66,18 @@ class ParserPsfond : IParser, ParserAbstract() {
             val name = element.text() ?: return@forEach
             attachents.add(AttachPsfond("https://psfond.ru" + url, name))
         }
-        val delivPlace = e.selectFirst("div:eq(1)")?.ownText()?.trim { it <= ' ' }
-            ?: ""
-        val tt = Psfond(purNum, "https://psfond.ru/", purName, datePub, dateEnd, delivPlace, attachents, status)
+        val delivPlace = e.selectFirst("div:eq(1)")?.ownText()?.trim { it <= ' ' } ?: ""
+        val tt =
+            Psfond(
+                purNum,
+                "https://psfond.ru/",
+                purName,
+                datePub,
+                dateEnd,
+                delivPlace,
+                attachents,
+                status
+            )
         val t = TenderPsfond(tt)
         ParserTender(t)
     }

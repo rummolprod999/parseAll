@@ -1,6 +1,5 @@
 package parser.parsers
 
-import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import parser.extensions.getDataFromRegexp
@@ -8,6 +7,7 @@ import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.Snm
 import parser.tenders.TenderSnm
+import java.util.*
 
 class ParserSnm : IParser, ParserAbstract() {
     companion object WebCl {

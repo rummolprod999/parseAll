@@ -49,8 +49,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                 .findElementWithoutException(By.xpath("//div[@id = 'publishDate']"))
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val pubDate = datePubTmp.getDateFromString(formatterGpn)
         if (pubDate == Date(0L)) {
             logger("can not find pubDate on page", datePubTmp, url)
@@ -63,8 +62,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                 )
                 ?.text
                 ?.trim()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val endDate = dateEndTmp.getDateFromString(formatterGpn)
         if (endDate == Date(0L)) {
             logger("can not find dateEnd on page", dateEndTmp, url)
@@ -76,8 +74,8 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
+                            )
                             .apply {
                                 setString(1, purNum)
                                 setTimestamp(2, Timestamp(pubDate.time))
@@ -97,8 +95,8 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                     var updated = false
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, purNum)
                                 setInt(2, typeFz)
@@ -110,8 +108,8 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                         val dateB: Timestamp = rs.getTimestamp(2)
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             con.prepareStatement(
-                                "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                            )
+                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                )
                                 .apply {
                                     setInt(1, idT)
                                     execute()
@@ -125,20 +123,19 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                     stmt.close()
                     var idOrganizer = 0
                     val orgName =
-                        driver.findElementWithoutException(
-                            By.xpath("//app-general-link[@id = 'customerName']/a")
-                        )
+                        driver
+                            .findElementWithoutException(
+                                By.xpath("//app-general-link[@id = 'customerName']/a")
+                            )
                             ?.text
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val fullnameOrg = orgName
                     val inn =
                         driver
                             .findElementWithoutException(By.xpath("//div[@id = 'customerInn']"))
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (fullnameOrg != "") {
                         val stmto =
                             con.prepareStatement(
@@ -161,8 +158,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val kpp =
                                 driver
                                     .findElementWithoutException(
@@ -170,8 +166,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val email =
                                 driver
                                     .findElementWithoutException(
@@ -179,8 +174,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val phone =
                                 driver
                                     .findElementWithoutException(
@@ -188,8 +182,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val contactPerson =
                                 driver
                                     .findElementWithoutException(
@@ -197,13 +190,12 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                                     )
                                     ?.text
                                     ?.trim()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
@@ -232,8 +224,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (placingWayName != "") {
                         idPlacingWay = getPlacingWay(con, placingWayName)
                     }
@@ -244,8 +235,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val idRegion = getIdRegion(con, regionName)
                     var idTender = 0
                     val printForm =
@@ -254,8 +244,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                                 By.xpath("//a[contains(@href, 'print-form')]")
                             )
                             ?.getAttribute("href")
-                            ?.trim { it <= ' ' }
-                            ?: url
+                            ?.trim { it <= ' ' } ?: url
                     val insertTender =
                         con.prepareStatement(
                             "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?",
@@ -305,16 +294,15 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                             ?.deleteAllWhiteSpace()
                             ?.replace(",", ".")
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var idLot = 0
                     val lotNumber = 1
                     val currency = "₽"
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
@@ -368,8 +356,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var delivTerm1 =
                         driver
                             .findElementWithoutException(
@@ -377,8 +364,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var delivTerm2 =
                         driver
                             .findElementWithoutException(
@@ -386,8 +372,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var delivTerm3 =
                         driver
                             .findElementWithoutException(
@@ -395,15 +380,13 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                             )
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var delivTerm4 =
                         driver
                             .findElementWithoutException(By.xpath("//div[@id = 'lotDeliveryDate']"))
                             ?.text
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val delivTerm =
                         "Условия оплаты: $delivTerm1\nКрайний срок оплаты: $delivTerm2\nПланируемая дата заключения контракта: $delivTerm3\nМаксимальный срок поставки (выполнения работ, оказания услуг): $delivTerm4"
                     val appGuarantAmount =
@@ -416,12 +399,11 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                             ?.deleteAllWhiteSpace()
                             ?.replace(",", ".")
                             ?.trim()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (delivPlace != "" || delivTerm != "") {
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?, application_guarantee_amount = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?, application_guarantee_amount = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)
@@ -441,22 +423,19 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                                 .findElementWithoutException(By.xpath(".//td[2]/app-lot-name/span"))
                                 ?.text
                                 ?.trim()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         val okei =
                             element
                                 .findElementWithoutException(By.xpath(".//td[4]"))
                                 ?.text
                                 ?.trim()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         val quant =
                             element
                                 .findElementWithoutException(By.xpath(".//td[3]"))
                                 ?.text
                                 ?.trim()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         val price =
                             element
                                 .findElementWithoutException(By.xpath(".//td[5]"))
@@ -465,8 +444,7 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                                 ?.deleteAllWhiteSpace()
                                 ?.replace(",", ".")
                                 ?.trim()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         val sum =
                             element
                                 .findElementWithoutException(By.xpath(".//td[6]"))
@@ -475,11 +453,10 @@ class TenderAgEat(val tn: AgEat, val driver: ChromeDriver) : TenderAbstract(), I
                                 ?.deleteAllWhiteSpace()
                                 ?.replace(",", ".")
                                 ?.trim()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)

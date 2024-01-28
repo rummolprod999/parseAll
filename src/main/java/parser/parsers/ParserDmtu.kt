@@ -12,7 +12,9 @@ import parser.tools.formatterOnlyDate
 
 class ParserDmtu : IParser, ParserAbstract() {
     val url = "https://anomtu.ru/zakupki/"
+
     override fun parser() = parse { parserDmtu() }
+
     private fun parserDmtu() {
         val pageTen = downloadFromUrl(url)
         if (pageTen == "") {

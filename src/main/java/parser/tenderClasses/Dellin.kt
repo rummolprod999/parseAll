@@ -10,4 +10,4 @@ data class Dellin(
     val endDate: Date,
     val pwName: String,
     val city: String
-) {}
+)

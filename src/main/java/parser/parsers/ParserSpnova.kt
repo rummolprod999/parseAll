@@ -1,7 +1,5 @@
 package parser.parsers
 
-import java.time.ZoneId
-import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import parser.extensions.extractPrice
@@ -12,6 +10,8 @@ import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.Spnova
 import parser.tenders.TenderSpnova
 import parser.tools.formatter
+import java.time.ZoneId
+import java.util.*
 
 class ParserSpnova : IParser, ParserAbstract() {
 

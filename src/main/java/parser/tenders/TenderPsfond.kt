@@ -26,8 +26,8 @@ class TenderPsfond(val tn: Psfond) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setTimestamp(2, Timestamp(tn.pubDate.time))
@@ -47,8 +47,8 @@ class TenderPsfond(val tn: Psfond) : TenderAbstract(), ITender {
                     var updated = false
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
@@ -60,8 +60,8 @@ class TenderPsfond(val tn: Psfond) : TenderAbstract(), ITender {
                         val dateB: Timestamp = rs.getTimestamp(2)
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             con.prepareStatement(
-                                "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                            )
+                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                )
                                 .apply {
                                     setInt(1, idT)
                                     execute()
@@ -97,9 +97,9 @@ class TenderPsfond(val tn: Psfond) : TenderAbstract(), ITender {
                             val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, etpName)
                                         setString(2, postalAdr)
@@ -159,8 +159,8 @@ class TenderPsfond(val tn: Psfond) : TenderAbstract(), ITender {
                     }
                     tn.attachments.forEach {
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setString(2, it.Name)
@@ -175,9 +175,9 @@ class TenderPsfond(val tn: Psfond) : TenderAbstract(), ITender {
                     val nmck = ""
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
@@ -225,8 +225,8 @@ class TenderPsfond(val tn: Psfond) : TenderAbstract(), ITender {
                     }
                     val insertPurObj =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?, okpd_name = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?, okpd_name = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)
@@ -238,8 +238,8 @@ class TenderPsfond(val tn: Psfond) : TenderAbstract(), ITender {
                             }
                     if (tn.delivPlace != "") {
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?, application_guarantee_amount = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?, application_guarantee_amount = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)

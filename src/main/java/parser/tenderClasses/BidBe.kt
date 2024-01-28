@@ -11,4 +11,4 @@ data class BidBe(
     val payMethod: String,
     val delivPlace: String,
     val status: String
-) {}
+)

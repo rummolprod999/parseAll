@@ -14,7 +14,7 @@ data class Oilb2b(
     val endTenderDate: String,
     var products: MutableList<Oilb2bProduct>,
     var attachments: MutableList<AttachOilb2b>
-) {}
+)
 
 data class Oilb2bProduct(
     val prodName: String,

@@ -11,6 +11,6 @@ data class Dmtu(
     val pwName: String,
     val attachments: List<AttachDmtu>,
     val status: String
-) {}
+)
 
 data class AttachDmtu(val Url: String, val Name: String)

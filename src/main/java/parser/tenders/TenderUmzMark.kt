@@ -17,8 +17,8 @@ import java.util.*
 /**
  * Tender umz mark
  *
- * @property tn
  * @constructor Create empty Tender umz mark
+ * @property tn
  */
 class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
     companion object TypeFz {
@@ -43,8 +43,7 @@ class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
                     "th:contains(Дата и время создания маркетингового исследования) + td > span"
                 )
                 ?.ownText()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val datePub = datePubT.getDateFromString(formatterGpn)
         if (datePub == Date(0L)) {
             logger("cannot find datePub on page", tn.href, tn.purName)
@@ -54,8 +53,7 @@ class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
             htmlTen
                 .selectFirst("th:contains(Номер маркетингового исследования) + td > span")
                 ?.ownText()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
             logger("cannot find purNum on page", tn.href, tn.purName)
             return
@@ -66,8 +64,8 @@ class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
+                            )
                             .apply {
                                 setString(1, purNum)
                                 setTimestamp(2, Timestamp(datePub.time))
@@ -87,8 +85,8 @@ class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
                     var updated = false
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, purNum)
                                 setInt(2, typeFz)
@@ -101,8 +99,8 @@ class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             val preparedStatement =
                                 con.prepareStatement(
-                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                                )
+                                        "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                    )
                                     .apply {
                                         setInt(1, idT)
                                         execute()
@@ -138,9 +136,9 @@ class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
                             val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, etpName)
                                         setString(2, postalAdr)
@@ -221,9 +219,9 @@ class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
                     val maxPrice = tn.nmck
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, LotNumber)
@@ -270,8 +268,8 @@ class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
                         }
                     }
                     con.prepareStatement(
-                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
-                    )
+                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
+                        )
                         .apply {
                             setInt(1, idLot)
                             setInt(2, idCustomer)
@@ -292,30 +290,26 @@ class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
                                 "th:contains(Дата начала срока поставки товаров) + td > span"
                             )
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var delivTerm2 =
                         htmlTen
                             .selectFirst(
                                 "th:contains(Дата окончания срока поставки товаров) + td > span"
                             )
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var delivTerm3 =
                         htmlTen
                             .selectFirst(
                                 "th:contains(Требования к порядку поставки товаров) + td > span"
                             )
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var delivTerm4 =
                         htmlTen
                             .selectFirst("th:contains(Порядок оплаты) + td > span")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val delivTerm =
                         "Дата начала срока поставки товаров: $delivTerm1\nДата окончания срока поставки товаров: $delivTerm2\nТребования к порядку поставки товаров: $delivTerm3\nПорядок оплаты): $delivTerm4"
                     val contrGuarantAmount =
@@ -324,12 +318,11 @@ class TenderUmzMark(val tn: UmzMark) : TenderAbstract(), ITender {
                                 "th:contains(Размер обеспечения исполнения контракта) + td > span"
                             )
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (delivTerm != "") {
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?, contract_guarantee_amount = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?, contract_guarantee_amount = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)

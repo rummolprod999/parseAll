@@ -12,7 +12,9 @@ import parser.tools.formatterGpn
 
 class ParserRusNano : IParser, ParserAbstract() {
     val url = "https://www.b2b-rusnano.ru/market/"
+
     override fun parser() = parse { parserRusNano() }
+
     private fun parserRusNano() {
         val pageTen = downloadFromUrl(url)
         if (pageTen == "") {

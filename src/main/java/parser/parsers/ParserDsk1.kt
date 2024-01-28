@@ -15,6 +15,7 @@ import java.util.*
 
 class ParserDsk1 : IParser, ParserAbstract() {
     val url = "https://tender.dsk1.ru/tendery/?PAGEN_1="
+
     override fun parser() = parse {
         System.setProperty("jsse.enableSNIExtension", "false")
         (1..20).forEach { parserDsk1("$url$it") }

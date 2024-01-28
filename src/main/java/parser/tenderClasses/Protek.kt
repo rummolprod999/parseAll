@@ -9,4 +9,4 @@ data class Protek(
     var pubDate: Date,
     val endDate: Date,
     val attachments: Map<String, String>
-) {}
+)

@@ -11,4 +11,4 @@ data class Akbars(
     val nmck: String,
     val delivTerm: String,
     val attachHref: String,
-) {}
+)

@@ -8,4 +8,4 @@ data class Vprom(
     val purName: String,
     val endDate: Date,
     val pubDate: Date,
-) {}
+)

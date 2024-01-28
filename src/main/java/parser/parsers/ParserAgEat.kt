@@ -29,7 +29,7 @@ class ParserAgEat : IParser, ParserAbstract() {
             "org.apache.commons.logging.impl.NoOpLog"
         )
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/patched/chromedriver")
     }
 
     companion object WebCl {
@@ -51,7 +51,7 @@ class ParserAgEat : IParser, ParserAbstract() {
         while (true) {
             try {
                 options = getchromeOptions()
-                driver = ChromeDriverBuilder().build(options, "/usr/local/bin/chromedriver")
+                driver = ChromeDriverBuilder().build(options, "/usr/local/bin/patched/chromedriver")
                 driver.manage().window().size = Dimension(1280, 1024)
                 // driver.manage().window().fullscreen()
                 parserSelen()

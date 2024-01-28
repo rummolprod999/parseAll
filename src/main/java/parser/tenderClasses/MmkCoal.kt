@@ -10,4 +10,4 @@ data class MmkCoal(
     val endDate: Date,
     val attachments: Map<String, String>,
     val noticeVer: String
-) {}
+)

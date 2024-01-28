@@ -11,4 +11,4 @@ data class Spnova(
     val pubDate: Date,
     val nmck: String,
     val doc: String
-) {}
+)

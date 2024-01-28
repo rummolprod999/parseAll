@@ -11,4 +11,4 @@ data class Vgtrk(
     val state: String,
     val Nmck: String,
     val cusName: String
-) {}
+)

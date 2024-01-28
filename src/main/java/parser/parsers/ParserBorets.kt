@@ -14,6 +14,7 @@ import java.util.*
 
 class ParserBorets : IParser, ParserAbstract() {
     val url = "http://tenderborets.ru/node?page="
+
     override fun parser() = parse {
         System.setProperty("jsse.enableSNIExtension", "false")
         parserBorets("http://tenderborets.ru/node")
@@ -88,12 +89,10 @@ class ParserBorets : IParser, ParserAbstract() {
                 )
         }
         val cusName =
-            e
-                .selectFirst("img[src ^='http://tender']")
+            e.selectFirst("img[src ^='http://tender']")
                 ?.attr("title")
                 ?.replace("Аватар пользователя", "")
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val purNum = purName.md5()
         val tn = Borets(purNum, urlTend, purName, datePub, dateEnd, cusName, delivTerm)
         val t = TenderBorets(tn)
