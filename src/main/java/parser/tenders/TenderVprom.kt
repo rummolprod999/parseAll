@@ -1,13 +1,13 @@
 package parser.tenders
 
+import parser.builderApp.BuilderApp
+import parser.logger.logger
+import parser.tenderClasses.Vprom
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
-import parser.builderApp.BuilderApp
-import parser.logger.logger
-import parser.tenderClasses.Vprom
 
 class TenderVprom(val tn: Vprom) : TenderAbstract(), ITender {
     init {
@@ -24,8 +24,8 @@ class TenderVprom(val tn: Vprom) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
@@ -65,9 +65,9 @@ class TenderVprom(val tn: Vprom) : TenderAbstract(), ITender {
                             val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
@@ -129,9 +129,9 @@ class TenderVprom(val tn: Vprom) : TenderAbstract(), ITender {
                     val lotNumber = 1
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
@@ -178,8 +178,8 @@ class TenderVprom(val tn: Vprom) : TenderAbstract(), ITender {
                         }
                     }
                     con.prepareStatement(
-                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
-                    )
+                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
+                        )
                         .apply {
                             setInt(1, idLot)
                             setInt(2, idCustomer)
@@ -214,8 +214,8 @@ class TenderVprom(val tn: Vprom) : TenderAbstract(), ITender {
         var cancelstatus1 = 0
         val stmt =
             con.prepareStatement(
-                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-            )
+                    "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                )
                 .apply {
                     setString(1, tn.purNum)
                     setInt(2, typeFz)
@@ -227,8 +227,8 @@ class TenderVprom(val tn: Vprom) : TenderAbstract(), ITender {
             val dateB: Timestamp = rs.getTimestamp(2)
             if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                 con.prepareStatement(
-                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                )
+                        "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                    )
                     .apply {
                         setInt(1, idT)
                         execute()

@@ -1,16 +1,16 @@
 package parser.tenders
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import parser.builderApp.BuilderApp
 import parser.logger.logger
 import parser.networkTools.downloadFromUrlNoSslNew
 import parser.tenderClasses.Fpk
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderFpk(val tn: Fpk) : TenderAbstract(), ITender {
 
@@ -77,8 +77,7 @@ class TenderFpk(val tn: Fpk) : TenderAbstract(), ITender {
                                         "div.left_element:contains(Имя и должность ответственного лица заказчика) + div"
                                     )
                                     ?.ownText()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val stmtins =
                                 con.prepareStatement(
                                         "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",

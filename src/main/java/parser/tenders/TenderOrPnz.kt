@@ -1,13 +1,13 @@
 package parser.tenders
 
+import parser.builderApp.BuilderApp
+import parser.logger.logger
+import parser.tenderClasses.OrPnz
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
-import parser.builderApp.BuilderApp
-import parser.logger.logger
-import parser.tenderClasses.OrPnz
 
 class TenderOrPnz(val tn: OrPnz) : TenderAbstract(), ITender {
 
@@ -23,8 +23,8 @@ class TenderOrPnz(val tn: OrPnz) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setTimestamp(2, Timestamp(tn.pubDate.time))
@@ -43,8 +43,8 @@ class TenderOrPnz(val tn: OrPnz) : TenderAbstract(), ITender {
                     var updated = false
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
@@ -57,8 +57,8 @@ class TenderOrPnz(val tn: OrPnz) : TenderAbstract(), ITender {
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             val preparedStatement =
                                 con.prepareStatement(
-                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                                )
+                                        "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                    )
                                     .apply {
                                         setInt(1, idT)
                                         execute()
@@ -95,9 +95,9 @@ class TenderOrPnz(val tn: OrPnz) : TenderAbstract(), ITender {
                             val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, orgName)
                                         setString(2, postalAdr)
@@ -155,8 +155,9 @@ class TenderOrPnz(val tn: OrPnz) : TenderAbstract(), ITender {
                     } else {
                         AddTender++
                     }
-                    if (tn.href !=
-                        "https://www.ornpz.ru/tenderyi/potrebnosti/dogovornaya-konkursnaya-komissiya/tablicza-tenderov-oao-orsknefteorgsintez/"
+                    if (
+                        tn.href !=
+                            "https://www.ornpz.ru/tenderyi/potrebnosti/dogovornaya-konkursnaya-komissiya/tablicza-tenderov-oao-orsknefteorgsintez/"
                     ) {
                         val insertDoc =
                             con.prepareStatement(
@@ -175,9 +176,9 @@ class TenderOrPnz(val tn: OrPnz) : TenderAbstract(), ITender {
                     val nmck = ""
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
@@ -226,8 +227,8 @@ class TenderOrPnz(val tn: OrPnz) : TenderAbstract(), ITender {
                     val okpdName = ""
                     val insertPurObj =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?, okpd_name = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?, okpd_name = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)

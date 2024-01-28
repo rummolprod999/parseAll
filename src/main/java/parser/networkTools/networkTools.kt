@@ -1,5 +1,6 @@
 package parser.networkTools
 
+import parser.logger.logger
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -14,7 +15,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import javax.net.ssl.*
-import parser.logger.logger
 
 private const val timeoutD = 3000L
 
@@ -37,8 +37,7 @@ fun downloadFromUrlNoSsl(urls: String, i: Int = 5, wt: Long = 3000): String {
         val sc: SSLContext = SSLContext.getInstance("SSL")
         sc.init(null, trustAllCerts, SecureRandom())
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
-    } catch (e: Exception) {
-    }
+    } catch (e: Exception) {}
     var count = 0
     while (true) {
         // val i = 50
@@ -81,8 +80,7 @@ fun downloadFromUrlNoSslNew(urls: String, i: Int = 5, wt: Long = 3000): String {
         val sc: SSLContext = SSLContext.getInstance("SSL")
         sc.init(null, trustAllCerts, SecureRandom())
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
-    } catch (e: Exception) {
-    }
+    } catch (e: Exception) {}
     var count = 0
     while (true) {
         // val i = 50
@@ -278,14 +276,12 @@ private fun disableSslVerification() {
                     override fun checkClientTrusted(
                         certs: Array<X509Certificate?>?,
                         authType: String?
-                    ) {
-                    }
+                    ) {}
 
                     override fun checkServerTrusted(
                         certs: Array<X509Certificate?>?,
                         authType: String?
-                    ) {
-                    }
+                    ) {}
 
                     override fun getAcceptedIssuers(): Array<X509Certificate> {
                         TODO("Not yet implemented")

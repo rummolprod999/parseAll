@@ -1,12 +1,12 @@
 package parser.extensions
 
+import org.apache.commons.codec.digest.DigestUtils
 import java.text.Format
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import org.apache.commons.codec.digest.DigestUtils
 
 fun String.getDataFromRegexp(reg: String): String {
     var st = ""
@@ -16,8 +16,7 @@ fun String.getDataFromRegexp(reg: String): String {
         if (matcher.find()) {
             st = matcher.group(1)
         }
-    } catch (e: Exception) {
-    }
+    } catch (e: Exception) {}
     return st.trim { it <= ' ' }
 }
 
@@ -42,8 +41,7 @@ fun String.getDateFromString(format: Format, datePub: Date = Date(0L)): Date {
     if (this == "") return d
     try {
         d = format.parseObject(this) as Date
-    } catch (_: Exception) {
-    }
+    } catch (_: Exception) {}
     if (datePub != Date(0L)) {
         d = Date.from(datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant())
     }
@@ -61,8 +59,7 @@ fun String.extractNum(): String {
         if (m.find()) {
             nm = m.group()
         }
-    } catch (e: Exception) {
-    }
+    } catch (e: Exception) {}
     return nm
 }
 
@@ -78,8 +75,7 @@ fun String.extractPrice(): String {
         if (m.find()) {
             nm = m.group(1)
         }
-    } catch (e: Exception) {
-    }
+    } catch (e: Exception) {}
     return nm
 }
 
@@ -97,8 +93,7 @@ fun String.getDateFromFormatOffset(format: SimpleDateFormat, offset: String): Da
     try {
         format.timeZone = TimeZone.getTimeZone(offset)
         d = format.parseObject(this) as Date
-    } catch (e: Exception) {
-    }
+    } catch (e: Exception) {}
 
     return d
 }
@@ -111,8 +106,7 @@ fun String.getGroupFromRegexp(reg: String): String {
         if (matcher.find()) {
             st = matcher.group(1)
         }
-    } catch (e: Exception) {
-    }
+    } catch (e: Exception) {}
     return st.trim { it <= ' ' }
 }
 

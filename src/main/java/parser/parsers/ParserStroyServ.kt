@@ -1,7 +1,5 @@
 package parser.parsers
 
-import java.time.ZoneId
-import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import parser.extensions.getDataFromRegexp
@@ -11,9 +9,12 @@ import parser.networkTools.downloadWaitWithRef
 import parser.tenderClasses.StroyServ
 import parser.tenders.TenderStroyServ
 import parser.tools.formatterOnlyDate
+import java.time.ZoneId
+import java.util.*
 
 class ParserStroyServ : IParser, ParserAbstract() {
     val url = "https://stroyservis.com/tenderstorgs/ads?_p="
+
     override fun parser() = parse {
         System.setProperty("jsse.enableSNIExtension", "false")
         (1..3).forEach { parserStroyServ("$url$it&") }

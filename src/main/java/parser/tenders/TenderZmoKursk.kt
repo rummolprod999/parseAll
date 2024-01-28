@@ -1,10 +1,5 @@
 package parser.tenders
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.jsoup.Jsoup
 import parser.builderApp.BuilderApp.PassDb
 import parser.builderApp.BuilderApp.Prefix
@@ -15,6 +10,11 @@ import parser.extensions.getDataFromRegexp
 import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.ZmoKursk
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
 
@@ -31,8 +31,8 @@ class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
-                        )
+                                "SELECT id_tender FROM ${Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
+                            )
                             .apply {
                                 setString(1, purNum)
                                 setTimestamp(2, Timestamp(pubDate.time))
@@ -52,8 +52,8 @@ class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
                     var updated = false
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, purNum)
                                 setInt(2, typeFz)
@@ -65,8 +65,8 @@ class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
                         val dateB: Timestamp = rs.getTimestamp(2)
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             con.prepareStatement(
-                                "UPDATE ${Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                            )
+                                    "UPDATE ${Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                )
                                 .apply {
                                     setInt(1, idT)
                                     execute()
@@ -90,8 +90,7 @@ class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
                         htmlTen
                             .selectFirst("td:contains(Полное наименование) + td > a")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (fullnameOrg != "") {
                         val stmto =
                             con.prepareStatement(
@@ -110,23 +109,21 @@ class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
                                 htmlTen
                                     .selectFirst("td:contains(Адрес места нахождения) + td")
                                     ?.ownText()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val factAdr = ""
                             inn =
                                 htmlTen.selectFirst("td:contains(ИНН) + td")?.ownText()?.trim {
                                     it <= ' '
-                                }
-                                    ?: ""
+                                } ?: ""
                             val kpp = ""
                             val email = ""
                             val phone = ""
                             val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
@@ -196,9 +193,9 @@ class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
                     val currency = "руб."
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
@@ -247,18 +244,16 @@ class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
                     val delivPlace =
                         htmlTen.selectFirst("td:contains(Место поставки) + td")?.ownText()?.trim {
                             it <= ' '
-                        }
-                            ?: ""
+                        } ?: ""
                     val delivTerm =
                         htmlTen.selectFirst("td:contains(Сроки поставки) + td")?.ownText()?.trim {
                             it <= ' '
-                        }
-                            ?: ""
+                        } ?: ""
                     if (delivPlace != "" || delivTerm != "") {
                         val insertCusRec =
                             con.prepareStatement(
-                                "INSERT INTO ${Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
-                            )
+                                    "INSERT INTO ${Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
+                                )
                                 .apply {
                                     setInt(1, idLot)
                                     setInt(2, idCustomer)
@@ -279,8 +274,7 @@ class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
                         val quantity =
                             element.selectFirst("td:eq(4)")?.ownText()?.replace(',', '.')?.trim {
                                 it <= ' '
-                            }
-                                ?: ""
+                            } ?: ""
                         val price =
                             element
                                 .selectFirst("td:eq(5) > p")
@@ -288,8 +282,7 @@ class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
                                 ?.replace("&nbsp;", "")
                                 ?.deleteAllWhiteSpace()
                                 ?.replace(',', '.')
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         val sum =
                             element
                                 .selectFirst("td:eq(6) > p")
@@ -297,18 +290,16 @@ class TenderZmoKursk(val tn: ZmoKursk) : TenderAbstract(), ITender {
                                 ?.replace("&nbsp;", "")
                                 ?.deleteAllWhiteSpace()
                                 ?.replace(',', '.')
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         val fullOkpd =
                             element.selectFirst("td:eq(2)")?.ownText()?.replace(',', '.')?.trim {
                                 it <= ' '
-                            }
-                                ?: ""
+                            } ?: ""
                         val okpd2 = fullOkpd.getDataFromRegexp("^(.+)\\s+/")
                         val okpdName = fullOkpd.getDataFromRegexp("/\\s*(.*)\$")
                         con.prepareStatement(
-                            "INSERT INTO ${Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
-                        )
+                                "INSERT INTO ${Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)

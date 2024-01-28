@@ -1,7 +1,5 @@
 package parser.parsers
 
-import java.time.ZoneId
-import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import parser.extensions.getDateFromString
@@ -11,9 +9,12 @@ import parser.tenderClasses.Aomsz
 import parser.tenders.TenderAomsz
 import parser.tools.formatter
 import parser.tools.formatterOnlyDate
+import java.time.ZoneId
+import java.util.*
 
 class ParserAomsz : IParser, ParserAbstract() {
     val url = "https://oaomsz.ru/purchases/requests/"
+
     override fun parser() = parse {
         System.setProperty("jsse.enableSNIExtension", "false")
         parserAomsz("$url")

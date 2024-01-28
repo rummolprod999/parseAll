@@ -1,15 +1,15 @@
 package parser.tenders
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.jsoup.Jsoup
 import parser.builderApp.BuilderApp
 import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.BidBe
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderBidBe(val tn: BidBe) : TenderAbstract(), ITender {
     init {
@@ -28,8 +28,8 @@ class TenderBidBe(val tn: BidBe) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setTimestamp(2, Timestamp(tn.pubDate.time))
@@ -55,8 +55,8 @@ class TenderBidBe(val tn: BidBe) : TenderAbstract(), ITender {
                     val htmlTen = Jsoup.parse(pageTen)
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
@@ -69,8 +69,8 @@ class TenderBidBe(val tn: BidBe) : TenderAbstract(), ITender {
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             val preparedStatement =
                                 con.prepareStatement(
-                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                                )
+                                        "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                    )
                                     .apply {
                                         setInt(1, idT)
                                         execute()
@@ -107,9 +107,9 @@ class TenderBidBe(val tn: BidBe) : TenderAbstract(), ITender {
                             val contactPerson = ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, orgName)
                                         setString(2, postalAdr)
@@ -172,9 +172,9 @@ class TenderBidBe(val tn: BidBe) : TenderAbstract(), ITender {
                     val currency = ""
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
@@ -220,8 +220,8 @@ class TenderBidBe(val tn: BidBe) : TenderAbstract(), ITender {
                             stmtins.close()
                         }
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)
@@ -240,45 +240,38 @@ class TenderBidBe(val tn: BidBe) : TenderAbstract(), ITender {
                             htmlTen
                                 .selectFirst("div:containsOwn(Регион доставки:)")
                                 ?.ownText()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         var delivTerm2 =
                             htmlTen
                                 .selectFirst("div:containsOwn(Адрес доставки:)")
                                 ?.ownText()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         var delivTerm3 =
                             htmlTen
                                 .selectFirst("div:containsOwn(Условия и сроки доставки:)")
                                 ?.ownText()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         var delivTerm4 =
                             htmlTen.selectFirst("div:containsOwn(Налог:)")?.ownText()?.trim {
                                 it <= ' '
-                            }
-                                ?: ""
+                            } ?: ""
                         var delivTerm5 =
                             htmlTen
                                 .selectFirst("div:containsOwn(Способ оплаты:)")
                                 ?.ownText()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         var delivTerm6 =
                             htmlTen
                                 .selectFirst("div:containsOwn(Условия и сроки оплаты:)")
                                 ?.ownText()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         val delivTerm =
-                            "${delivTerm1}\n${delivTerm2}\n${delivTerm3}\n${delivTerm4}\n${delivTerm5}\n${delivTerm6}".trim {
-                                it <= ' '
-                            }
+                            "${delivTerm1}\n${delivTerm2}\n${delivTerm3}\n${delivTerm4}\n${delivTerm5}\n${delivTerm6}"
+                                .trim { it <= ' ' }
                         if (tn.delivPlace != "" || delivTerm != "") {
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
-                            )
+                                    "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
+                                )
                                 .apply {
                                     setInt(1, idLot)
                                     setInt(2, idCustomer)

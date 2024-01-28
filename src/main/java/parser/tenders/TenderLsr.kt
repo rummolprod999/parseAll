@@ -1,10 +1,5 @@
 package parser.tenders
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import parser.builderApp.BuilderApp.PassDb
@@ -17,6 +12,11 @@ import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.Lsr
 import parser.tools.formatterGpn
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
     companion object TypeFz {
@@ -46,29 +46,25 @@ class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
             tn.status =
                 htmlLot.selectFirst("label:containsOwn(Статус) + div > div")?.ownText()?.trim {
                     it <= ' '
-                }
-                    ?: ""
+                } ?: ""
         }
         if (tn.placingWayName == "") {
             tn.placingWayName =
                 htmlLot.selectFirst("div:containsOwn(Способ проведения) + div")?.ownText()?.trim {
                     it <= ' '
-                }
-                    ?: ""
+                } ?: ""
         }
         if (tn.nameCus == "") {
             tn.nameCus =
                 htmlLot.selectFirst("label:containsOwn(Заказчик) + div > div")?.ownText()?.trim {
                     it <= ' '
-                }
-                    ?: ""
+                } ?: ""
         }
         val datePubT =
             htmlTen
                 .selectFirst("label:containsOwn(Дата начала подачи заявок) + div > div")
                 ?.ownText()
-                ?.trim { it <= ' ' }
-                ?: ""
+                ?.trim { it <= ' ' } ?: ""
         val pubDate = datePubT.getDateFromString(formatterGpn)
         if (pubDate != Date(0L)) {
             tn.pubDate = pubDate
@@ -78,8 +74,8 @@ class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
-                        )
+                                "SELECT id_tender FROM ${Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setTimestamp(2, Timestamp(tn.pubDate.time))
@@ -99,8 +95,8 @@ class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
                     var updated = false
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                        )
+                                "SELECT id_tender, date_version FROM ${Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
@@ -113,8 +109,8 @@ class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                             val preparedStatement =
                                 con.prepareStatement(
-                                    "UPDATE ${Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                                )
+                                        "UPDATE ${Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                    )
                                     .apply {
                                         setInt(1, idT)
                                         execute()
@@ -133,8 +129,7 @@ class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
                         htmlTen
                             .selectFirst("label:containsOwn(Организатор) + div > div a")
                             ?.attr("href")
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (urlOrgT != "") {
                         urlOrgT = "http://zakupki.lsr.ru$urlOrgT"
                         val pageOrg = downloadFromUrl(urlOrgT)
@@ -147,8 +142,7 @@ class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
                             htmlOrg
                                 .selectFirst("label:containsOwn(Полное наименование) + div > div")
                                 ?.ownText()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         if (fullnameOrg != "") {
                             val stmto =
                                 con.prepareStatement(
@@ -169,51 +163,44 @@ class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
                                             "label:containsOwn(Почтовый адрес) + div > div"
                                         )
                                         ?.ownText()
-                                        ?.trim { it <= ' ' }
-                                        ?: ""
+                                        ?.trim { it <= ' ' } ?: ""
                                 val factAdr =
                                     htmlOrg
                                         .selectFirst(
                                             "label:containsOwn(Юридический адрес) + div > div"
                                         )
                                         ?.ownText()
-                                        ?.trim { it <= ' ' }
-                                        ?: ""
+                                        ?.trim { it <= ' ' } ?: ""
                                 inn =
                                     htmlOrg
                                         .selectFirst("label:containsOwn(ИНН) + div > div")
                                         ?.ownText()
-                                        ?.trim { it <= ' ' }
-                                        ?: ""
+                                        ?.trim { it <= ' ' } ?: ""
                                 val kpp =
                                     htmlOrg
                                         .selectFirst("label:containsOwn(КПП) + div > div")
                                         ?.ownText()
-                                        ?.trim { it <= ' ' }
-                                        ?: ""
+                                        ?.trim { it <= ' ' } ?: ""
                                 val email =
                                     htmlOrg
                                         .selectFirst("label:containsOwn(Эл. почта) + div > div")
                                         ?.ownText()
-                                        ?.trim { it <= ' ' }
-                                        ?: ""
+                                        ?.trim { it <= ' ' } ?: ""
                                 val phone =
                                     htmlOrg
                                         .selectFirst("label:containsOwn(Телефоны) + div > div")
                                         ?.ownText()
-                                        ?.trim { it <= ' ' }
-                                        ?: ""
+                                        ?.trim { it <= ' ' } ?: ""
                                 val contactPerson =
                                     htmlOrg
                                         .selectFirst("label:containsOwn(Руководитель) + div > div")
                                         ?.ownText()
-                                        ?.trim { it <= ' ' }
-                                        ?: ""
+                                        ?.trim { it <= ' ' } ?: ""
                                 val stmtins =
                                     con.prepareStatement(
-                                        "INSERT INTO ${Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                        Statement.RETURN_GENERATED_KEYS
-                                    )
+                                            "INSERT INTO ${Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                            Statement.RETURN_GENERATED_KEYS
+                                        )
                                         .apply {
                                             setString(1, fullnameOrg)
                                             setString(2, postalAdr)
@@ -246,15 +233,13 @@ class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
                                 "label:containsOwn(Дата и время начала торгов) + div > div"
                             )
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (biddingDateT == "") {
                         biddingDateT =
                             htmlLot
                                 .selectFirst("div:containsOwn(Дата и время начала торгов) + div")
                                 ?.ownText()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                     }
                     val biddingDate = biddingDateT.getDateFromString(formatterGpn)
                     val idRegion = 0
@@ -317,30 +302,27 @@ class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
                         htmlLot
                             .selectFirst("label:containsOwn(Валюта) + div > div")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var maxPriceT =
                         htmlLot
                             .selectFirst("div:containsOwn(Начальная цена) + div")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (maxPriceT == "") {
                         maxPriceT =
                             htmlLot
                                 .selectFirst("label:containsOwn(Начальная цена) + div > div")
                                 ?.ownText()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                     }
                     var maxPrice =
                         maxPriceT.replace("&nbsp;", "").replace(",", ".").replace(Regex("\\s+"), "")
                     maxPrice = maxPrice.extractNum()
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, LotNumber)
@@ -390,19 +372,17 @@ class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
                         htmlLot
                             .selectFirst("label:containsOwn(Место поставки) + div > div")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val delivTerm =
                         htmlLot
                             .selectFirst("label:containsOwn(Дополнительная информация) + div > div")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (delivPlace != "" || delivTerm != "") {
                         val insertCusRec =
                             con.prepareStatement(
-                                "INSERT INTO ${Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
-                            )
+                                    "INSERT INTO ${Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
+                                )
                                 .apply {
                                     setInt(1, idLot)
                                     setInt(2, idCustomer)
@@ -414,8 +394,8 @@ class TenderLsr(val tn: Lsr) : TenderAbstract(), ITender {
                     }
                     val insertPurObj =
                         con.prepareStatement(
-                            "INSERT INTO ${Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?"
-                        )
+                                "INSERT INTO ${Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, sum = ?"
+                            )
                             .apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)

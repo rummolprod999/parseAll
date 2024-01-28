@@ -1,10 +1,5 @@
 package parser.tenders
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import parser.builderApp.BuilderApp
@@ -15,6 +10,11 @@ import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.Achi
 import parser.tools.formatterAchi
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderAchi(val tn: Achi) : TenderAbstract(), ITender {
     data class Result(val cancelstatus: Int, val updated: Boolean)
@@ -65,8 +65,8 @@ class TenderAchi(val tn: Achi) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ? AND doc_publish_date = ? AND notice_version = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ? AND doc_publish_date = ? AND notice_version = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
@@ -88,8 +88,7 @@ class TenderAchi(val tn: Achi) : TenderAbstract(), ITender {
                     var fullnameOrg =
                         htmlTen.selectFirst("span:contains(Наименование) + div")?.text()?.trim {
                             it <= ' '
-                        }
-                            ?: ""
+                        } ?: ""
                     var inn = ""
                     if (fullnameOrg != "") {
                         val stmto =
@@ -108,34 +107,30 @@ class TenderAchi(val tn: Achi) : TenderAbstract(), ITender {
                             val postalAdr =
                                 htmlTen.selectFirst("span:contains(Адрес) + div")?.text()?.trim {
                                     it <= ' '
-                                }
-                                    ?: ""
+                                } ?: ""
                             inn =
                                 htmlTen
                                     .selectFirst("span:contains(Фискальный код/IDNO) + div")
                                     ?.text()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val kpp = ""
                             val email =
                                 htmlTen
                                     .selectFirst("span:contains(Эл. адрес) + div")
                                     ?.text()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val phone =
                                 htmlTen
                                     .selectFirst("span:contains(Контактный номер) + div")
                                     ?.text()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val contactPerson =
                                 htmlTen.selectFirst("Ф.И.О")?.ownText()?.trim { it <= ' ' } ?: ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
@@ -159,8 +154,7 @@ class TenderAchi(val tn: Achi) : TenderAbstract(), ITender {
                     val pwName =
                         htmlTen.selectFirst("span:contains(Тип процедуры) + div")?.text()?.trim {
                             it <= ' '
-                        }
-                            ?: ""
+                        } ?: ""
                     var idPlacingWay = 0
                     if (pwName != "") {
                         idPlacingWay = getPlacingWay(con, pwName)
@@ -244,12 +238,10 @@ class TenderAchi(val tn: Achi) : TenderAbstract(), ITender {
                         )
                     for ((ind, l) in lots.iterator().withIndex()) {
                         val nmckT =
-                            l
-                                .selectFirst("a + div:contains(Бюджет:)")
+                            l.selectFirst("a + div:contains(Бюджет:)")
                                 ?.text()
                                 ?.replace("Бюджет:", "")
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         val currency = nmckT.getDataFromRegexp("""(\w+)${'$'}""")
                         val nmck = nmckT.getDataFromRegexp("""([\d.]+)""")
                         val purObj = l.selectFirst("a strong")?.text()?.trim { it <= ' ' } ?: ""
@@ -257,9 +249,9 @@ class TenderAchi(val tn: Achi) : TenderAbstract(), ITender {
                         val lotNumber = ind + 1
                         val insertLot =
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                                Statement.RETURN_GENERATED_KEYS
-                            )
+                                    "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                    Statement.RETURN_GENERATED_KEYS
+                                )
                                 .apply {
                                     setInt(1, idTender)
                                     setInt(2, lotNumber)
@@ -275,8 +267,8 @@ class TenderAchi(val tn: Achi) : TenderAbstract(), ITender {
                         insertLot.close()
                         if (purObj != "") {
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
-                            )
+                                    "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
+                                )
                                 .apply {
                                     setInt(1, idLot)
                                     setInt(2, idCustomer)
@@ -335,8 +327,8 @@ class TenderAchi(val tn: Achi) : TenderAbstract(), ITender {
         var cancelstatus1 = 0
         val stmt =
             con.prepareStatement(
-                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-            )
+                    "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                )
                 .apply {
                     setString(1, tn.purNum)
                     setInt(2, typeFz)
@@ -348,8 +340,8 @@ class TenderAchi(val tn: Achi) : TenderAbstract(), ITender {
             val dateB: Timestamp = rs.getTimestamp(2)
             if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                 con.prepareStatement(
-                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                )
+                        "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                    )
                     .apply {
                         setInt(1, idT)
                         execute()

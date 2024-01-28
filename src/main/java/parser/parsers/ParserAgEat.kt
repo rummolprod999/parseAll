@@ -3,6 +3,7 @@ package parser.parsers
 import com.frogking.chromedriver.ChromeDriverBuilder
 import org.openqa.selenium.By
 import org.openqa.selenium.Dimension
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -98,7 +99,7 @@ class ParserAgEat : IParser, ParserAbstract() {
         getListTenders()
         (2..CountPage).forEach {
             try {
-                getNextPage(it)
+                getNextPage(it, driver)
             } catch (e: Exception) {
                 logger("Error in getNextPage function", e.stackTrace, e)
             }
@@ -126,7 +127,7 @@ class ParserAgEat : IParser, ParserAbstract() {
         return options
     }
 
-    private fun getNextPage(num: Int) {
+    private fun getNextPage(num: Int, driver: ChromeDriver) {
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath(
@@ -135,13 +136,10 @@ class ParserAgEat : IParser, ParserAbstract() {
             )
         )
         try {
-            val paginator =
-                driver.findElement(
-                    By.xpath(
-                        "//span[contains(@class, 'p-paginator-icon pi pi-angle-double-right')]/parent::button"
-                    )
-                )
-            paginator.click()
+            val js = driver as JavascriptExecutor
+            js.executeScript(
+                "document.querySelector('button.p-ripple.p-element.p-paginator-next.p-paginator-element.p-link').click();"
+            )
             getListTenders()
         } catch (e: Exception) {
             logger("Bad clicker", e.stackTrace, e)

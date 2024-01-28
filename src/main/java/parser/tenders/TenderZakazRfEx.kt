@@ -1,12 +1,5 @@
 package parser.tenders
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import parser.builderApp.BuilderApp
@@ -17,6 +10,13 @@ import parser.tenderClasses.ZakazRf
 import parser.tools.formatterEtpRf
 import parser.tools.formatterEtpRfN
 import parser.tools.formatterOnlyDate
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
     init {
@@ -59,8 +59,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                         html
                             .selectFirst("td:containsOwn(Состояние извещения) ~ td")
                             ?.ownText()
-                            ?.trim()
-                            ?: ""
+                            ?.trim() ?: ""
                     if (eis == "Опубликовано в ЕИС") {
                         logger("Опубликовано в ЕИС")
                         // return
@@ -117,34 +116,29 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                 html
                                     .selectFirst("td:containsOwn(Почтовый адрес организации) ~ td")
                                     ?.ownText()
-                                    ?.trim()
-                                    ?: ""
+                                    ?.trim() ?: ""
                             val email =
                                 html
                                     .selectFirst(
                                         "td:containsOwn(e-mail адрес контактного лица) ~ td"
                                     )
                                     ?.ownText()
-                                    ?.trim()
-                                    ?: ""
+                                    ?.trim() ?: ""
                             val phone =
                                 html
                                     .selectFirst("td:containsOwn(Телефон контактного лица) ~ td")
                                     ?.ownText()
-                                    ?.trim()
-                                    ?: ""
+                                    ?.trim() ?: ""
                             val fax =
                                 html
                                     .selectFirst("td:containsOwn(Факс контактного лица) ~ td")
                                     ?.ownText()
-                                    ?.trim()
-                                    ?: ""
+                                    ?.trim() ?: ""
                             val contactPerson =
                                 html
                                     .selectFirst("td:containsOwn(Контактное лицо) ~ td")
                                     ?.ownText()
-                                    ?.trim()
-                                    ?: ""
+                                    ?.trim() ?: ""
                             val stmtins =
                                 con.prepareStatement(
                                     "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, inn = ?, kpp = ?, post_address = ?, contact_person = ?, contact_email = ?, contact_phone = ?, contact_fax = ?",
@@ -241,8 +235,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                         html
                             .selectFirst("td:containsOwn(Дата и время рассмотрения заявок) ~ td")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var scoringDate = scoringDT.getDateFromString(formatterEtpRfN)
                     if (scoringDate == Date(0L)) {
                         scoringDT =
@@ -251,8 +244,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                     "td:containsOwn(Дата и время рассмотрения заявок) ~ td div"
                                 )
                                 ?.ownText()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         scoringDate = scoringDT.getDateFromString(formatterEtpRfN)
                     }
                     if (scoringDate == Date(0L)) {
@@ -262,16 +254,14 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                     "td:containsOwn(Дата рассмотрения первых частей заявок) ~ td"
                                 )
                                 ?.ownText()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         scoringDate = scoringDT.getDateFromString(formatterOnlyDate)
                     }
                     val dateBiddingT =
                         html
                             .selectFirst("td:containsOwn(Дата и время проведения торгов) ~ td")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val dateBidding = dateBiddingT.getDateFromString(formatterEtpRf)
                     val extendScoringDate =
                         html
@@ -279,21 +269,18 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                 "td:containsOwn(Дата рассмотрения вторых частей заявок) ~ td"
                             )
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
 
                     val extendBiddingDate =
                         html
                             .selectFirst("td:containsOwn(Дата подведения итогов) ~ td")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var region =
                         html
                             .selectFirst("td:containsOwn(Место поставки (субъект РФ)) ~ td")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val idRegion = getIdRegion(con, region)
 
                     val insertTender =
@@ -372,8 +359,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                     val currency =
                         html.selectFirst("td:containsOwn(Валюта) ~ td")?.ownText()?.trim {
                             it <= ' '
-                        }
-                            ?: ""
+                        } ?: ""
                     val insertLot =
                         con.prepareStatement(
                             "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
@@ -438,15 +424,13 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                         "td:containsOwn(Полное наименование (предмет договора)) ~ td"
                                     )
                                     ?.ownText()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             if (namePO == "") {
                                 namePO =
                                     html
                                         .selectFirst("td:containsOwn(Предмет договора) ~ td")
                                         ?.ownText()
-                                        ?.trim { it <= ' ' }
-                                        ?: ""
+                                        ?.trim { it <= ' ' } ?: ""
                             }
                             if (namePO == "") {
                                 namePO = okpd2Name
@@ -492,8 +476,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                 "td:containsOwn(Место поставки, выполнения работ, оказания услуг) ~ td"
                             )
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (delivPlace == "") {
                         val delivPlace1 =
                             html
@@ -501,8 +484,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                     "td:containsOwn(Место поставки товаров, выполнения работ, оказания услуг) ~ td"
                                 )
                                 ?.ownText()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                         delivPlace =
                             "Регион: " +
                                 region +
@@ -514,16 +496,14 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                         html
                             .selectFirst("td:containsOwn(Дополнительные комментарии) ~ td")
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     var applGAmount =
                         html
                             .selectFirst(
                                 "td:containsOwn(Размер обеспечения(резервирования оплаты) заявки на участие, в рублях) ~ td"
                             )
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     applGAmount = applGAmount.replace("руб.", "")
                     val applGuaranteeAmount = returnPriceEtpRf(applGAmount)
                     if (delivPlace != "") {
@@ -546,8 +526,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                 "td:containsOwn(Требование к отсутствию участника в реестре недобросовестных поставщиков) ~ td"
                             )
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (restr == "Да") {
                         val restInfo =
                             "Требование к отсутствию участника в реестре недобросовестных поставщиков"
@@ -566,8 +545,7 @@ class TenderZakazRfEx(val tn: ZakazRf) : TenderAbstract(), ITender {
                                 "td:containsOwn(Торги для субъектов малого и среднего предпринимательства) ~ td"
                             )
                             ?.ownText()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (msp == "Да") {
                         val recContent = "Торги для субъектов малого и среднего предпринимательства"
                         val insertRec =

@@ -1,10 +1,5 @@
 package parser.tenders
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
-import java.sql.Timestamp
-import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -15,6 +10,11 @@ import parser.logger.logger
 import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.Uzex
 import parser.tools.formatterOnlyDate
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.Statement
+import java.sql.Timestamp
+import java.util.*
 
 class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
     data class Result(val cancelstatus: Int, val updated: Boolean)
@@ -33,8 +33,8 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?"
-                        )
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?"
+                            )
                             .apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
@@ -61,8 +61,7 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
                         htmlTen
                             .selectFirst("div.left_element:contains(Наименование заказчика) + div")
                             ?.text()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     if (fullnameOrg == "") {
                         fullnameOrg =
                             htmlTen
@@ -70,8 +69,7 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
                                     "div.left_element:contains(Название организации:) + div"
                                 )
                                 ?.text()
-                                ?.trim { it <= ' ' }
-                                ?: ""
+                                ?.trim { it <= ' ' } ?: ""
                     }
                     var inn = ""
                     if (fullnameOrg != "") {
@@ -94,35 +92,31 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
                                         "div.left_element:contains(Адрес заказчика:) + div"
                                     )
                                     ?.text()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             inn =
                                 htmlTen
                                     .selectFirst("div.left_element:contains(ИНН:) + div")
                                     ?.text()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val kpp = ""
                             val email = ""
                             val phone =
                                 htmlTen
                                     .selectFirst("div.left_element:contains(Телефон:) + div")
                                     ?.text()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val contactPerson =
                                 htmlTen
                                     .selectFirst(
                                         "div.left_element:contains(Имя и должность ответственного лица заказчика) + div"
                                     )
                                     ?.ownText()
-                                    ?.trim { it <= ' ' }
-                                    ?: ""
+                                    ?.trim { it <= ' ' } ?: ""
                             val stmtins =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
+                                        "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
+                                        Statement.RETURN_GENERATED_KEYS
+                                    )
                                     .apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
@@ -146,8 +140,7 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
                         htmlTen
                             .selectFirst("div.left_element:contains(Дата начала:) + div")
                             ?.text()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val datePub = datePubTmp.getDateFromString(formatterOnlyDate)
                     if (datePub != Date(0L)) {
                         tn.pubDate = datePub
@@ -194,9 +187,9 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
                     val lotNumber = 1
                     val insertLot =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
-                        )
+                                "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
+                                Statement.RETURN_GENERATED_KEYS
+                            )
                             .apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
@@ -251,26 +244,23 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
                         htmlTen
                             .selectFirst("div.left_element:contains(Место поставки:) + div")
                             ?.text()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val delivTerm1 =
                         htmlTen
                             .selectFirst("div.left_element:contains(Срок поставки) + div")
                             ?.text()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val delivTerm2 =
                         htmlTen
                             .selectFirst("div.left_element:contains(Условия поставки) + div")
                             ?.text()
-                            ?.trim { it <= ' ' }
-                            ?: ""
+                            ?.trim { it <= ' ' } ?: ""
                     val delivTerm = "$delivTerm1 $delivTerm2".trim { it <= ' ' }
                     if (delivPlace != "" || delivTerm != "") {
                         val insertCusRec =
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
-                            )
+                                    "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
+                                )
                                 .apply {
                                     setInt(1, idLot)
                                     setInt(2, idCustomer)
@@ -313,8 +303,8 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
             val price = priceT.extractNum()
             if (name != "") {
                 con.prepareStatement(
-                    "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
-                )
+                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
+                    )
                     .apply {
                         setInt(1, idLot)
                         setInt(2, idCustomer)
@@ -339,8 +329,8 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
             if (recName != "") {
                 val insertRec =
                     con.prepareStatement(
-                        "INSERT INTO ${BuilderApp.Prefix}requirement SET id_lot = ?, name = ?"
-                    )
+                            "INSERT INTO ${BuilderApp.Prefix}requirement SET id_lot = ?, name = ?"
+                        )
                         .apply {
                             setInt(1, idLot)
                             setString(2, recName)
@@ -378,8 +368,8 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
         var cancelstatus1 = 0
         val stmt =
             con.prepareStatement(
-                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-            )
+                    "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                )
                 .apply {
                     setString(1, tn.purNum)
                     setInt(2, typeFz)
@@ -391,8 +381,8 @@ class TenderUzex(val tn: Uzex) : TenderAbstract(), ITender {
             val dateB: Timestamp = rs.getTimestamp(2)
             if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
                 con.prepareStatement(
-                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                )
+                        "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                    )
                     .apply {
                         setInt(1, idT)
                         execute()

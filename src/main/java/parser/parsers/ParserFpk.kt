@@ -1,7 +1,5 @@
 package parser.parsers
 
-import java.time.ZoneId
-import java.util.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import parser.extensions.getDateFromString
@@ -10,10 +8,13 @@ import parser.networkTools.downloadFromUrlNoSslNew
 import parser.tenderClasses.Fpk
 import parser.tenders.TenderFpk
 import parser.tools.formatterOnlyDate
+import java.time.ZoneId
+import java.util.*
 
 class ParserFpk : IParser, ParserAbstract() {
 
     val url = "https://fpkinvest.ru/purchase?Purchase_page="
+
     override fun parser() = parse {
         System.setProperty("jsse.enableSNIExtension", "false")
         (1..10).forEach { parserFpk("$url$it") }
