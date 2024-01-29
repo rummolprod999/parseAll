@@ -13,7 +13,7 @@ abstract class ParserAbstract {
         logger("Конец парсинга")
     }
 
-    fun ParserTender(t: ITender) {
+    open fun ParserTender(t: ITender) {
         try {
             t.parsing()
         } catch (e: Exception) {

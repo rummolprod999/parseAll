@@ -13,6 +13,7 @@ import parser.extensions.clickerExp
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
 import parser.tenderClasses.AgEat
+import parser.tenders.ITender
 import parser.tenders.TenderAgEat
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
@@ -22,6 +23,7 @@ class ParserAgEat : IParser, ParserAbstract() {
     lateinit var driver: ChromeDriver
     lateinit var wait: WebDriverWait
     lateinit var options: ChromeOptions
+    private var timeout: Long = 0
 
     init {
         System.setProperty(
@@ -110,11 +112,26 @@ class ParserAgEat : IParser, ParserAbstract() {
     fun parserTenderList() {
         tendersList.forEach {
             try {
+                if (timeout > 3) {
+                    return@forEach
+                }
                 ParserTender(it)
                 // Thread.sleep(5000)
             } catch (e: Exception) {
                 logger("error in TenderAgEat.parsing()", e.stackTrace, e)
             }
+        }
+    }
+
+    override fun ParserTender(t: ITender) {
+        try {
+            t.parsing()
+        } catch (e: org.openqa.selenium.TimeoutException) {
+            timeout++
+            logger("timeout error in ${t::class.simpleName}.parsing()", e.stackTrace, e)
+            Thread.sleep(120_000)
+        } catch (e: Exception) {
+            logger("error in ${t::class.simpleName}.parsing()", e.stackTrace, e)
         }
     }
 
