@@ -31,7 +31,7 @@ class ParserAgEat : IParser, ParserAbstract() {
             "org.apache.commons.logging.impl.NoOpLog"
         )
         java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/patched/chromedriver")
+        // System.setProperty("webdriver.chrome.driver", "/usr/local/bin/patched/chromedriver")
     }
 
     companion object WebCl {
@@ -137,9 +137,13 @@ class ParserAgEat : IParser, ParserAbstract() {
 
     private fun getchromeOptions(): ChromeOptions {
         val options = ChromeOptions()
-        options.addArguments("--headless=new")
-        // options.addArguments("disable-gpu")
-        // options.addArguments("no-sandbox")
+        // options.addArguments("--headless=new")
+        options.addArguments("--disable-gpu")
+        options.addArguments("--no-sandbox")
+        options.addArguments("--disable-dev-shm-usage")
+        options.addArguments("--disable-application-cache")
+        options.addArguments("--disable-setuid-sandbox")
+        options.addArguments("--disable-extensions")
         // options.addArguments("disable-infobars")
         // options.addArguments("lang=ru, ru-RU")
         return options
