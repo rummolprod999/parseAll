@@ -15,7 +15,9 @@ import parser.tools.formatterOnlyDate
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserBerel : IParser, ParserAbstract() {
+class ParserBerel :
+    ParserAbstract(),
+    IParser {
     private val tendersList = mutableListOf<TenderBerel>()
     lateinit var driver: ChromeDriver
     lateinit var wait: WebDriverWait
@@ -24,9 +26,11 @@ class ParserBerel : IParser, ParserAbstract() {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -35,13 +39,14 @@ class ParserBerel : IParser, ParserAbstract() {
         val timeoutB = java.time.Duration.ofSeconds(30L)
     }
 
-    override fun parser() = parse {
-        try {
-            parserBerel()
-        } catch (e: Exception) {
-            logger("Error in parserSelen function", e.stackTrace, e)
+    override fun parser() =
+        parse {
+            try {
+                parserBerel()
+            } catch (e: Exception) {
+                logger("Error in parserSelen function", e.stackTrace, e)
+            }
         }
-    }
 
     private fun getchromeOptions(): ChromeOptions {
         val options = ChromeOptions()
@@ -96,8 +101,8 @@ class ParserBerel : IParser, ParserAbstract() {
         wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[contains(@class, 'purchase_item')]")
-            )
+                By.xpath("//div[contains(@class, 'purchase_item')]"),
+            ),
         )
         getListTenders()
     }
@@ -110,7 +115,6 @@ class ParserBerel : IParser, ParserAbstract() {
             try {
                 parserTender(it)
             } catch (e: Exception) {
-
                 logger("error in parserTender", e.stackTrace, e)
             }
         }
@@ -118,7 +122,8 @@ class ParserBerel : IParser, ParserAbstract() {
 
     private fun parserTender(el: WebElement) {
         val purNum =
-            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_num']"))
+            el
+                .findElementWithoutException(By.xpath(".//div[@class = 'purchase_num']"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
@@ -126,29 +131,31 @@ class ParserBerel : IParser, ParserAbstract() {
             return
         }
         val urlT =
-            el.findElementWithoutException(
-                    By.xpath(".//a[@class = 'purchase_item_attachment left']")
-                )
-                ?.getAttribute("href")
+            el
+                .findElementWithoutException(
+                    By.xpath(".//a[@class = 'purchase_item_attachment left']"),
+                )?.getAttribute("href")
                 ?.trim { it <= ' ' } ?: ""
         if (urlT == "") {
             logger("cannot urlT in tender", purNum)
             throw Exception("cannot urlT in tender")
         }
         val purObj =
-            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_text']"))
+            el
+                .findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_text']"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         val datePubTmp =
-            el.findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_date']/span"))
+            el
+                .findElementWithoutException(By.xpath(".//div[@class = 'purchase_item_date']/span"))
                 ?.text
                 ?.trim()
                 ?.trim { it <= ' ' } ?: ""
         val dateEndTmp =
-            el.findElementWithoutException(
-                    By.xpath(".//div[@class = 'purchase_item_date purchase_item_marg']/span")
-                )
-                ?.text
+            el
+                .findElementWithoutException(
+                    By.xpath(".//div[@class = 'purchase_item_date purchase_item_marg']/span"),
+                )?.text
                 ?.trim()
                 ?.trim { it <= ' ' } ?: ""
         val datePub = datePubTmp.getDateFromString(formatterOnlyDate)

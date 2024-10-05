@@ -8,5 +8,5 @@ data class Dsk1(
     val purName: String,
     val pubDate: Date,
     val endDate: Date,
-    val cusName: String
+    val cusName: String,
 )

@@ -10,7 +10,10 @@ data class Psfond(
     val endDate: Date,
     val delivPlace: String,
     val attachments: List<AttachPsfond>,
-    val status: String
+    val status: String,
 )
 
-data class AttachPsfond(val Url: String, val Name: String)
+data class AttachPsfond(
+    val Url: String,
+    val Name: String,
+)

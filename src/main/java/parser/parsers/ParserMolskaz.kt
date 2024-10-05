@@ -10,8 +10,9 @@ import parser.tenderClasses.Molskaz
 import parser.tenders.TenderMolskaz
 import parser.tools.formatter
 
-class ParserMolskaz : IParser, ParserAbstract() {
-
+class ParserMolskaz :
+    ParserAbstract(),
+    IParser {
     companion object WebCl {
         const val BaseUrl = "https://molskaz.priceflow.ru/tenders/list/?ajaxifyID=tenders_list"
     }
@@ -92,7 +93,7 @@ class ParserMolskaz : IParser, ParserAbstract() {
                 currency,
                 delivTerm,
                 delivPlace,
-                notice
+                notice,
             )
         val t = TenderMolskaz(tn)
         ParserTender(t)

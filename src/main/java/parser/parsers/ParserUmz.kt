@@ -17,13 +17,17 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserUmz : IParser, ParserAbstract() {
+class ParserUmz :
+    ParserAbstract(),
+    IParser {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -73,8 +77,8 @@ class ParserUmz : IParser, ParserAbstract() {
             try {
                 wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//div[@class = 'paging']/i[contains(., 'Всего записей:')]")
-                    )
+                        By.xpath("//div[@class = 'paging']/i[contains(., 'Всего записей:')]"),
+                    ),
                 )
                 driver.findElement(By.cssSelector("body")).sendKeys(Keys.END)
                 driver.findElement(By.cssSelector("body")).sendKeys(Keys.RIGHT)
@@ -83,7 +87,7 @@ class ParserUmz : IParser, ParserAbstract() {
                 try {
                     val js = driver as JavascriptExecutor
                     js.executeScript(
-                        """document.querySelectorAll('div.dataPager div span[onclick="\$.ETC.EventContainer.trigger(this,\'Grid.SetRowPerPage\',\'100\')"]')[0].click()"""
+                        """document.querySelectorAll('div.dataPager div span[onclick="\$.ETC.EventContainer.trigger(this,\'Grid.SetRowPerPage\',\'100\')"]')[0].click()""",
                     )
                 } catch (e: Exception) {
                     logger(e)
@@ -127,11 +131,15 @@ class ParserUmz : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait, np: Int = 0) {
+    private fun parserPageN(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+        np: Int = 0,
+    ) {
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[@class = 'paging']/i[contains(., 'Всего записей:')]")
-            )
+                By.xpath("//div[@class = 'paging']/i[contains(., 'Всего записей:')]"),
+            ),
         )
         driver.findElement(By.cssSelector("body")).sendKeys(Keys.END)
         Thread.sleep(5000)
@@ -158,16 +166,15 @@ class ParserUmz : IParser, ParserAbstract() {
                         // + 1}']").click()
                         val js = driver as JavascriptExecutor
                         js.executeScript(
-                            """document.querySelectorAll('div.dataPager div span[onclick="${'$'}.ETC.EventContainer.trigger(this,\'Grid.SetPage\',${np + 1})"]')[0].click()"""
+                            """document.querySelectorAll('div.dataPager div span[onclick="${'$'}.ETC.EventContainer.trigger(this,\'Grid.SetPage\',${np + 1})"]')[0].click()""",
                         )
                         break
                     } catch (e: JavascriptException) {
                         c++
                         driver
                             .findElement(
-                                By.xpath("//div[@class = 'dataPager']/div/span[. = '${np + 1}']")
-                            )
-                            .click()
+                                By.xpath("//div[@class = 'dataPager']/div/span[. = '${np + 1}']"),
+                            ).click()
                         break
                     }
                 } catch (e: Exception) {
@@ -183,8 +190,8 @@ class ParserUmz : IParser, ParserAbstract() {
         driver.switchTo().defaultContent()
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//table[contains(@class, 'datagrid')]/tbody")
-            )
+                By.xpath("//table[contains(@class, 'datagrid')]/tbody"),
+            ),
         )
         driver.switchTo().defaultContent()
         val tenders =
@@ -227,7 +234,8 @@ class ParserUmz : IParser, ParserAbstract() {
         val pwName =
             el.findElementWithoutException(By.xpath("./td[6]"))?.text?.trim { it <= ' ' } ?: ""
         val datePubTmp =
-            el.findElementWithoutException(By.xpath("./td[2]"))
+            el
+                .findElementWithoutException(By.xpath("./td[2]"))
                 ?.text
                 ?.trim()
                 ?.replace("в ", "")

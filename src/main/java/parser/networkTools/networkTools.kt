@@ -21,23 +21,33 @@ private const val timeoutD = 3000L
 var trustAllCerts: Array<TrustManager> =
     arrayOf<TrustManager>(
         object : X509TrustManager {
-
-            override fun checkClientTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
-
-            override fun checkServerTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
-
-            override fun getAcceptedIssuers(): Array<X509Certificate>? {
-                return null
+            override fun checkClientTrusted(
+                certs: Array<X509Certificate?>?,
+                authType: String?,
+            ) {
             }
-        }
+
+            override fun checkServerTrusted(
+                certs: Array<X509Certificate?>?,
+                authType: String?,
+            ) {
+            }
+
+            override fun getAcceptedIssuers(): Array<X509Certificate>? = null
+        },
     )
 
-fun downloadFromUrlNoSsl(urls: String, i: Int = 5, wt: Long = 3000): String {
+fun downloadFromUrlNoSsl(
+    urls: String,
+    i: Int = 5,
+    wt: Long = 3000,
+): String {
     try {
         val sc: SSLContext = SSLContext.getInstance("SSL")
         sc.init(null, trustAllCerts, SecureRandom())
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
-    } catch (e: Exception) {}
+    } catch (e: Exception) {
+    }
     var count = 0
     while (true) {
         // val i = 50
@@ -74,13 +84,18 @@ fun downloadFromUrlNoSsl(urls: String, i: Int = 5, wt: Long = 3000): String {
     return ""
 }
 
-fun downloadFromUrlNoSslNew(urls: String, i: Int = 5, wt: Long = 3000): String {
+fun downloadFromUrlNoSslNew(
+    urls: String,
+    i: Int = 5,
+    wt: Long = 3000,
+): String {
     try {
         disableSslVerification()
         val sc: SSLContext = SSLContext.getInstance("SSL")
         sc.init(null, trustAllCerts, SecureRandom())
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
-    } catch (e: Exception) {}
+    } catch (e: Exception) {
+    }
     var count = 0
     while (true) {
         // val i = 50
@@ -117,7 +132,11 @@ fun downloadFromUrlNoSslNew(urls: String, i: Int = 5, wt: Long = 3000): String {
     return ""
 }
 
-fun downloadFromUrl(urls: String, i: Int = 5, wt: Long = 3000): String {
+fun downloadFromUrl(
+    urls: String,
+    i: Int = 5,
+    wt: Long = 3000,
+): String {
     var count = 0
     while (true) {
         // val i = 50
@@ -202,7 +221,10 @@ fun downloadWaitWithRef(urls: String): String {
     return s.toString()
 }
 
-fun downloadFromUrl1251(urls: String, i: Int = 5): String {
+fun downloadFromUrl1251(
+    urls: String,
+    i: Int = 5,
+): String {
     var count = 0
     while (true) {
         // val i = 50
@@ -247,7 +269,7 @@ fun downloadWaitWithRef1251(urls: String): String {
     uc.readTimeout = 600_000
     uc.addRequestProperty(
         "User-Agent",
-        "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.6) Gecko/20070802 SeaMonkey/1.1.4"
+        "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.6) Gecko/20070802 SeaMonkey/1.1.4",
     )
     uc.connect()
     val `is`: InputStream = uc.getInputStream()
@@ -272,30 +294,32 @@ private fun disableSslVerification() {
         val trustAllCerts: Array<TrustManager> =
             arrayOf(
                 object : X509TrustManager {
-
                     override fun checkClientTrusted(
                         certs: Array<X509Certificate?>?,
-                        authType: String?
-                    ) {}
+                        authType: String?,
+                    ) {
+                    }
 
                     override fun checkServerTrusted(
                         certs: Array<X509Certificate?>?,
-                        authType: String?
-                    ) {}
+                        authType: String?,
+                    ) {
+                    }
 
                     override fun getAcceptedIssuers(): Array<X509Certificate> {
                         TODO("Not yet implemented")
                     }
-                }
+                },
             )
         val sc: SSLContext = SSLContext.getInstance("SSL")
         sc.init(null, trustAllCerts, SecureRandom())
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
         val allHostsValid: HostnameVerifier =
             object : HostnameVerifier {
-                override fun verify(hostname: String?, session: SSLSession?): Boolean {
-                    return true
-                }
+                override fun verify(
+                    hostname: String?,
+                    session: SSLSession?,
+                ): Boolean = true
             }
         HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid)
     } catch (e: NoSuchAlgorithmException) {

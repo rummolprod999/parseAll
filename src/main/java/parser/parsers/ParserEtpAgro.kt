@@ -16,15 +16,19 @@ import parser.tools.formatterGpn
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserEtpAgro : IParser, ParserAbstract() {
+class ParserEtpAgro :
+    ParserAbstract(),
+    IParser {
     private val tendersS = mutableListOf<TenderEtpAgro>()
 
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -57,7 +61,7 @@ class ParserEtpAgro : IParser, ParserAbstract() {
         // options.addArguments("user-agent=${RandomUserAgent.randomUserAgent}")
         options.setCapability(
             CapabilityType.UNHANDLED_PROMPT_BEHAVIOUR,
-            UnexpectedAlertBehaviour.IGNORE
+            UnexpectedAlertBehaviour.IGNORE,
         )
         val driver = ChromeDriver(options)
         driver.manage().window().size = Dimension(1280, 1024)
@@ -70,7 +74,7 @@ class ParserEtpAgro : IParser, ParserAbstract() {
             Thread.sleep(5000)
             driver.switchTo().defaultContent()
             wait.until(
-                ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name = 'login']"))
+                ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name = 'login']")),
             )
             driver.findElement(By.xpath("//input[@name = 'login']")).sendKeys("enter-it_1@mail.ru")
             driver.findElement(By.xpath("//input[@ppassword]")).sendKeys("mcfbJrBy73FYpN6)")
@@ -85,9 +89,9 @@ class ParserEtpAgro : IParser, ParserAbstract() {
                 wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
                         By.xpath(
-                            "//div[contains(@class, 'p-grid p-nogutter')]/ef-widget-container[contains(@element_path, 'table')]"
-                        )
-                    )
+                            "//div[contains(@class, 'p-grid p-nogutter')]/ef-widget-container[contains(@element_path, 'table')]",
+                        ),
+                    ),
                 )
             } catch (e: Exception) {
                 throw e
@@ -119,12 +123,15 @@ class ParserEtpAgro : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun parserPageN(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//button[contains(@class, 'p-paginator-next')]")
-                )
+                    By.xpath("//button[contains(@class, 'p-paginator-next')]"),
+                ),
             )
         } catch (e: Exception) {
             logger("next page not found")
@@ -135,15 +142,18 @@ class ParserEtpAgro : IParser, ParserAbstract() {
         return getListTenders(driver, wait)
     }
 
-    private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun getListTenders(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         Thread.sleep(5000)
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
                     By.xpath(
-                        "//div[contains(@class, 'p-grid p-nogutter')]/ef-widget-container[contains(@element_path, 'table')][1]"
-                    )
-                )
+                        "//div[contains(@class, 'p-grid p-nogutter')]/ef-widget-container[contains(@element_path, 'table')][1]",
+                    ),
+                ),
             )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
@@ -152,8 +162,8 @@ class ParserEtpAgro : IParser, ParserAbstract() {
         val tenders =
             driver.findElements(
                 By.xpath(
-                    "//div[contains(@class, 'p-grid p-nogutter')]/ef-widget-container[contains(@element_path, 'table')]"
-                )
+                    "//div[contains(@class, 'p-grid p-nogutter')]/ef-widget-container[contains(@element_path, 'table')]",
+                ),
             )
         for (it in tenders) {
             try {
@@ -165,9 +175,13 @@ class ParserEtpAgro : IParser, ParserAbstract() {
         return true
     }
 
-    private fun parserTender(el: WebElement, driver: ChromeDriver) {
+    private fun parserTender(
+        el: WebElement,
+        driver: ChromeDriver,
+    ) {
         val href =
-            el.findElementWithoutException(By.xpath(".//a[@name = 'typeAndNumber']"))
+            el
+                .findElementWithoutException(By.xpath(".//a[@name = 'typeAndNumber']"))
                 ?.getAttribute("href")
                 ?.trim { it <= ' ' }
                 ?: run {
@@ -179,40 +193,40 @@ class ParserEtpAgro : IParser, ParserAbstract() {
                 it <= ' '
             }
                 ?: run {
-                    logger("purNumT not found ${href}")
+                    logger("purNumT not found $href")
                     return
                 }
         val purNum = purNumT.getDataFromRegexp("№(\\d+)")
         val purName =
-            el.findElementWithoutException(
+            el
+                .findElementWithoutException(
                     By.xpath(
-                        ".//ef-widget-info[contains(@element_path, 'nameBlock.name')]//div[@efcfgelement = 'value']/span"
-                    )
-                )
-                ?.text
+                        ".//ef-widget-info[contains(@element_path, 'nameBlock.name')]//div[@efcfgelement = 'value']/span",
+                    ),
+                )?.text
                 ?.trim { it <= ' ' }
                 ?: run {
-                    logger("purName not found ${href}")
+                    logger("purName not found $href")
                     return
                 }
         val status =
-            el.findElementWithoutException(
+            el
+                .findElementWithoutException(
                     By.xpath(
-                        ".//ef-widget-html[contains(@element_path, 'statusBlock.status')]//div[@efcfgelement = 'value']/span"
-                    )
-                )
-                ?.text
+                        ".//ef-widget-html[contains(@element_path, 'statusBlock.status')]//div[@efcfgelement = 'value']/span",
+                    ),
+                )?.text
                 ?.trim { it <= ' ' } ?: ""
         val endDateT =
-            el.findElementWithoutException(
+            el
+                .findElementWithoutException(
                     By.xpath(
-                        ".//ef-widget-html[contains(@element_path, 'infoBlock.applicationDeadline')]//div[@efcfgelement = 'value']/span"
-                    )
-                )
-                ?.text
+                        ".//ef-widget-html[contains(@element_path, 'infoBlock.applicationDeadline')]//div[@efcfgelement = 'value']/span",
+                    ),
+                )?.text
                 ?.trim { it <= ' ' }
                 ?: run {
-                    logger("endDateT not found ${href}")
+                    logger("endDateT not found $href")
                     return
                 }
         val endDateR = endDateT.getDataFromRegexp("""(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")

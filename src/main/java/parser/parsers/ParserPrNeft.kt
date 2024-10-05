@@ -10,7 +10,9 @@ import parser.tenderClasses.PrNeft
 import parser.tenders.TenderPrNeft
 import parser.tools.formatterOnlyDate
 
-class ParserPrNeft : IParser, ParserAbstract() {
+class ParserPrNeft :
+    ParserAbstract(),
+    IParser {
     companion object WebCl {
         const val BaseUrl = "https://www.prneft.ru/tendery/obyavlennyie-tenderyi/"
     }

@@ -8,5 +8,5 @@ data class Aomsz(
     val purName: String,
     var pubDate: Date,
     val endDate: Date,
-    val status: String
+    val status: String,
 )

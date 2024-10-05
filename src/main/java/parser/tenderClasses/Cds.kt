@@ -10,5 +10,5 @@ data class Cds(
     var pubDate: Date,
     val endDate: Date,
     val delivTerm: String,
-    val delivPlace: String
+    val delivPlace: String,
 )

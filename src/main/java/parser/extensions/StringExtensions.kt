@@ -16,7 +16,8 @@ fun String.getDataFromRegexp(reg: String): String {
         if (matcher.find()) {
             st = matcher.group(1)
         }
-    } catch (e: Exception) {}
+    } catch (e: Exception) {
+    }
     return st.trim { it <= ' ' }
 }
 
@@ -36,14 +37,25 @@ fun String.deleteAllWhiteSpace(): String {
     return ss
 }
 
-fun String.getDateFromString(format: Format, datePub: Date = Date(0L)): Date {
+fun String.getDateFromString(
+    format: Format,
+    datePub: Date = Date(0L),
+): Date {
     var d = Date(0L)
     if (this == "") return d
     try {
         d = format.parseObject(this) as Date
-    } catch (_: Exception) {}
+    } catch (_: Exception) {
+    }
     if (datePub != Date(0L)) {
-        d = Date.from(datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant())
+        d =
+            Date.from(
+                datePub
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .plusDays(2)
+                    .toInstant(),
+            )
     }
     return d
 }
@@ -59,7 +71,8 @@ fun String.extractNum(): String {
         if (m.find()) {
             nm = m.group()
         }
-    } catch (e: Exception) {}
+    } catch (e: Exception) {
+    }
     return nm
 }
 
@@ -75,25 +88,29 @@ fun String.extractPrice(): String {
         if (m.find()) {
             nm = m.group(1)
         }
-    } catch (e: Exception) {}
+    } catch (e: Exception) {
+    }
     return nm
 }
 
-fun String.tryParseInt(): Boolean {
-    return try {
+fun String.tryParseInt(): Boolean =
+    try {
         Integer.parseInt(this)
         true
     } catch (e: NumberFormatException) {
         false
     }
-}
 
-fun String.getDateFromFormatOffset(format: SimpleDateFormat, offset: String): Date {
+fun String.getDateFromFormatOffset(
+    format: SimpleDateFormat,
+    offset: String,
+): Date {
     var d = Date(0L)
     try {
         format.timeZone = TimeZone.getTimeZone(offset)
         d = format.parseObject(this) as Date
-    } catch (e: Exception) {}
+    } catch (e: Exception) {
+    }
 
     return d
 }
@@ -106,7 +123,8 @@ fun String.getGroupFromRegexp(reg: String): String {
         if (matcher.find()) {
             st = matcher.group(1)
         }
-    } catch (e: Exception) {}
+    } catch (e: Exception) {
+    }
     return st.trim { it <= ' ' }
 }
 
@@ -164,6 +182,4 @@ fun String.replaceDateBorets(): String {
     return this
 }
 
-fun String.md5(): String {
-    return DigestUtils.md5Hex(this).toUpperCase()
-}
+fun String.md5(): String = DigestUtils.md5Hex(this).toUpperCase()

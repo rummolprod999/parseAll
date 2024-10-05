@@ -10,5 +10,5 @@ data class BidBe(
     val endDate: Date,
     val payMethod: String,
     val delivPlace: String,
-    val status: String
+    val status: String,
 )

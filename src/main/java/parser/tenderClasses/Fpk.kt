@@ -10,5 +10,5 @@ data class Fpk(
     val endDate: Date,
     val pwName: String,
     val orgName: String,
-    val cusName: String
+    val cusName: String,
 )

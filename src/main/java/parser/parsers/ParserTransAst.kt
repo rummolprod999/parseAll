@@ -13,8 +13,9 @@ import parser.tenders.TenderTransAst
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserTransAst : IParser, ParserAbstract() {
-
+class ParserTransAst :
+    ParserAbstract(),
+    IParser {
     lateinit var drv: ChromeDriver
     var firstPage = true
     private lateinit var windowsSet: Set<String?>
@@ -22,9 +23,11 @@ class ParserTransAst : IParser, ParserAbstract() {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -34,7 +37,6 @@ class ParserTransAst : IParser, ParserAbstract() {
         var tr = 0
         while (true) {
             try {
-
                 BaseUrl.forEach { parserSelen(it) }
                 break
             } catch (e: Exception) {
@@ -63,22 +65,26 @@ class ParserTransAst : IParser, ParserAbstract() {
         try {
             val alert = wait.until(ExpectedConditions.alertIsPresent())
             alert.accept()
-        } catch (e: Exception) {}
+        } catch (e: Exception) {
+        }
 
         drv.switchTo().defaultContent()
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//input[@id = 'mainContent_txtLoginName']")
-            )
+                By.xpath("//input[@id = 'mainContent_txtLoginName']"),
+            ),
         )
-        drv.findElement(By.xpath("//input[@id = 'mainContent_txtLoginName']"))
+        drv
+            .findElement(By.xpath("//input[@id = 'mainContent_txtLoginName']"))
             .sendKeys("114049225022048885")
-        drv.findElement(By.xpath("//input[@id = 'mainContent_txtPassword']"))
+        drv
+            .findElement(By.xpath("//input[@id = 'mainContent_txtPassword']"))
             .sendKeys("Wsy74FC4yLjuMBJ")
         try {
             val alert1 = wait.until(ExpectedConditions.alertIsPresent())
             alert1.accept()
-        } catch (e: Exception) {}
+        } catch (e: Exception) {
+        }
 
         // driver.findElement(By.xpath("//button[@pbutton]")).click()
         /*val js = drv as JavascriptExecutor
@@ -87,7 +93,8 @@ class ParserTransAst : IParser, ParserAbstract() {
             drv.findElement(By.cssSelector("#btnSignInLogin")).click()
             val alert1 = wait.until(ExpectedConditions.alertIsPresent())
             alert1.accept()
-        } catch (e: Exception) {}
+        } catch (e: Exception) {
+        }
 
         Thread.sleep(5000)
         drv.get(urlPage)
@@ -109,8 +116,8 @@ class ParserTransAst : IParser, ParserAbstract() {
         val wait = WebDriverWait(drv, java.time.Duration.ofSeconds(30L))
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]")
-            )
+                By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]"),
+            ),
         )
         drv.switchTo().defaultContent()
         if (firstPage) {
@@ -128,12 +135,16 @@ class ParserTransAst : IParser, ParserAbstract() {
         try {
             val js = drv as JavascriptExecutor
             js.executeScript(
-                "var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();"
+                "var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();",
             )
-        } catch (e: Exception) {}
+        } catch (e: Exception) {
+        }
     }
 
-    private fun parserTender(el: WebElement, ind: Int) {
+    private fun parserTender(
+        el: WebElement,
+        ind: Int,
+    ) {
         val eis =
             el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim {
                 it <= ' '
@@ -142,7 +153,8 @@ class ParserTransAst : IParser, ParserAbstract() {
             logger("This tender exist on EIS")
         }
         val purNum =
-            el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))
+            el
+                .findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
@@ -202,7 +214,7 @@ class ParserTransAst : IParser, ParserAbstract() {
         val BaseUrl =
             listOf(
                 "http://utp.sberbank-ast.ru/Transneft/List/PurchaseList",
-                "http://utp.sberbank-ast.ru/Transneft/List/PurchaseListSMiSP"
+                "http://utp.sberbank-ast.ru/Transneft/List/PurchaseListSMiSP",
             )
         const val timeoutB = 120L
         const val CountPage = 10

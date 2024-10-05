@@ -9,5 +9,5 @@ data class Dellin(
     var pubDate: Date,
     val endDate: Date,
     val pwName: String,
-    val city: String
+    val city: String,
 )

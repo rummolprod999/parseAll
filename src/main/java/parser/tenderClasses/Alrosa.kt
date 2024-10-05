@@ -17,5 +17,5 @@ data class Alrosa(
     val contactPerson: String,
     val phone: String,
     val email: String,
-    val products: MutableList<AlrosaProduct>
+    val products: MutableList<AlrosaProduct>,
 )

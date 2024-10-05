@@ -9,7 +9,9 @@ import parser.tenderClasses.Snm
 import parser.tenders.TenderSnm
 import java.util.*
 
-class ParserSnm : IParser, ParserAbstract() {
+class ParserSnm :
+    ParserAbstract(),
+    IParser {
     companion object WebCl {
         const val BaseUrl = "http://www.snm.ru/tender"
     }

@@ -12,13 +12,16 @@ import parser.tools.formatterOnlyDate
 import java.time.ZoneId
 import java.util.*
 
-class ParserStroyServ : IParser, ParserAbstract() {
+class ParserStroyServ :
+    ParserAbstract(),
+    IParser {
     val url = "https://stroyservis.com/tenderstorgs/ads?_p="
 
-    override fun parser() = parse {
-        System.setProperty("jsse.enableSNIExtension", "false")
-        (1..3).forEach { parserStroyServ("$url$it&") }
-    }
+    override fun parser() =
+        parse {
+            System.setProperty("jsse.enableSNIExtension", "false")
+            (1..3).forEach { parserStroyServ("$url$it&") }
+        }
 
     private fun parserStroyServ(url: String) {
         val pageTen = downloadWaitWithRef(url)
@@ -70,7 +73,11 @@ class ParserStroyServ : IParser, ParserAbstract() {
         if (dateEnd == Date(0)) {
             dateEnd =
                 Date.from(
-                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                    datePub
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .plusDays(2)
+                        .toInstant(),
                 )
         }
         val cusName = e.selectFirst("p:eq(1)")?.ownText()?.trim { it <= ' ' } ?: ""

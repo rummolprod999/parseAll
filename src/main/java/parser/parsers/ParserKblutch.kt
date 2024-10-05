@@ -12,13 +12,16 @@ import parser.tools.formatterOnlyDate
 import java.time.ZoneId
 import java.util.*
 
-class ParserKblutch : IParser, ParserAbstract() {
+class ParserKblutch :
+    ParserAbstract(),
+    IParser {
     val url = "https://kb-lutch.ru/wp-content/themes/wp-luch/archive_gette_cat-5.php"
 
-    override fun parser() = parse {
-        System.setProperty("jsse.enableSNIExtension", "false")
-        ParserKblutch("$url")
-    }
+    override fun parser() =
+        parse {
+            System.setProperty("jsse.enableSNIExtension", "false")
+            ParserKblutch("$url")
+        }
 
     private fun ParserKblutch(url: String) {
         val pageTen = downloadFromUrlNoSslNew(url)
@@ -54,7 +57,13 @@ class ParserKblutch : IParser, ParserAbstract() {
         val datePubT = purName.getDataFromRegexp("""(\d{2}\.\d{2}\.\d{4})""")
         val datePub = datePubT.getDateFromString(formatterOnlyDate)
         val dateEnd =
-            Date.from(datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant())
+            Date.from(
+                datePub
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .plusDays(2)
+                    .toInstant(),
+            )
         val attName =
             e.selectFirst("div a")?.text()?.trim { it <= ' ' }
                 ?: run {

@@ -10,5 +10,5 @@ data class Uzex(
     val endDate: Date,
     val addr: String,
     val nmck: String,
-    val currency: String
+    val currency: String,
 )

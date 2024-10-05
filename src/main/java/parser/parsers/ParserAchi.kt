@@ -8,19 +8,22 @@ import parser.networkTools.downloadFromUrl
 import parser.tenderClasses.Achi
 import parser.tenders.TenderAchi
 
-class ParserAchi : IParser, ParserAbstract() {
+class ParserAchi :
+    ParserAbstract(),
+    IParser {
     companion object WebCl {
         val BaseUrl = arrayOf("https://achizitii.md/ru/public/tender/list?page=")
         const val CountPage = 20
     }
 
-    override fun parser() = parse {
-        try {
-            parserAchi()
-        } catch (e: Exception) {
-            logger("Error in ${this::class.simpleName} function", e.stackTrace, e)
+    override fun parser() =
+        parse {
+            try {
+                parserAchi()
+            } catch (e: Exception) {
+                logger("Error in ${this::class.simpleName} function", e.stackTrace, e)
+            }
         }
-    }
 
     private fun parserAchi() {
         BaseUrl.forEach { b ->

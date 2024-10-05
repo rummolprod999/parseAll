@@ -19,16 +19,19 @@ import java.lang.Thread.sleep
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserOilb2b : IParser, ParserAbstract() {
-
+class ParserOilb2b :
+    ParserAbstract(),
+    IParser {
     private val tendersS = mutableListOf<TenderOilb2b>()
 
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -67,8 +70,8 @@ class ParserOilb2b : IParser, ParserAbstract() {
             val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//span[. = 'Опубликована']")
-                )
+                    By.xpath("//span[. = 'Опубликована']"),
+                ),
             )
             sleep(7000)
 
@@ -98,12 +101,15 @@ class ParserOilb2b : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun parserPageN(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//a[contains(@href, 'javascript:loadPage')]")
-                )
+                    By.xpath("//a[contains(@href, 'javascript:loadPage')]"),
+                ),
             )
         } catch (e: Exception) {
             logger("next page not found")
@@ -111,19 +117,22 @@ class ParserOilb2b : IParser, ParserAbstract() {
         }
         val js = driver as JavascriptExecutor
         js.executeScript(
-            "document.querySelectorAll('a[href=\"javascript:loadPage($i)\"]')[0].click()"
+            "document.querySelectorAll('a[href=\"javascript:loadPage($i)\"]')[0].click()",
         )
         i++
         return getListTenders(driver, wait)
     }
 
-    private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun getListTenders(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         sleep(5000)
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//ul[@id = 'planClaimData']/li[1]")
-                )
+                    By.xpath("//ul[@id = 'planClaimData']/li[1]"),
+                ),
             )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
@@ -140,10 +149,13 @@ class ParserOilb2b : IParser, ParserAbstract() {
         return true
     }
 
-    private fun parserTender(el: WebElement, driver: ChromeDriver) {
-
+    private fun parserTender(
+        el: WebElement,
+        driver: ChromeDriver,
+    ) {
         val purNum =
-            el.findElementWithoutException(By.xpath(".//span[contains(., 'Заявка')]"))
+            el
+                .findElementWithoutException(By.xpath(".//span[contains(., 'Заявка')]"))
                 ?.text
                 ?.replace("Заявка №", "")
                 ?.trim { it <= ' ' }
@@ -152,55 +164,56 @@ class ParserOilb2b : IParser, ParserAbstract() {
                     return
                 }
         val purName =
-            el.findElementWithoutException(
-                    By.xpath(".//a[@class = 'name' and contains(@href, '/admin/')]")
-                )
-                ?.text
+            el
+                .findElementWithoutException(
+                    By.xpath(".//a[@class = 'name' and contains(@href, '/admin/')]"),
+                )?.text
                 ?.trim { it <= ' ' }
                 ?: run {
                     logger("purName not found")
                     return
                 }
         val href =
-            el.findElementWithoutException(
-                    By.xpath(".//a[@class = 'name' and contains(@href, '/admin/')]")
-                )
-                ?.getAttribute("href")
+            el
+                .findElementWithoutException(
+                    By.xpath(".//a[@class = 'name' and contains(@href, '/admin/')]"),
+                )?.getAttribute("href")
                 ?.trim { it <= ' ' }
                 ?: run {
                     logger("href not found")
                     return
                 }
         val status =
-            el.findElementWithoutException(By.xpath(".//span[contains(@class, 'status')]"))
+            el
+                .findElementWithoutException(By.xpath(".//span[contains(@class, 'status')]"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         val cusName = ""
         val pubDateT =
-            el.findElementWithoutException(
-                    By.xpath(".//div[. = 'Сформирована:']/following-sibling::div")
-                )
-                ?.text
+            el
+                .findElementWithoutException(
+                    By.xpath(".//div[. = 'Сформирована:']/following-sibling::div"),
+                )?.text
                 ?.trim { it <= ' ' } ?: ""
         val datePub = pubDateT.getDateFromString(formatterGpn)
         val endDateT =
-            el.findElementWithoutException(
-                    By.xpath(".//div[contains(., 'Окончание приема предложений ')]/p")
-                )
-                ?.text
+            el
+                .findElementWithoutException(
+                    By.xpath(".//div[contains(., 'Окончание приема предложений ')]/p"),
+                )?.text
                 ?.trim { it <= ' ' } ?: ""
         val dateEnd = endDateT.getDateFromString(formatterGpn)
         val tenderDate =
-            el.findElementWithoutException(
-                    By.xpath(".//div[. = 'Срок закупки:']/following-sibling::div")
-                )
-                ?.text
+            el
+                .findElementWithoutException(
+                    By.xpath(".//div[. = 'Срок закупки:']/following-sibling::div"),
+                )?.text
                 ?.trim { it <= ' ' } ?: ""
         val endTenderDate =
-            el.findElementWithoutException(
-                    By.xpath(".//div[. = 'Срок исполнения договора:']/following-sibling::div")
-                )
-                ?.text
+            el
+                .findElementWithoutException(
+                    By.xpath(".//div[. = 'Срок исполнения договора:']/following-sibling::div"),
+                )?.text
                 ?.trim { it <= ' ' } ?: ""
         val attachments = mutableListOf<AttachOilb2b>()
         el.findElements(By.xpath(".//div/a[contains(@href, '/PlanClaimFiles')]")).forEach { at ->
@@ -213,15 +226,15 @@ class ParserOilb2b : IParser, ParserAbstract() {
                         "Документация"
                     } else {
                         nameAtt
-                    }
-                )
+                    },
+                ),
             )
         }
         val purObgs = mutableListOf<Oilb2bProduct>()
-        el.findElements(
-                By.xpath(".//h4[. = 'Спецификация заявки']/following-sibling::table/tbody/tr")
-            )
-            .forEach { prod ->
+        el
+            .findElements(
+                By.xpath(".//h4[. = 'Спецификация заявки']/following-sibling::table/tbody/tr"),
+            ).forEach { prod ->
                 val prodName =
                     prod.findElementWithoutException(By.xpath("./td[2]"))?.text?.trim { it <= ' ' }
                         ?: return@forEach
@@ -248,7 +261,7 @@ class ParserOilb2b : IParser, ParserAbstract() {
                 tenderDate,
                 endTenderDate,
                 purObgs,
-                attachments
+                attachments,
             )
         val t = TenderOilb2b(tt, driver)
         tendersS.add(t)

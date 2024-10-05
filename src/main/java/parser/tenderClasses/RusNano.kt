@@ -9,5 +9,5 @@ data class RusNano(
     val pubDate: Date,
     val endDate: Date,
     val pwName: String,
-    val orgName: String
+    val orgName: String,
 )

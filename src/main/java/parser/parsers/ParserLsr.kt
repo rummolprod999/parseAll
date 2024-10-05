@@ -17,13 +17,17 @@ import parser.tools.formatterGpn
 import java.util.*
 import java.util.logging.Level
 
-class ParserLsr : IParser, ParserAbstract() {
+class ParserLsr :
+    ParserAbstract(),
+    IParser {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -87,8 +91,8 @@ class ParserLsr : IParser, ParserAbstract() {
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//a[@class = 'page-link page-next']")
-                )
+                    By.xpath("//a[@class = 'page-link page-next']"),
+                ),
             )
             val js = driver as JavascriptExecutor
             js.executeScript("document.querySelectorAll('a.page-link.page-next')[0].click()")
@@ -104,15 +108,15 @@ class ParserLsr : IParser, ParserAbstract() {
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath(
-                    "//table[@aria-describedby = 'DataTables_Table_0_info']/tbody/tr[contains(@role, 'row')][10]"
-                )
-            )
+                    "//table[@aria-describedby = 'DataTables_Table_0_info']/tbody/tr[contains(@role, 'row')][10]",
+                ),
+            ),
         )
         val tenders =
             driver.findElements(
                 By.xpath(
-                    "//table[@aria-describedby = 'DataTables_Table_0_info']/tbody/tr[contains(@role, 'row')]"
-                )
+                    "//table[@aria-describedby = 'DataTables_Table_0_info']/tbody/tr[contains(@role, 'row')]",
+                ),
             )
         for ((index, value) in tenders.withIndex()) {
             try {
@@ -123,7 +127,10 @@ class ParserLsr : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserTender(el: WebElement, ind: Int) {
+    private fun parserTender(
+        el: WebElement,
+        ind: Int,
+    ) {
         val purNum =
             el.findElementWithoutException(By.xpath(".//td[1]/a"))?.text?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
@@ -160,12 +167,12 @@ class ParserLsr : IParser, ParserAbstract() {
             el.findElementWithoutException(By.xpath(".//td[5]"))?.text?.trim { it <= ' ' } ?: ""
         if (endDateT == "") {
             endDateT =
-                el.findElementWithoutException(
+                el
+                    .findElementWithoutException(
                         By.xpath(
-                            "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Окончание приема заявок')]/following-sibling::span"
-                        )
-                    )
-                    ?.text
+                            "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Окончание приема заявок')]/following-sibling::span",
+                        ),
+                    )?.text
                     ?.trim { it <= ' ' } ?: ""
         }
         val endDate = endDateT.getDateFromString(formatterGpn)
@@ -177,36 +184,36 @@ class ParserLsr : IParser, ParserAbstract() {
             el.findElementWithoutException(By.xpath(".//td[7]"))?.text?.trim { it <= ' ' } ?: ""
         if (status == "") {
             status =
-                el.findElementWithoutException(
+                el
+                    .findElementWithoutException(
                         By.xpath(
-                            "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Статус лота')]/following-sibling::span"
-                        )
-                    )
-                    ?.text
+                            "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Статус лота')]/following-sibling::span",
+                        ),
+                    )?.text
                     ?.trim { it <= ' ' } ?: ""
         }
         var placingWayName =
             el.findElementWithoutException(By.xpath(".//td[8]"))?.text?.trim { it <= ' ' } ?: ""
         if (placingWayName == "") {
             placingWayName =
-                el.findElementWithoutException(
+                el
+                    .findElementWithoutException(
                         By.xpath(
-                            "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Способ проведения закупки')]/following-sibling::span"
-                        )
-                    )
-                    ?.text
+                            "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Способ проведения закупки')]/following-sibling::span",
+                        ),
+                    )?.text
                     ?.trim { it <= ' ' } ?: ""
         }
         var nameCus =
             el.findElementWithoutException(By.xpath(".//td[6]"))?.text?.trim { it <= ' ' } ?: ""
         if (nameCus == "") {
             nameCus =
-                el.findElementWithoutException(
+                el
+                    .findElementWithoutException(
                         By.xpath(
-                            "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Заказчик')]/following-sibling::span"
-                        )
-                    )
-                    ?.getAttribute("href")
+                            "//table[@aria-describedby = 'grid_TenderGridViewModel_info']/tbody/tr[contains(@class, 'child')][$ind]//span[contains(., 'Заказчик')]/following-sibling::span",
+                        ),
+                    )?.getAttribute("href")
                     ?.trim { it <= ' ' } ?: ""
         }
         val tn =

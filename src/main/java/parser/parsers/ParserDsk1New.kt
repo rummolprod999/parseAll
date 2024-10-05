@@ -20,15 +20,19 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserDsk1New : IParser, ParserAbstract() {
+class ParserDsk1New :
+    ParserAbstract(),
+    IParser {
     private val tendersS = mutableListOf<TenderDsk1New>()
 
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -75,7 +79,7 @@ class ParserDsk1New : IParser, ParserAbstract() {
             // driver.manage().window().maximize()
             val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
-                ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[. = 'Тендеры']"))
+                ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[. = 'Тендеры']")),
             )
             Thread.sleep(7000)
 
@@ -96,13 +100,16 @@ class ParserDsk1New : IParser, ParserAbstract() {
         }
     }
 
-    private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun getListTenders(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         Thread.sleep(5000)
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//a[@class = 'table-item'][1]")
-                )
+                    By.xpath("//a[@class = 'table-item'][1]"),
+                ),
             )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
@@ -119,7 +126,10 @@ class ParserDsk1New : IParser, ParserAbstract() {
         return true
     }
 
-    private fun parserTender(el: WebElement, driver: ChromeDriver) {
+    private fun parserTender(
+        el: WebElement,
+        driver: ChromeDriver,
+    ) {
         val purName =
             el.findElementWithoutException(By.xpath(".//span[1]"))?.text?.trim { it <= ' ' }
                 ?: run {
@@ -136,7 +146,8 @@ class ParserDsk1New : IParser, ParserAbstract() {
         val cusName =
             el.findElementWithoutException(By.xpath(".//span[3]"))?.text?.trim { it <= ' ' } ?: ""
         val datePubT =
-            el.findElementWithoutException(By.xpath(".//time[1]"))
+            el
+                .findElementWithoutException(By.xpath(".//time[1]"))
                 ?.text
                 ?.trim { it <= ' ' }
                 ?.deleteDoubleWhiteSpace() ?: ""
@@ -148,7 +159,8 @@ class ParserDsk1New : IParser, ParserAbstract() {
         }
 
         val dateEndT =
-            el.findElementWithoutException(By.xpath(".//time[2]"))
+            el
+                .findElementWithoutException(By.xpath(".//time[2]"))
                 ?.text
                 ?.trim { it <= ' ' }
                 ?.deleteDoubleWhiteSpace() ?: ""

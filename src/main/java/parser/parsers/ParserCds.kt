@@ -20,8 +20,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserCds : IParser, ParserAbstract() {
-
+class ParserCds :
+    ParserAbstract(),
+    IParser {
     private val tendersS = mutableListOf<TenderCds>()
 
     private var c = 0
@@ -35,9 +36,11 @@ class ParserCds : IParser, ParserAbstract() {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -76,8 +79,8 @@ class ParserCds : IParser, ParserAbstract() {
             val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//tr[contains(@id, 'gvTendersGrid')][position() > 2]")
-                )
+                    By.xpath("//tr[contains(@id, 'gvTendersGrid')][position() > 2]"),
+                ),
             )
             driver.switchTo().defaultContent()
             getListTenders(driver, wait)
@@ -103,10 +106,13 @@ class ParserCds : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait) {
+    private fun parserPageN(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ) {
         driver.switchTo().defaultContent()
         wait.until(
-            ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.dxp-button.dxp-bi"))
+            ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.dxp-button.dxp-bi")),
         )
         val js = driver as JavascriptExecutor
         if (c > 0) {
@@ -120,7 +126,10 @@ class ParserCds : IParser, ParserAbstract() {
         getListTenders(driver, wait)
     }
 
-    private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait) {
+    private fun getListTenders(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ) {
         Thread.sleep(5000)
         driver.switchTo().defaultContent()
         val tenders =
@@ -170,7 +179,11 @@ class ParserCds : IParser, ParserAbstract() {
         if (dateEnd == Date(0)) {
             dateEnd =
                 Date.from(
-                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                    datePub
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .plusDays(2)
+                        .toInstant(),
                 )
         }
         val tt =
@@ -182,7 +195,7 @@ class ParserCds : IParser, ParserAbstract() {
                 pubDate = datePub,
                 endDate = dateEnd,
                 delivTerm = delivTerm,
-                delivPlace = delivPlace
+                delivPlace = delivPlace,
             )
         val t = TenderCds(tt)
         tendersS.add(t)

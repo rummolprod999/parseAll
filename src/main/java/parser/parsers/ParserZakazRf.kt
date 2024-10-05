@@ -17,16 +17,19 @@ import parser.tools.formatterEtpRfN
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserZakazRf : IParser, ParserAbstract() {
-
+class ParserZakazRf :
+    ParserAbstract(),
+    IParser {
     private val tendersS = mutableListOf<TenderZakazRf>()
 
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -59,7 +62,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
         // options.addArguments("user-agent=${RandomUserAgent.randomUserAgent}")
         options.setCapability(
             CapabilityType.UNHANDLED_PROMPT_BEHAVIOUR,
-            UnexpectedAlertBehaviour.IGNORE
+            UnexpectedAlertBehaviour.IGNORE,
         )
         val driver = ChromeDriver(options)
         driver.manage().window().size = Dimension(1280, 1024)
@@ -83,7 +86,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
             driver.switchTo().defaultContent()
             val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
-                ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id = 'userName']"))
+                ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id = 'userName']")),
             )
             driver.findElement(By.xpath("//input[@id = 'userName']")).sendKeys("enter-it_1@mail.ru")
             driver.findElement(By.xpath("//input[@id = 'password']")).sendKeys("aa!rVdW8M8vEcE")
@@ -114,8 +117,8 @@ class ParserZakazRf : IParser, ParserAbstract() {
             try {
                 wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//table[@objecttype]/tbody/tr[@id]")
-                    )
+                        By.xpath("//table[@objecttype]/tbody/tr[@id]"),
+                    ),
                 )
             } catch (e: Exception) {
                 println(driver.pageSource)
@@ -149,12 +152,15 @@ class ParserZakazRf : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun parserPageN(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//a[contains(@class, 'pager-button-next')]")
-                )
+                    By.xpath("//a[contains(@class, 'pager-button-next')]"),
+                ),
             )
         } catch (e: Exception) {
             logger("next page not found")
@@ -165,13 +171,16 @@ class ParserZakazRf : IParser, ParserAbstract() {
         return getListTenders(driver, wait)
     }
 
-    private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun getListTenders(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         Thread.sleep(5000)
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//table[@objecttype]/tbody/tr[@id][1]")
-                )
+                    By.xpath("//table[@objecttype]/tbody/tr[@id][1]"),
+                ),
             )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
@@ -201,7 +210,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
             el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
                 ?: el.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
                 ?: run {
-                    logger("purName not found ${href}")
+                    logger("purName not found $href")
                     return
                 }
         val purNum = href.getDataFromRegexp("/id/([\\d.]+)")
@@ -210,19 +219,22 @@ class ParserZakazRf : IParser, ParserAbstract() {
         val okei =
             el.findElementWithoutException(By.xpath("./td[6]"))?.text?.trim { it <= ' ' } ?: ""
         val price =
-            el.findElementWithoutException(By.xpath("./td[7]"))
+            el
+                .findElementWithoutException(By.xpath("./td[7]"))
                 ?.text
                 ?.trim { it <= ' ' }
                 ?.replace(",", "")
                 ?.deleteAllWhiteSpace() ?: ""
         val quantity =
-            el.findElementWithoutException(By.xpath("./td[8]"))
+            el
+                .findElementWithoutException(By.xpath("./td[8]"))
                 ?.text
                 ?.trim { it <= ' ' }
                 ?.replace(",", "")
                 ?.deleteAllWhiteSpace() ?: ""
         val sum =
-            el.findElementWithoutException(By.xpath("./td[9]"))
+            el
+                .findElementWithoutException(By.xpath("./td[9]"))
                 ?.text
                 ?.trim { it <= ' ' }
                 ?.replace(",", ".")
@@ -236,14 +248,14 @@ class ParserZakazRf : IParser, ParserAbstract() {
         val pubDateT =
             el.findElementWithoutException(By.xpath("./td[12]"))?.text?.trim { it <= ' ' }
                 ?: run {
-                    logger("pubDateT not found ${href}")
+                    logger("pubDateT not found $href")
                     return
                 }
         val datePub = pubDateT.getDateFromString(formatterEtpRfN)
         val endDateT =
             el.findElementWithoutException(By.xpath("./td[13]"))?.text?.trim { it <= ' ' }
                 ?: run {
-                    logger("endDateT not found ${href}")
+                    logger("endDateT not found $href")
                     return
                 }
         val dateEnd = endDateT.getDateFromString(formatterEtpRfN)
@@ -261,7 +273,7 @@ class ParserZakazRf : IParser, ParserAbstract() {
                 orgName,
                 region,
                 delivPlace,
-                status
+                status,
             )
         val t = TenderZakazRf(tt)
         tendersS.add(t)

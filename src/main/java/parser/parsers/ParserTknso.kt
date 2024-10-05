@@ -14,19 +14,21 @@ import parser.tools.formatterGpn
 import java.time.ZoneId
 import java.util.*
 
-class ParserTknso : IParser, ParserAbstract() {
-
-    override fun parser() = parse {
-        System.setProperty("jsse.enableSNIExtension", "false")
-        parserTknso("http://tknso.ru/tendery.html")
-        (2..20).forEach {
-            try {
-                parserTknso("http://tknso.ru/tendery/$it.html")
-            } catch (e: Exception) {
-                logger(e)
+class ParserTknso :
+    ParserAbstract(),
+    IParser {
+    override fun parser() =
+        parse {
+            System.setProperty("jsse.enableSNIExtension", "false")
+            parserTknso("http://tknso.ru/tendery.html")
+            (2..20).forEach {
+                try {
+                    parserTknso("http://tknso.ru/tendery/$it.html")
+                } catch (e: Exception) {
+                    logger(e)
+                }
             }
         }
-    }
 
     private fun parserTknso(url: String) {
         val pageTen = downloadWaitWithRef(url)
@@ -60,7 +62,8 @@ class ParserTknso : IParser, ParserAbstract() {
                 }
         val urlTend = "http://tknso.ru$urlT"
         val dates =
-            e.selectFirst("span:contains(Прием заявок:)")
+            e
+                .selectFirst("span:contains(Прием заявок:)")
                 ?.ownText()
                 ?.replace("Прием заявок:", "")
                 ?.trim { it <= ' ' }
@@ -89,7 +92,11 @@ class ParserTknso : IParser, ParserAbstract() {
         if (dateEnd == Date(0)) {
             dateEnd =
                 Date.from(
-                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                    datePub
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .plusDays(2)
+                        .toInstant(),
                 )
         }
         val purNum = urlTend.md5()

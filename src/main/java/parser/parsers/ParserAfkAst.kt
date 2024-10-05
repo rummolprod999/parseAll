@@ -14,8 +14,9 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserAfkAst : IParser, ParserAbstract() {
-
+class ParserAfkAst :
+    ParserAbstract(),
+    IParser {
     lateinit var drv: ChromeDriver
     var firstPage = true
     private lateinit var windowsSet: Set<String?>
@@ -24,9 +25,11 @@ class ParserAfkAst : IParser, ParserAbstract() {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -83,8 +86,8 @@ class ParserAfkAst : IParser, ParserAbstract() {
         val wait = WebDriverWait(drv, timeoutB)
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]")
-            )
+                By.xpath("//div[@class = 'purch-reestr-tbl-div'][20]"),
+            ),
         )
         drv.switchTo().defaultContent()
         if (firstPage) {
@@ -102,12 +105,16 @@ class ParserAfkAst : IParser, ParserAbstract() {
         try {
             val js = drv as JavascriptExecutor
             js.executeScript(
-                "var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();"
+                "var us = document.querySelectorAll('#pageButton > span.pagerElem'); us[us.length-2].click();",
             )
-        } catch (e: Exception) {}
+        } catch (e: Exception) {
+        }
     }
 
-    private fun parserTender(el: WebElement, ind: Int) {
+    private fun parserTender(
+        el: WebElement,
+        ind: Int,
+    ) {
         val eis =
             el.findElementWithoutException(By.xpath(".//span[@class = 'oosSpan']"))?.text?.trim {
                 it <= ' '
@@ -117,7 +124,8 @@ class ParserAfkAst : IParser, ParserAbstract() {
             return
         }
         val purNum =
-            el.findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))
+            el
+                .findElementWithoutException(By.xpath(".//span[@class = 'es-el-code-term']"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {

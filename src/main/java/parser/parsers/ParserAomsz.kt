@@ -12,13 +12,16 @@ import parser.tools.formatterOnlyDate
 import java.time.ZoneId
 import java.util.*
 
-class ParserAomsz : IParser, ParserAbstract() {
+class ParserAomsz :
+    ParserAbstract(),
+    IParser {
     val url = "https://oaomsz.ru/purchases/requests/"
 
-    override fun parser() = parse {
-        System.setProperty("jsse.enableSNIExtension", "false")
-        parserAomsz("$url")
-    }
+    override fun parser() =
+        parse {
+            System.setProperty("jsse.enableSNIExtension", "false")
+            parserAomsz("$url")
+        }
 
     private fun parserAomsz(url: String) {
         val pageTen = downloadFromUrlNoSslNew(url)
@@ -51,7 +54,11 @@ class ParserAomsz : IParser, ParserAbstract() {
                     return
                 }
         val purNum =
-            e.selectFirst("td:eq(0)")?.ownText()?.replace("№", "")?.trim { it <= ' ' }
+            e
+                .selectFirst("td:eq(0)")
+                ?.ownText()
+                ?.replace("№", "")
+                ?.trim { it <= ' ' }
                 ?: run {
                     logger("purNum not found")
                     return
@@ -74,7 +81,11 @@ class ParserAomsz : IParser, ParserAbstract() {
         if (dateEnd == Date(0)) {
             dateEnd =
                 Date.from(
-                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                    datePub
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .plusDays(2)
+                        .toInstant(),
                 )
         }
         val tn = Aomsz(purNum, href, purName, datePub, dateEnd, status)

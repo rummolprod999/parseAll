@@ -18,7 +18,9 @@ import parser.tenders.TenderAgEat
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserAgEat : IParser, ParserAbstract() {
+class ParserAgEat :
+    ParserAbstract(),
+    IParser {
     private val tendersList = mutableListOf<TenderAgEat>()
     lateinit var driver: ChromeDriver
     lateinit var wait: WebDriverWait
@@ -28,9 +30,11 @@ class ParserAgEat : IParser, ParserAbstract() {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         // System.setProperty("webdriver.chrome.driver", "/usr/local/bin/patched/chromedriver")
     }
 
@@ -40,13 +44,14 @@ class ParserAgEat : IParser, ParserAbstract() {
         const val CountPage = 170
     }
 
-    override fun parser() = parse {
-        try {
-            parserAgEat()
-        } catch (e: Exception) {
-            logger("Error in parserSelen function", e.stackTrace, e)
+    override fun parser() =
+        parse {
+            try {
+                parserAgEat()
+            } catch (e: Exception) {
+                logger("Error in parserSelen function", e.stackTrace, e)
+            }
         }
-    }
 
     private fun parserAgEat() {
         var tr = 0
@@ -90,7 +95,7 @@ class ParserAgEat : IParser, ParserAbstract() {
         driver.switchTo().defaultContent()
         wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         wait.until(
-            ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@href= '/purchases/all']"))
+            ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@href= '/purchases/all']")),
         )
         try {
             driver.clickerExp("//a[@href= '/purchases/all']")
@@ -149,18 +154,21 @@ class ParserAgEat : IParser, ParserAbstract() {
         return options
     }
 
-    private fun getNextPage(num: Int, driver: ChromeDriver) {
+    private fun getNextPage(
+        num: Int,
+        driver: ChromeDriver,
+    ) {
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath(
-                    "//span[contains(@class, 'p-paginator-icon pi pi-angle-double-right')]/parent::button"
-                )
-            )
+                    "//span[contains(@class, 'p-paginator-icon pi pi-angle-double-right')]/parent::button",
+                ),
+            ),
         )
         try {
             val js = driver as JavascriptExecutor
             js.executeScript(
-                "document.querySelector('button.p-ripple.p-element.p-paginator-next.p-paginator-element.p-link').click();"
+                "document.querySelector('button.p-ripple.p-element.p-paginator-next.p-paginator-element.p-link').click();",
             )
             getListTenders()
         } catch (e: Exception) {
@@ -172,8 +180,8 @@ class ParserAgEat : IParser, ParserAbstract() {
         Thread.sleep(5000)
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[@class = 'registry-sorting' and contains(., 'Сортировать:')]")
-            )
+                By.xpath("//div[@class = 'registry-sorting' and contains(., 'Сортировать:')]"),
+            ),
         )
         driver.switchTo().defaultContent()
         val tenders = driver.findElements(By.xpath("//article[@class = 'card p-grid']"))
@@ -181,7 +189,6 @@ class ParserAgEat : IParser, ParserAbstract() {
             try {
                 parserTender(it)
             } catch (e: Exception) {
-
                 logger("error in parserTender", e.stackTrace, e)
             }
         }
@@ -197,19 +204,20 @@ class ParserAgEat : IParser, ParserAbstract() {
             return
         }
         val purObj =
-            el.findElementWithoutException(
-                    By.xpath(".//label[. = 'Наименование']/following-sibling::p")
-                )
-                ?.text
+            el
+                .findElementWithoutException(
+                    By.xpath(".//label[. = 'Наименование']/following-sibling::p"),
+                )?.text
                 ?.trim { it <= ' ' } ?: ""
         val status =
-            el.findElementWithoutException(
-                    By.xpath(".//div[@id = 'purchaseStateDescription']//span")
-                )
-                ?.text
+            el
+                .findElementWithoutException(
+                    By.xpath(".//div[@id = 'purchaseStateDescription']//span"),
+                )?.text
                 ?.trim { it <= ' ' } ?: ""
         val urlT =
-            el.findElementWithoutException(By.xpath(".//a[@id = 'tradeInfoLink']"))
+            el
+                .findElementWithoutException(By.xpath(".//a[@id = 'tradeInfoLink']"))
                 ?.getAttribute("href")
                 ?.trim { it <= ' ' } ?: ""
         if (urlT == "") {

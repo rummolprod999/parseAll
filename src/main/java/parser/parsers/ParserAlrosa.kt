@@ -19,15 +19,19 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserAlrosa : IParser, ParserAbstract() {
+class ParserAlrosa :
+    ParserAbstract(),
+    IParser {
     private val tendersList = mutableListOf<TenderAlrosa>()
 
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -71,7 +75,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
             // driver.manage().window().maximize()
             val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
-                ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[. = 'Вход в систему']"))
+                ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[. = 'Вход в систему']")),
             )
             driver.findElement(By.xpath("//input[@id = 'sap-user']")).sendKeys("enter-it_1@m")
             driver
@@ -82,7 +86,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
             driver.switchTo().defaultContent()
             if (
                 driver.pageSource.contains(
-                    "Вы уже зарегистрированы в системе со следующими сеансами:"
+                    "Вы уже зарегистрированы в системе со следующими сеансами:",
                 )
             ) {
                 driver.findElement(By.xpath("//a[. = 'Дальше']")).click()
@@ -91,8 +95,8 @@ class ParserAlrosa : IParser, ParserAbstract() {
             }
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//a[. = 'Найти закупку и принять участие']")
-                )
+                    By.xpath("//a[. = 'Найти закупку и принять участие']"),
+                ),
             )
             driver.findElement(By.xpath("//a[. = 'Найти закупку и принять участие']")).click()
             Thread.sleep(10000)
@@ -100,18 +104,18 @@ class ParserAlrosa : IParser, ParserAbstract() {
             driver.switchTo().frame(0)
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//tbody[@id = 'WD6C-contentTBody']/tr[@rr and @sst and @rt]")
-                )
+                    By.xpath("//tbody[@id = 'WD6C-contentTBody']/tr[@rr and @sst and @rt]"),
+                ),
             )
             // driver.switchTo().defaultContent()
             try {
                 val js = driver as JavascriptExecutor
                 js.executeScript(
-                    "document.querySelector('div[title = \"Дата начала подачи заявок на участие в закупочной процедуре\"]').click()"
+                    "document.querySelector('div[title = \"Дата начала подачи заявок на участие в закупочной процедуре\"]').click()",
                 )
                 Thread.sleep(5000)
                 js.executeScript(
-                    "document.querySelector('div[title = \"Дата начала подачи заявок на участие в закупочной процедуре\"]').click()"
+                    "document.querySelector('div[title = \"Дата начала подачи заявок на участие в закупочной процедуре\"]').click()",
                 )
                 Thread.sleep(5000)
             } catch (e: Exception) {
@@ -134,13 +138,16 @@ class ParserAlrosa : IParser, ParserAbstract() {
         }
     }
 
-    private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun getListTenders(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         Thread.sleep(5000)
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//tbody[@id = 'WD6C-contentTBody']/tr[@rr and @sst and @rt]")
-                )
+                    By.xpath("//tbody[@id = 'WD6C-contentTBody']/tr[@rr and @sst and @rt]"),
+                ),
             )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
@@ -151,7 +158,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
             // driver.switchTo().defaultContent()
             val tenders =
                 driver.findElements(
-                    By.xpath("//tbody[@id = 'WD6C-contentTBody']/tr[@rr and @sst and @rt]")
+                    By.xpath("//tbody[@id = 'WD6C-contentTBody']/tr[@rr and @sst and @rt]"),
                 )
             for (it in tenders) {
                 try {
@@ -171,7 +178,10 @@ class ParserAlrosa : IParser, ParserAbstract() {
         return true
     }
 
-    private fun parserTender(el: WebElement, driver: ChromeDriver) {
+    private fun parserTender(
+        el: WebElement,
+        driver: ChromeDriver,
+    ) {
         // driver.switchTo().defaultContent()
         val purNum =
             el.findElementWithoutException(By.xpath("./td[2]/a"))?.text?.trim { it <= ' ' } ?: ""
@@ -230,14 +240,17 @@ class ParserAlrosa : IParser, ParserAbstract() {
                 contactPerson,
                 phone,
                 email,
-                prod
+                prod,
             )
         val tender = TenderAlrosa(tt)
         tendersList.add(tender)
         Thread.sleep(1000)
     }
 
-    private fun getProducts(el: WebElement, driver: ChromeDriver): MutableList<AlrosaProduct> {
+    private fun getProducts(
+        el: WebElement,
+        driver: ChromeDriver,
+    ): MutableList<AlrosaProduct> {
         val listProd: MutableList<AlrosaProduct> = mutableListOf()
         val p = el.findElement(By.xpath("./td[2]/a"))
         p.click()
@@ -272,7 +285,7 @@ class ParserAlrosa : IParser, ParserAbstract() {
             val js = driver as JavascriptExecutor
             js.executeScript("document.querySelector('a[action = \"close\"]').click()")
             js.executeScript(
-                "var d = document.querySelectorAll('a[action = \"close\"]'); if(d.length>0){d[0].click()};"
+                "var d = document.querySelectorAll('a[action = \"close\"]'); if(d.length>0){d[0].click()};",
             )
         } catch (e: Exception) {
             logger(e)

@@ -18,7 +18,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserRusSalt : IParser, ParserAbstract() {
+class ParserRusSalt :
+    ParserAbstract(),
+    IParser {
     private val tendersList = mutableListOf<TenderRusSalt>()
     lateinit var driver: ChromeDriver
     lateinit var wait: WebDriverWait
@@ -27,9 +29,11 @@ class ParserRusSalt : IParser, ParserAbstract() {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -39,13 +43,14 @@ class ParserRusSalt : IParser, ParserAbstract() {
         const val CountPage = 10
     }
 
-    override fun parser() = parse {
-        try {
-            parserRussalt()
-        } catch (e: Exception) {
-            logger("Error in parserSelen function", e.stackTrace, e)
+    override fun parser() =
+        parse {
+            try {
+                parserRussalt()
+            } catch (e: Exception) {
+                logger("Error in parserSelen function", e.stackTrace, e)
+            }
         }
-    }
 
     private fun getchromeOptions(): ChromeOptions {
         val options = ChromeOptions()
@@ -108,8 +113,8 @@ class ParserRusSalt : IParser, ParserAbstract() {
         Thread.sleep(3000)
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[@class = 'tenders-item tenders-grid']")
-            )
+                By.xpath("//div[@class = 'tenders-item tenders-grid']"),
+            ),
         )
         getListTenders()
         (1..CountPage).forEach { _ ->
@@ -125,8 +130,8 @@ class ParserRusSalt : IParser, ParserAbstract() {
     private fun getNextPage() {
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//a[@class = 'next page-numbers']")
-            )
+                By.xpath("//a[@class = 'next page-numbers']"),
+            ),
         )
         try {
             val paginator = driver.findElement(By.xpath("//a[@class = 'next page-numbers']"))
@@ -146,7 +151,6 @@ class ParserRusSalt : IParser, ParserAbstract() {
             try {
                 parserTender(it)
             } catch (e: Exception) {
-
                 logger("error in parserTender", e.stackTrace, e)
             }
         }
@@ -162,10 +166,10 @@ class ParserRusSalt : IParser, ParserAbstract() {
             return
         }
         val purNum =
-            el.findElementWithoutException(
-                    By.xpath(".//div[@class = 'tenders-item__text tenders-number']")
-                )
-                ?.text
+            el
+                .findElementWithoutException(
+                    By.xpath(".//div[@class = 'tenders-item__text tenders-number']"),
+                )?.text
                 ?.replace("№", "")
                 ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
@@ -179,15 +183,18 @@ class ParserRusSalt : IParser, ParserAbstract() {
             return
         }
         val status =
-            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-status')]"))
+            el
+                .findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-status')]"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         val divT =
-            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-curator')]"))
+            el
+                .findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-curator')]"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         val datePubTmp =
-            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-start')]"))
+            el
+                .findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-start')]"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         val datePub = datePubTmp.getDateFromString(formatterRs)
@@ -196,7 +203,8 @@ class ParserRusSalt : IParser, ParserAbstract() {
             return
         }
         val dateEndTmp =
-            el.findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-finish')]"))
+            el
+                .findElementWithoutException(By.xpath(".//div[contains(@class, 'tenders-finish')]"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         val dateEndR = dateEndTmp.getDataFromRegexp("""(\d{2}\.\d{2}\.\d{2})""")

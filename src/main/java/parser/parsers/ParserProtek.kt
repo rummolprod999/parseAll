@@ -11,8 +11,9 @@ import parser.tenders.TenderProtek
 import parser.tools.formatterOnlyDate
 import java.util.*
 
-class ParserProtek : IParser, ParserAbstract() {
-
+class ParserProtek :
+    ParserAbstract(),
+    IParser {
     companion object WebCl {
         const val BaseUrl = "https://protek.ru/partners/tendery/active/"
     }

@@ -7,5 +7,5 @@ data class RenCredit(
     val href: String,
     val purName: String,
     val pubDate: Date,
-    val endDate: Date
+    val endDate: Date,
 )

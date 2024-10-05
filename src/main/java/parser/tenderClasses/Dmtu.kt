@@ -10,7 +10,10 @@ data class Dmtu(
     val endDate: Date,
     val pwName: String,
     val attachments: List<AttachDmtu>,
-    val status: String
+    val status: String,
 )
 
-data class AttachDmtu(val Url: String, val Name: String)
+data class AttachDmtu(
+    val Url: String,
+    val Name: String,
+)

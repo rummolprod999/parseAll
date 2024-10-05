@@ -12,7 +12,9 @@ import parser.tenders.TenderEvraz
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserEvraz : IParser, ParserAbstract() {
+class ParserEvraz :
+    ParserAbstract(),
+    IParser {
     private val tendersList = mutableListOf<TenderEvraz>()
     lateinit var driver: ChromeDriver
     lateinit var wait: WebDriverWait
@@ -21,9 +23,11 @@ class ParserEvraz : IParser, ParserAbstract() {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -32,13 +36,14 @@ class ParserEvraz : IParser, ParserAbstract() {
         const val timeoutB = 30L
     }
 
-    override fun parser() = parse {
-        try {
-            parserEvraz()
-        } catch (e: Exception) {
-            logger("Error in parserSelen function", e.stackTrace, e)
+    override fun parser() =
+        parse {
+            try {
+                parserEvraz()
+            } catch (e: Exception) {
+                logger("Error in parserSelen function", e.stackTrace, e)
+            }
         }
-    }
 
     private fun getchromeOptions(): ChromeOptions {
         val options = ChromeOptions()
@@ -94,8 +99,8 @@ class ParserEvraz : IParser, ParserAbstract() {
         wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[contains(@class, 'company-name')]")
-            )
+                By.xpath("//div[contains(@class, 'company-name')]"),
+            ),
         )
         val collapsed = driver.findElements(By.xpath("//div[contains(@class, 'company-name')]"))
         collapsed.forEach {
@@ -113,8 +118,8 @@ class ParserEvraz : IParser, ParserAbstract() {
         }
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//a[contains(@class, 'open_lot')]")
-            )
+                By.xpath("//a[contains(@class, 'open_lot')]"),
+            ),
         )
         getListTenders()
     }
@@ -127,7 +132,6 @@ class ParserEvraz : IParser, ParserAbstract() {
             try {
                 parserTender(it)
             } catch (e: Exception) {
-
                 logger("error in parserTender", e.stackTrace, e)
             }
         }
@@ -164,7 +168,7 @@ class ParserEvraz : IParser, ParserAbstract() {
                     return
                 }
         val href =
-            "https://supply.evraz.com/lot/index.php?ID=${purNum}&IBLOCK_ID=${idiblock}&IBLOCK_ID_APPLIK=${iblock_applick}&HISTORY_APPLIK=Y&modalWindow=Y"
+            "https://supply.evraz.com/lot/index.php?ID=$purNum&IBLOCK_ID=$idiblock&IBLOCK_ID_APPLIK=${iblock_applick}&HISTORY_APPLIK=Y&modalWindow=Y"
         val tt = Evraz(purNum, href, purName)
         val t = TenderEvraz(tt, driver)
         tendersList.add(t)

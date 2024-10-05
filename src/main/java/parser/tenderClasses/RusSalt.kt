@@ -9,5 +9,5 @@ data class RusSalt(
     val endDate: Date,
     var pubDate: Date,
     var status: String,
-    val delivTerm: String
+    val delivTerm: String,
 )

@@ -9,7 +9,10 @@ import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
 
-class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
+class TenderProtek(
+    val tn: Protek,
+) : TenderAbstract(),
+    ITender {
     companion object TypeFz {
         val typeFz = 238
     }
@@ -21,14 +24,15 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
 
     override fun parsing() {
         val dateVer = Date()
-        DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
+        DriverManager
+            .getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
             .use(
                 fun(con: Connection) {
                     val stmt0 =
-                        con.prepareStatement(
-                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?"
-                            )
-                            .apply {
+                        con
+                            .prepareStatement(
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ?",
+                            ).apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
                                 setTimestamp(3, Timestamp(tn.endDate.time))
@@ -44,10 +48,10 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
                     var cancelstatus = 0
                     var updated = false
                     val stmt =
-                        con.prepareStatement(
-                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                            )
-                            .apply {
+                        con
+                            .prepareStatement(
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?",
+                            ).apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
                             }
@@ -57,10 +61,10 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
                         val idT = rs.getInt(1)
                         val dateB: Timestamp = rs.getTimestamp(2)
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
-                            con.prepareStatement(
-                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                                )
-                                .apply {
+                            con
+                                .prepareStatement(
+                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?",
+                                ).apply {
                                     setInt(1, idT)
                                     execute()
                                     close()
@@ -77,7 +81,7 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
                     if (fullnameOrg != "") {
                         val stmto =
                             con.prepareStatement(
-                                "SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?"
+                                "SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?",
                             )
                         stmto.setString(1, fullnameOrg)
                         val rso = stmto.executeQuery()
@@ -96,11 +100,11 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
                             val phone = "+7(495) 737-3500 (35-01)"
                             val contactPerson = ""
                             val stmtins =
-                                con.prepareStatement(
+                                con
+                                    .prepareStatement(
                                         "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                        Statement.RETURN_GENERATED_KEYS
-                                    )
-                                    .apply {
+                                        Statement.RETURN_GENERATED_KEYS,
+                                    ).apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
                                         setString(3, email)
@@ -125,7 +129,7 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
                     val insertTender =
                         con.prepareStatement(
                             "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?",
-                            Statement.RETURN_GENERATED_KEYS
+                            Statement.RETURN_GENERATED_KEYS,
                         )
                     insertTender.setString(1, tn.purNum)
                     insertTender.setString(2, tn.purNum)
@@ -165,11 +169,11 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
                     val lotNumber = 1
                     val currency = ""
                     val insertLot =
-                        con.prepareStatement(
+                        con
+                            .prepareStatement(
                                 "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                                Statement.RETURN_GENERATED_KEYS
-                            )
-                            .apply {
+                                Statement.RETURN_GENERATED_KEYS,
+                            ).apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
                                 setString(3, currency)
@@ -186,7 +190,7 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
                     if (fullnameOrg != "") {
                         val stmtoc =
                             con.prepareStatement(
-                                "SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1"
+                                "SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1",
                             )
                         stmtoc.setString(1, fullnameOrg)
                         val rsoc = stmtoc.executeQuery()
@@ -200,10 +204,15 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
                             val stmtins =
                                 con.prepareStatement(
                                     "INSERT INTO ${BuilderApp.Prefix}customer SET full_name = ?, is223=1, reg_num = ?, inn = ?",
-                                    Statement.RETURN_GENERATED_KEYS
+                                    Statement.RETURN_GENERATED_KEYS,
                                 )
                             stmtins.setString(1, fullnameOrg)
-                            stmtins.setString(2, java.util.UUID.randomUUID().toString())
+                            stmtins.setString(
+                                2,
+                                java.util.UUID
+                                    .randomUUID()
+                                    .toString(),
+                            )
                             stmtins.setString(3, inn)
                             stmtins.executeUpdate()
                             val rsoi = stmtins.generatedKeys
@@ -214,10 +223,10 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
                             stmtins.close()
                         }
                     }
-                    con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
-                        )
-                        .apply {
+                    con
+                        .prepareStatement(
+                            "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?",
+                        ).apply {
                             setInt(1, idLot)
                             setInt(2, idCustomer)
                             setString(3, tn.purName)
@@ -242,17 +251,19 @@ class TenderProtek(val tn: Protek) : TenderAbstract(), ITender {
                     } catch (e: Exception) {
                         logger("Ошибка добавления версий", e.stackTrace, e)
                     }
-                }
+                },
             )
     }
 
-    private fun getAttachments(idTender: Int, con: Connection) {
-
+    private fun getAttachments(
+        idTender: Int,
+        con: Connection,
+    ) {
         tn.attachments.forEach {
-            con.prepareStatement(
-                    "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
-                )
-                .apply {
+            con
+                .prepareStatement(
+                    "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?",
+                ).apply {
                     setInt(1, idTender)
                     setString(2, it.key)
                     setString(3, it.value)

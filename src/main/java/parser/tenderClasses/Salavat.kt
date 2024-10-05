@@ -9,5 +9,5 @@ data class Salavat(
     val endDate: Date,
     val placingWayName: String,
     val nameCus: String,
-    val nameOrg: String
+    val nameOrg: String,
 )

@@ -1,7 +1,6 @@
 package parser.networkTools
 
 object RandomUserAgent {
-
     private val uaMap = HashMap<String, Array<String>>()
     private val freqMap = HashMap<String, Double>()
 
@@ -22,7 +21,7 @@ object RandomUserAgent {
             val userAgents: Array<String> =
                 uaMap[browser]
                     ?: arrayOf(
-                        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.183 Safari/537.36 Vivaldi/1.96.1147.55"
+                        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.183 Safari/537.36 Vivaldi/1.96.1147.55",
                     )
             return userAgents[Math.floor(Math.random() * userAgents.size).toInt()]
         }
@@ -277,7 +276,7 @@ object RandomUserAgent {
                 "Mozilla/2.0 (compatible; MSIE 3.0; Windows 3.1)",
                 "Mozilla/4.0 (compatible; MSIE 2.0; Windows NT 5.0; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0)",
                 "Mozilla/1.22 (compatible; MSIE 2.0; Windows 95)",
-                "Mozilla/1.22 (compatible; MSIE 2.0; Windows 3.1)"
+                "Mozilla/1.22 (compatible; MSIE 2.0; Windows 3.1)",
             )
 
         uaMap["Firefox"] =
@@ -705,7 +704,7 @@ object RandomUserAgent {
                 "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.6) Gecko/2009011913  Firefox",
                 "Mozilla/5.0 (Windows; U; Windows NT 5.1; de-DE; rv:1.9.2.20) Gecko/20110803 Firefox",
                 "Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O; rv:1.8.1.16) Gecko/20080702 Firefox",
-                "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.13) Gecko/20080313 Firefox"
+                "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.13) Gecko/20080313 Firefox",
             )
         uaMap["Chrome"] =
             arrayOf(
@@ -1273,7 +1272,7 @@ object RandomUserAgent {
                 "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/532.0 (KHTML, like Gecko) Chrome/4.0.211.4 Safari/532.0",
                 "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/532.0 (KHTML, like Gecko) Chrome/4.0.211.4 Safari/532.0",
                 "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/532.0 (KHTML, like Gecko) Chrome/4.0.211.4 Safari/532.0",
-                "Mozilla/5.0 (X11; U; Linux x86_64; en-US) AppleWebKit/532.0 (KHTML, like Gecko) Chrome/4.0.211.2 Safari/532.0"
+                "Mozilla/5.0 (X11; U; Linux x86_64; en-US) AppleWebKit/532.0 (KHTML, like Gecko) Chrome/4.0.211.2 Safari/532.0",
             )
 
         uaMap["Safari"] =
@@ -1490,7 +1489,7 @@ object RandomUserAgent {
                 "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit (KHTML, like Gecko)",
                 "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_3; es-es) AppleWebKit/531.22.7 (KHTML, like Gecko)",
                 "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_6; en-us) AppleWebKit/528.16 (KHTML, like Gecko)",
-                "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_5; it-it) AppleWebKit/525.18 (KHTML, like Gecko)"
+                "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_5; it-it) AppleWebKit/525.18 (KHTML, like Gecko)",
             )
         uaMap["Opera"] =
             arrayOf(
@@ -1666,7 +1665,7 @@ object RandomUserAgent {
                 "Opera/9.64 (Windows NT 6.0; U; zh-cn) Presto/2.1.1",
                 "Opera/9.64 (Windows NT 6.0; U; pl) Presto/2.1.1",
                 "Opera/9.63 (X11; Linux x86_64; U; ru) Presto/2.1.1",
-                "Opera/9.63 (X11; Linux x86_64; U; cs) Presto/2.1.1"
+                "Opera/9.63 (X11; Linux x86_64; U; cs) Presto/2.1.1",
             )
     }
 }

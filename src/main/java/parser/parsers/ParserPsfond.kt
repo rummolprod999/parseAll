@@ -12,7 +12,9 @@ import parser.tenderClasses.Psfond
 import parser.tenders.TenderPsfond
 import parser.tools.formatterOnlyDate
 
-class ParserPsfond : IParser, ParserAbstract() {
+class ParserPsfond :
+    ParserAbstract(),
+    IParser {
     val url = "https://psfond.ru/about/tenders/"
 
     override fun parser() = parse { parserPsfond() }
@@ -76,7 +78,7 @@ class ParserPsfond : IParser, ParserAbstract() {
                 dateEnd,
                 delivPlace,
                 attachents,
-                status
+                status,
             )
         val t = TenderPsfond(tt)
         ParserTender(t)

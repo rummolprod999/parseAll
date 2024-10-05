@@ -13,5 +13,5 @@ data class UmzMark(
     val okei: String,
     val nameCus: String,
     val nmck: String,
-    val status: String
+    val status: String,
 )

@@ -13,13 +13,16 @@ import parser.tools.formatterOnlyDate
 import java.time.ZoneId
 import java.util.*
 
-class ParserDsk1 : IParser, ParserAbstract() {
+class ParserDsk1 :
+    ParserAbstract(),
+    IParser {
     val url = "https://tender.dsk1.ru/tendery/?PAGEN_1="
 
-    override fun parser() = parse {
-        System.setProperty("jsse.enableSNIExtension", "false")
-        (1..20).forEach { parserDsk1("$url$it") }
-    }
+    override fun parser() =
+        parse {
+            System.setProperty("jsse.enableSNIExtension", "false")
+            (1..20).forEach { parserDsk1("$url$it") }
+        }
 
     private fun parserDsk1(url: String) {
         val pageTen = downloadFromUrlNoSslNew(url)
@@ -71,7 +74,11 @@ class ParserDsk1 : IParser, ParserAbstract() {
         if (dateEnd == Date(0)) {
             dateEnd =
                 Date.from(
-                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                    datePub
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .plusDays(2)
+                        .toInstant(),
                 )
         }
         val cusName = e.selectFirst("td:eq(5)")?.ownText()?.trim { it <= ' ' } ?: ""

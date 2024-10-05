@@ -9,5 +9,5 @@ data class ZmoKursk(
     val nmck: String,
     val pubDate: Date,
     val endDate: Date,
-    val url: String
+    val url: String,
 )

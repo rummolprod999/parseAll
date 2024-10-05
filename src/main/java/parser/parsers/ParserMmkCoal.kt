@@ -11,7 +11,9 @@ import parser.tenders.TenderMmkCoal
 import parser.tools.formatter
 import java.util.*
 
-class ParserMmkCoal : IParser, ParserAbstract() {
+class ParserMmkCoal :
+    ParserAbstract(),
+    IParser {
     companion object WebCl {
         const val BaseUrl = "http://mmk-coal.ru/pokupatelyam-i-postavshchikam/tendery/"
     }

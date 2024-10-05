@@ -19,7 +19,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserBrn : IParser, ParserAbstract() {
+class ParserBrn :
+    ParserAbstract(),
+    IParser {
     private val tendersS = mutableListOf<TenderBrn>()
 
     companion object WebCl {
@@ -31,9 +33,11 @@ class ParserBrn : IParser, ParserAbstract() {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -72,13 +76,13 @@ class ParserBrn : IParser, ParserAbstract() {
             val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//div[@class = 'wg-selectbox']/div[@class = 'select']")
-                )
+                    By.xpath("//div[@class = 'wg-selectbox']/div[@class = 'select']"),
+                ),
             )
             val js = driver as JavascriptExecutor
             js.executeScript("document.querySelectorAll('div.wg-selectbox div.select')[0].click()")
             js.executeScript(
-                "document.querySelectorAll('div.wg-selectbox ul li:last-child')[0].click()"
+                "document.querySelectorAll('div.wg-selectbox ul li:last-child')[0].click()",
             )
             driver.switchTo().defaultContent()
             getListTenders(driver, wait)
@@ -105,14 +109,17 @@ class ParserBrn : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun parserPageN(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         driver.switchTo().defaultContent()
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath(
-                    "//div[@class = 'paginator__page-selector']/a[contains(@class, 'paginator__next')]"
-                )
-            )
+                    "//div[@class = 'paginator__page-selector']/a[contains(@class, 'paginator__next')]",
+                ),
+            ),
         )
         val js = driver as JavascriptExecutor
         js.executeScript("document.getElementsByClassName('paginator__next')[0].click()")
@@ -120,13 +127,16 @@ class ParserBrn : IParser, ParserAbstract() {
         return getListTenders(driver, wait)
     }
 
-    private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun getListTenders(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         Thread.sleep(5000)
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//table[@id = 'jqGrid']/tbody/tr[not(@class = 'jqgfirstrow')][10]")
-                )
+                    By.xpath("//table[@id = 'jqGrid']/tbody/tr[not(@class = 'jqgfirstrow')][10]"),
+                ),
             )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
@@ -137,7 +147,7 @@ class ParserBrn : IParser, ParserAbstract() {
             driver.switchTo().defaultContent()
             val tenders =
                 driver.findElements(
-                    By.xpath("//table[@id = 'jqGrid']/tbody/tr[not(@class = 'jqgfirstrow')]")
+                    By.xpath("//table[@id = 'jqGrid']/tbody/tr[not(@class = 'jqgfirstrow')]"),
                 )
             for (it in tenders) {
                 try {
@@ -188,7 +198,8 @@ class ParserBrn : IParser, ParserAbstract() {
         val status =
             el.findElementWithoutException(By.xpath("./td[9]"))?.text?.trim { it <= ' ' } ?: ""
         val nmck =
-            el.findElementWithoutException(By.xpath("./td[5]"))
+            el
+                .findElementWithoutException(By.xpath("./td[5]"))
                 ?.text
                 ?.replace(',', '.')
                 ?.deleteAllWhiteSpace()

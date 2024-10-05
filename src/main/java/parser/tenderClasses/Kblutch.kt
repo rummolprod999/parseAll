@@ -8,5 +8,5 @@ data class Kblutch(
     val purName: String,
     val pubDate: Date,
     val endDate: Date,
-    val attaname: String
+    val attaname: String,
 )

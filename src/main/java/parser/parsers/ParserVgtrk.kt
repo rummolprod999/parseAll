@@ -10,7 +10,9 @@ import parser.tenderClasses.Vgtrk
 import parser.tenders.TenderVgtrk
 import parser.tools.formatter
 
-class ParserVgtrk : IParser, ParserAbstract() {
+class ParserVgtrk :
+    ParserAbstract(),
+    IParser {
     val url = "https://tendering.vgtrk.com/orders/working"
 
     override fun parser() = parse { parserRusNano() }
@@ -79,7 +81,7 @@ class ParserVgtrk : IParser, ParserAbstract() {
                 pubDate = datePub,
                 purName = purName,
                 purNum = purNum,
-                state = state
+                state = state,
             )
         val t = TenderVgtrk(tn)
         ParserTender(t)

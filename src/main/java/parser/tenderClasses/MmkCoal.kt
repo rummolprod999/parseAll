@@ -9,5 +9,5 @@ data class MmkCoal(
     var pubDate: Date,
     val endDate: Date,
     val attachments: Map<String, String>,
-    val noticeVer: String
+    val noticeVer: String,
 )

@@ -9,5 +9,5 @@ data class Tmk(
     val endDate: Date,
     var pubDate: Date,
     var status: String,
-    val nameOrg: String
+    val nameOrg: String,
 )

@@ -11,14 +11,16 @@ import parser.tools.formatterOnlyDate
 import java.time.ZoneId
 import java.util.*
 
-class ParserFpk : IParser, ParserAbstract() {
-
+class ParserFpk :
+    ParserAbstract(),
+    IParser {
     val url = "https://fpkinvest.ru/purchase?Purchase_page="
 
-    override fun parser() = parse {
-        System.setProperty("jsse.enableSNIExtension", "false")
-        (1..10).forEach { parserFpk("$url$it") }
-    }
+    override fun parser() =
+        parse {
+            System.setProperty("jsse.enableSNIExtension", "false")
+            (1..10).forEach { parserFpk("$url$it") }
+        }
 
     private fun parserFpk(url: String) {
         val pageTen = downloadFromUrlNoSslNew(url)
@@ -65,7 +67,11 @@ class ParserFpk : IParser, ParserAbstract() {
         if (dateEnd == Date(0)) {
             dateEnd =
                 Date.from(
-                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                    datePub
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .plusDays(2)
+                        .toInstant(),
                 )
         }
         val pwName = e.selectFirst("td:eq(7)")?.ownText()?.trim { it <= ' ' } ?: ""

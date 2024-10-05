@@ -17,13 +17,17 @@ import parser.tools.formatterOnlyDate
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserZakazRfEx : IParser, ParserAbstract() {
+class ParserZakazRfEx :
+    ParserAbstract(),
+    IParser {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -58,7 +62,7 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
         // options.addArguments("user-agent=${RandomUserAgent.randomUserAgent}")
         options.setCapability(
             CapabilityType.UNHANDLED_PROMPT_BEHAVIOUR,
-            UnexpectedAlertBehaviour.IGNORE
+            UnexpectedAlertBehaviour.IGNORE,
         )
         val driver = ChromeDriver(options)
         driver.manage().window().size = Dimension(1280, 1024)
@@ -84,8 +88,8 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
             try {
                 wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//table[@objecttype]/tbody/tr[@id]")
-                    )
+                        By.xpath("//table[@objecttype]/tbody/tr[@id]"),
+                    ),
                 )
             } catch (e: Exception) {
                 throw e
@@ -117,12 +121,15 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun parserPageN(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//a[contains(@class, 'pager-button-next')]")
-                )
+                    By.xpath("//a[contains(@class, 'pager-button-next')]"),
+                ),
             )
         } catch (e: Exception) {
             logger("next page not found")
@@ -133,13 +140,16 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
         return getListTenders(driver, wait)
     }
 
-    private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun getListTenders(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         Thread.sleep(5000)
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//table[@objecttype]/tbody/tr[@id][1]")
-                )
+                    By.xpath("//table[@objecttype]/tbody/tr[@id][1]"),
+                ),
             )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
@@ -169,7 +179,7 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
             el.findElementWithoutException(By.xpath("./td[5]"))?.text?.trim { it <= ' ' }
                 ?: el.findElementWithoutException(By.xpath("./td[4]"))?.text?.trim { it <= ' ' }
                 ?: run {
-                    logger("purName not found ${href}")
+                    logger("purName not found $href")
                     return
                 }
         val purNum =
@@ -178,7 +188,8 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
             el.findElementWithoutException(By.xpath("./td[3]"))?.text?.trim { it <= ' ' } ?: ""
         val okei = ""
         val price =
-            el.findElementWithoutException(By.xpath("./td[6]"))
+            el
+                .findElementWithoutException(By.xpath("./td[6]"))
                 ?.text
                 ?.trim { it <= ' ' }
                 ?.replace(",", ".")
@@ -188,14 +199,14 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
         val pubDateT =
             el.findElementWithoutException(By.xpath("./td[10]"))?.text?.trim { it <= ' ' }
                 ?: run {
-                    logger("pubDateT not found ${href}")
+                    logger("pubDateT not found $href")
                     return
                 }
         val datePub = pubDateT.getDateFromString(formatterOnlyDate)
         val endDateT =
             el.findElementWithoutException(By.xpath("./td[12]"))?.text?.trim { it <= ' ' }
                 ?: run {
-                    logger("endDateT not found ${href}")
+                    logger("endDateT not found $href")
                     return
                 }
         val dateEnd = endDateT.getDateFromString(formatterEtpRfN)
@@ -213,7 +224,7 @@ class ParserZakazRfEx : IParser, ParserAbstract() {
                 orgName,
                 "",
                 "",
-                status
+                status,
             )
         val t = TenderZakazRfEx(tt)
         tendersS.add(t)

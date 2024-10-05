@@ -12,24 +12,27 @@ import parser.tenders.TenderExUzex
 import parser.tools.formatter
 import java.util.*
 
-class ParserExUzex : IParser, ParserAbstract() {
+class ParserExUzex :
+    ParserAbstract(),
+    IParser {
     companion object WebCl {
         val BaseUrl =
             arrayOf(
                 "https://exarid.uzex.uz/ru?page=",
                 "https://exarid.uzex.uz/ru/competitive/?page=",
-                "https://exarid.uzex.uz/ru/tender2/?page="
+                "https://exarid.uzex.uz/ru/tender2/?page=",
             )
         const val CountPage = 50
     }
 
-    override fun parser() = parse {
-        try {
-            parserUzex()
-        } catch (e: Exception) {
-            logger("Error in ${this::class.simpleName} function", e.stackTrace, e)
+    override fun parser() =
+        parse {
+            try {
+                parserUzex()
+            } catch (e: Exception) {
+                logger("Error in ${this::class.simpleName} function", e.stackTrace, e)
+            }
         }
-    }
 
     private fun parserUzex() {
         BaseUrl.forEach { b ->

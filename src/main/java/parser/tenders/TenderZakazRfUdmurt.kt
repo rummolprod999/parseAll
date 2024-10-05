@@ -18,7 +18,10 @@ import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
+class TenderZakazRfUdmurt(
+    val tn: ZakazRf,
+) : TenderAbstract(),
+    ITender {
     init {
         etpName = "Zakaz RF Удмуртия"
         etpUrl = "http://udmurtia.zakazrf.ru/DeliveryRequest"
@@ -30,12 +33,13 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
 
     override fun parsing() {
         val dateVer = Date()
-        DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
+        DriverManager
+            .getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
             .use(
                 fun(con: Connection) {
                     val stmt0 =
                         con.prepareStatement(
-                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND date_version = ? AND type_fz = ? AND notice_version = ?"
+                            "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND date_version = ? AND type_fz = ? AND notice_version = ?",
                         )
                     stmt0.setString(1, tn.purNum)
                     stmt0.setTimestamp(2, Timestamp(tn.pubDate.time))
@@ -68,7 +72,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     var update = false
                     val stmt =
                         con.prepareStatement(
-                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
+                            "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?",
                         )
                     stmt.setString(1, tn.purNum)
                     stmt.setInt(2, typeFz)
@@ -80,7 +84,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                         if (tn.pubDate.after(dateB) || dateB == Timestamp(tn.pubDate.time)) {
                             val preparedStatement =
                                 con.prepareStatement(
-                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
+                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?",
                                 )
                             preparedStatement.setInt(1, idT)
                             preparedStatement.execute()
@@ -95,7 +99,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     if (tn.orgName != "") {
                         val stmto =
                             con.prepareStatement(
-                                "SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?"
+                                "SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?",
                             )
                         stmto.setString(1, tn.orgName)
                         val rso = stmto.executeQuery()
@@ -126,11 +130,11 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                                     ?.trim { it <= ' ' } ?: ""
                             val contactPerson = ""
                             val stmtins =
-                                con.prepareStatement(
+                                con
+                                    .prepareStatement(
                                         "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                        Statement.RETURN_GENERATED_KEYS
-                                    )
-                                    .apply {
+                                        Statement.RETURN_GENERATED_KEYS,
+                                    ).apply {
                                         setString(1, tn.orgName)
                                         setString(2, postalAdr)
                                         setString(3, email)
@@ -153,7 +157,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     try {
                         val stmto =
                             con.prepareStatement(
-                                "SELECT id_etp FROM ${BuilderApp.Prefix}etp WHERE name = ? AND url = ? LIMIT 1"
+                                "SELECT id_etp FROM ${BuilderApp.Prefix}etp WHERE name = ? AND url = ? LIMIT 1",
                             )
                         stmto.setString(1, etpName)
                         stmto.setString(2, etpUrl)
@@ -168,7 +172,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                             val stmtins =
                                 con.prepareStatement(
                                     "INSERT INTO ${BuilderApp.Prefix}etp SET name = ?, url = ?, conf=0",
-                                    Statement.RETURN_GENERATED_KEYS
+                                    Statement.RETURN_GENERATED_KEYS,
                                 )
                             stmtins.setString(1, etpName)
                             stmtins.setString(2, etpUrl)
@@ -180,7 +184,8 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                             rsoi.close()
                             stmtins.close()
                         }
-                    } catch (ignored: Exception) {}
+                    } catch (ignored: Exception) {
+                    }
 
                     var IdPlacingWay = 0
                     val placingWay =
@@ -191,7 +196,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     if (placingWay != "") {
                         val stmto =
                             con.prepareStatement(
-                                "SELECT id_placing_way FROM ${BuilderApp.Prefix}placing_way WHERE name = ? LIMIT 1"
+                                "SELECT id_placing_way FROM ${BuilderApp.Prefix}placing_way WHERE name = ? LIMIT 1",
                             )
                         stmto.setString(1, placingWay)
                         val rso = stmto.executeQuery()
@@ -206,7 +211,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                             val stmtins =
                                 con.prepareStatement(
                                     "INSERT INTO ${BuilderApp.Prefix}placing_way SET name = ?, conformity = ?",
-                                    Statement.RETURN_GENERATED_KEYS
+                                    Statement.RETURN_GENERATED_KEYS,
                                 )
                             stmtins.setString(1, placingWay)
                             stmtins.setInt(2, conf)
@@ -231,9 +236,8 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                         scoringDT =
                             html
                                 .selectFirst(
-                                    "td:containsOwn(Дата и время рассмотрения заявок) ~ td div"
-                                )
-                                ?.ownText()
+                                    "td:containsOwn(Дата и время рассмотрения заявок) ~ td div",
+                                )?.ownText()
                                 ?.trim { it <= ' ' } ?: ""
                         scoringDate = scoringDT.getDateFromString(formatterEtpRfN)
                     }
@@ -241,9 +245,8 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                         scoringDT =
                             html
                                 .selectFirst(
-                                    "td:containsOwn(Дата рассмотрения первых частей заявок) ~ td"
-                                )
-                                ?.ownText()
+                                    "td:containsOwn(Дата рассмотрения первых частей заявок) ~ td",
+                                )?.ownText()
                                 ?.trim { it <= ' ' } ?: ""
                         scoringDate = scoringDT.getDateFromString(formatterOnlyDate)
                     }
@@ -262,16 +265,15 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     val extendBiddingDate =
                         html
                             .selectFirst(
-                                "td:containsOwn(Окончание определения лучшего предложения) ~ td"
-                            )
-                            ?.ownText()
+                                "td:containsOwn(Окончание определения лучшего предложения) ~ td",
+                            )?.ownText()
                             ?.trim { it <= ' ' } ?: ""
                     val idRegion = getIdRegion(con, "Удмурт")
 
                     val insertTender =
                         con.prepareStatement(
                             "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, scoring_date = ?, bidding_date = ?, extend_scoring_date = ?, extend_bidding_date  = ?, id_region = ?",
-                            Statement.RETURN_GENERATED_KEYS
+                            Statement.RETURN_GENERATED_KEYS,
                         )
                     insertTender.setString(1, tn.purNum)
                     insertTender.setString(2, tn.purNum)
@@ -309,12 +311,12 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     val documents: Elements =
                         html.select("table[data-orm-table-id = DocumentMetas] tbody tr[style]")
                     documents.addAll(
-                        html.select("table[data-orm-table-id = OtherFiles] tbody tr[style]")
+                        html.select("table[data-orm-table-id = OtherFiles] tbody tr[style]"),
                     )
                     documents.addAll(
                         html.select(
-                            "table[data-orm-table-id = HistoryFilesFiltered] tbody tr[style]"
-                        )
+                            "table[data-orm-table-id = HistoryFilesFiltered] tbody tr[style]",
+                        ),
                     )
 
                     if (documents.count() > 0) {
@@ -328,7 +330,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                             if (href != "") {
                                 val insertDoc =
                                     con.prepareStatement(
-                                        "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?, description = ?"
+                                        "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?, description = ?",
                                     )
                                 insertDoc.setInt(1, idTender)
                                 insertDoc.setString(2, nameDoc)
@@ -349,7 +351,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     val insertLot =
                         con.prepareStatement(
                             "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                            Statement.RETURN_GENERATED_KEYS
+                            Statement.RETURN_GENERATED_KEYS,
                         )
                     insertLot.setInt(1, idTender)
                     insertLot.setInt(2, LotNumber)
@@ -366,7 +368,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     if (tn.orgName != "") {
                         val stmtoc =
                             con.prepareStatement(
-                                "SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1"
+                                "SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1",
                             )
                         stmtoc.setString(1, tn.orgName)
                         val rsoc = stmtoc.executeQuery()
@@ -380,10 +382,15 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                             val stmtins =
                                 con.prepareStatement(
                                     "INSERT INTO ${BuilderApp.Prefix}customer SET full_name = ?, is223=1, reg_num = ?, inn = ?",
-                                    Statement.RETURN_GENERATED_KEYS
+                                    Statement.RETURN_GENERATED_KEYS,
                                 )
                             stmtins.setString(1, tn.orgName)
-                            stmtins.setString(2, java.util.UUID.randomUUID().toString())
+                            stmtins.setString(
+                                2,
+                                java.util.UUID
+                                    .randomUUID()
+                                    .toString(),
+                            )
                             stmtins.setString(3, "")
                             stmtins.executeUpdate()
                             val rsoi = stmtins.generatedKeys
@@ -407,9 +414,8 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                             var namePO =
                                 html
                                     .selectFirst(
-                                        "td:containsOwn(Полное наименование (предмет договора)) ~ td"
-                                    )
-                                    ?.ownText()
+                                        "td:containsOwn(Полное наименование (предмет договора)) ~ td",
+                                    )?.ownText()
                                     ?.trim { it <= ' ' } ?: ""
                             if (namePO == "") {
                                 namePO =
@@ -423,7 +429,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                             }
                             val insertPurObj =
                                 con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, quantity_value = ?, okei = ?, customer_quantity_value = ?, okpd2_code = ?, okpd2_group_code = ?, okpd2_group_level1_code = ?"
+                                    "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, quantity_value = ?, okei = ?, customer_quantity_value = ?, okpd2_code = ?, okpd2_group_code = ?, okpd2_group_level1_code = ?",
                                 )
                             insertPurObj.setInt(1, idLot)
                             insertPurObj.setInt(2, idCustomer)
@@ -438,10 +444,10 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                             insertPurObj.close()
                         }
                     } else {
-                        con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?"
-                            )
-                            .apply {
+                        con
+                            .prepareStatement(
+                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?, okpd2_code = ?, okpd_name = ?",
+                            ).apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)
                                 setString(3, tn.purName)
@@ -461,16 +467,15 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                         val delivPlace1 =
                             html
                                 .selectFirst(
-                                    "td:containsOwn(Место поставки товаров, выполнения работ, оказания услуг) ~ td"
-                                )
-                                ?.ownText()
+                                    "td:containsOwn(Место поставки товаров, выполнения работ, оказания услуг) ~ td",
+                                )?.ownText()
                                 ?.trim { it <= ' ' } ?: ""
                         delivPlace =
                             "Регион: " +
-                                tn.delivPlace +
-                                " " +
-                                "Место поставки товаров, выполнения работ, оказания услуг: " +
-                                delivPlace1
+                            tn.delivPlace +
+                            " " +
+                            "Место поставки товаров, выполнения работ, оказания услуг: " +
+                            delivPlace1
                     }
                     val delivTerm =
                         html
@@ -480,16 +485,15 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     var applGAmount =
                         html
                             .selectFirst(
-                                "td:containsOwn(Размер обеспечения(резервирования оплаты) заявки на участие, в рублях) ~ td"
-                            )
-                            ?.ownText()
+                                "td:containsOwn(Размер обеспечения(резервирования оплаты) заявки на участие, в рублях) ~ td",
+                            )?.ownText()
                             ?.trim { it <= ' ' } ?: ""
                     applGAmount = applGAmount.replace("руб.", "")
                     val applGuaranteeAmount = returnPriceEtpRf(applGAmount)
                     if (delivPlace != "") {
                         val insertCusRec =
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_term = ?, delivery_place = ?, application_guarantee_amount = ?, max_price = ?"
+                                "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_term = ?, delivery_place = ?, application_guarantee_amount = ?, max_price = ?",
                             )
                         insertCusRec.setInt(1, idLot)
                         insertCusRec.setInt(2, idCustomer)
@@ -503,16 +507,15 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     val restr =
                         html
                             .selectFirst(
-                                "td:containsOwn(Требование к отсутствию участника в реестре недобросовестных поставщиков) ~ td"
-                            )
-                            ?.ownText()
+                                "td:containsOwn(Требование к отсутствию участника в реестре недобросовестных поставщиков) ~ td",
+                            )?.ownText()
                             ?.trim { it <= ' ' } ?: ""
                     if (restr == "Да") {
                         val restInfo =
                             "Требование к отсутствию участника в реестре недобросовестных поставщиков"
                         val insertRestr =
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}restricts SET id_lot = ?, info = ?"
+                                "INSERT INTO ${BuilderApp.Prefix}restricts SET id_lot = ?, info = ?",
                             )
                         insertRestr.setInt(1, idLot)
                         insertRestr.setString(2, restInfo)
@@ -522,15 +525,14 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     val msp =
                         html
                             .selectFirst(
-                                "td:containsOwn(Торги для субъектов малого и среднего предпринимательства) ~ td"
-                            )
-                            ?.ownText()
+                                "td:containsOwn(Торги для субъектов малого и среднего предпринимательства) ~ td",
+                            )?.ownText()
                             ?.trim { it <= ' ' } ?: ""
                     if (msp == "Да") {
                         val recContent = "Торги для субъектов малого и среднего предпринимательства"
                         val insertRec =
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}requirement SET id_lot = ?, content = ?"
+                                "INSERT INTO ${BuilderApp.Prefix}requirement SET id_lot = ?, content = ?",
                             )
                         insertRec.setInt(1, idLot)
                         insertRec.setString(2, recContent)
@@ -548,7 +550,7 @@ class TenderZakazRfUdmurt(val tn: ZakazRf) : TenderAbstract(), ITender {
                     } catch (e: Exception) {
                         logger("Ошибка добавления версий", e.stackTrace, e)
                     }
-                }
+                },
             )
     }
 

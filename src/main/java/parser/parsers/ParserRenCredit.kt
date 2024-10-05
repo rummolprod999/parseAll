@@ -10,7 +10,9 @@ import parser.tenders.TenderRenCredit
 import parser.tools.formatter
 import parser.tools.formatterOnlyDate
 
-class ParserRenCredit : IParser, ParserAbstract() {
+class ParserRenCredit :
+    ParserAbstract(),
+    IParser {
     val url = "https://rencredit.ru/about/tenders/"
 
     override fun parser() = parse { parserRenCredit() }

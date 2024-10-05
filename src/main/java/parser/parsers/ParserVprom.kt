@@ -12,15 +12,17 @@ import parser.tools.formatterOnlyDate
 import java.time.ZoneId
 import java.util.*
 
-class ParserVprom : IParser, ParserAbstract() {
-
-    override fun parser() = parse {
-        try {
-            parserVprom()
-        } catch (e: Exception) {
-            logger("Error in ${this::class.simpleName} function", e.stackTrace, e)
+class ParserVprom :
+    ParserAbstract(),
+    IParser {
+    override fun parser() =
+        parse {
+            try {
+                parserVprom()
+            } catch (e: Exception) {
+                logger("Error in ${this::class.simpleName} function", e.stackTrace, e)
+            }
         }
-    }
 
     private fun parserVprom() {
         val url = "https://voltyre-prom.ru/cooperation/tenders/"
@@ -58,7 +60,7 @@ class ParserVprom : IParser, ParserAbstract() {
                     logger("urlTend not found")
                     return
                 }
-        urlTend = "https://voltyre-prom.ru${urlTend}"
+        urlTend = "https://voltyre-prom.ru$urlTend"
         val purName =
             el.selectFirst("div.s-tender__name a")?.ownText()?.trim { it <= ' ' }
                 ?: run {
@@ -81,7 +83,11 @@ class ParserVprom : IParser, ParserAbstract() {
         if (dateEnd == Date(0L)) {
             dateEnd =
                 Date.from(
-                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                    datePub
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .plusDays(2)
+                        .toInstant(),
                 )
         }
         val tt = Vprom(purNum, urlTend, purName, dateEnd, datePub)

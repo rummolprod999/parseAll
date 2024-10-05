@@ -13,19 +13,21 @@ import parser.tools.formatter
 import java.time.ZoneId
 import java.util.*
 
-class ParserSpnova : IParser, ParserAbstract() {
-
+class ParserSpnova :
+    ParserAbstract(),
+    IParser {
     companion object WebCl {
         const val CountPage = 11
     }
 
-    override fun parser() = parse {
-        try {
-            parserSpnova()
-        } catch (e: Exception) {
-            logger("Error in ${this::class.simpleName} function", e.stackTrace, e)
+    override fun parser() =
+        parse {
+            try {
+                parserSpnova()
+            } catch (e: Exception) {
+                logger("Error in ${this::class.simpleName} function", e.stackTrace, e)
+            }
         }
-    }
 
     private fun parserSpnova() {
         (1..CountPage).forEach {
@@ -100,11 +102,20 @@ class ParserSpnova : IParser, ParserAbstract() {
         if (dateEnd == Date(0L)) {
             dateEnd =
                 Date.from(
-                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                    datePub
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .plusDays(2)
+                        .toInstant(),
                 )
         }
 
-        val nmck = el.selectFirst("td:eq(4)")?.ownText()?.trim { it <= ' ' }?.extractPrice() ?: ""
+        val nmck =
+            el
+                .selectFirst("td:eq(4)")
+                ?.ownText()
+                ?.trim { it <= ' ' }
+                ?.extractPrice() ?: ""
         val tt = Spnova(purNum, href, purName, dateEnd, pwName, datePub, nmck, hrefDoc)
         val t = TenderSpnova(tt)
         ParserTender(t)

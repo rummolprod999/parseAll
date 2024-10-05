@@ -7,5 +7,5 @@ data class EtpAgro(
     val href: String,
     val purName: String,
     val endDate: Date,
-    val status: String
+    val status: String,
 )

@@ -12,14 +12,17 @@ import parser.tools.formatterOnlyDate
 import java.time.ZoneId
 import java.util.*
 
-class ParserBorets : IParser, ParserAbstract() {
+class ParserBorets :
+    ParserAbstract(),
+    IParser {
     val url = "http://tenderborets.ru/node?page="
 
-    override fun parser() = parse {
-        System.setProperty("jsse.enableSNIExtension", "false")
-        parserBorets("http://tenderborets.ru/node")
-        (1..20).forEach { parserBorets("$url$it") }
-    }
+    override fun parser() =
+        parse {
+            System.setProperty("jsse.enableSNIExtension", "false")
+            parserBorets("http://tenderborets.ru/node")
+            (1..20).forEach { parserBorets("$url$it") }
+        }
 
     private fun parserBorets(url: String) {
         val pageTen = downloadWaitWithRef(url)
@@ -85,11 +88,16 @@ class ParserBorets : IParser, ParserAbstract() {
         if (dateEnd == Date(0)) {
             dateEnd =
                 Date.from(
-                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                    datePub
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .plusDays(2)
+                        .toInstant(),
                 )
         }
         val cusName =
-            e.selectFirst("img[src ^='http://tender']")
+            e
+                .selectFirst("img[src ^='http://tender']")
                 ?.attr("title")
                 ?.replace("Аватар пользователя", "")
                 ?.trim { it <= ' ' } ?: ""

@@ -12,16 +12,19 @@ import parser.tenders.TenderRb2B
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserRb2B : IParser, ParserAbstract() {
-
+class ParserRb2B :
+    ParserAbstract(),
+    IParser {
     private val tendersS = mutableListOf<TenderRb2B>()
 
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -61,8 +64,8 @@ class ParserRb2B : IParser, ParserAbstract() {
             val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//span[. = 'Торговые процедуры ККЗ 1885']")
-                )
+                    By.xpath("//span[. = 'Торговые процедуры ККЗ 1885']"),
+                ),
             )
             Thread.sleep(7000)
             driver.switchTo().defaultContent()
@@ -105,12 +108,15 @@ class ParserRb2B : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun parserPageN(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//a[contains(@href, 'javascript:loadPage')]")
-                )
+                    By.xpath("//a[contains(@href, 'javascript:loadPage')]"),
+                ),
             )
         } catch (e: Exception) {
             logger("next page not found")
@@ -118,19 +124,22 @@ class ParserRb2B : IParser, ParserAbstract() {
         }
         val js = driver as JavascriptExecutor
         js.executeScript(
-            "document.querySelectorAll('a[href=\"javascript:loadPage(${i})\"]')[0].click()"
+            "document.querySelectorAll('a[href=\"javascript:loadPage($i)\"]')[0].click()",
         )
         i++
         return getListTenders(driver, wait)
     }
 
-    private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun getListTenders(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         Thread.sleep(5000)
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//div[@id = 'proc-list']/div[contains(@class, 'proc')][1]")
-                )
+                    By.xpath("//div[@id = 'proc-list']/div[contains(@class, 'proc')][1]"),
+                ),
             )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
@@ -156,7 +165,7 @@ class ParserRb2B : IParser, ParserAbstract() {
             }
             val tenders =
                 driver.findElements(
-                    By.xpath("//div[@id = 'proc-list']/div[contains(@class, 'proc')]")
+                    By.xpath("//div[@id = 'proc-list']/div[contains(@class, 'proc')]"),
                 )
             for (it in tenders) {
                 try {
@@ -190,19 +199,19 @@ class ParserRb2B : IParser, ParserAbstract() {
             listOf(
                 { js: JavascriptExecutor ->
                     js.executeScript(
-                        "document.querySelectorAll('span.x-tab-strip-text.icon-information')[0].click()"
+                        "document.querySelectorAll('span.x-tab-strip-text.icon-information')[0].click()",
                     )
                 },
                 { js: JavascriptExecutor ->
                     js.executeScript(
-                        "document.querySelectorAll('span.x-tab-strip-text.icon-information')[1].click()"
+                        "document.querySelectorAll('span.x-tab-strip-text.icon-information')[1].click()",
                     )
                 },
                 { js: JavascriptExecutor ->
                     js.executeScript(
-                        "document.querySelectorAll('span.x-tab-strip-text.icon-information')[2].click()"
+                        "document.querySelectorAll('span.x-tab-strip-text.icon-information')[2].click()",
                     )
-                }
+                },
             )
     }
 }

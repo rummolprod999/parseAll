@@ -13,22 +13,23 @@ import parser.tools.formatterOnlyDate
 import java.time.ZoneId
 import java.util.*
 
-class ParserGns : IParser, ParserAbstract() {
-
-    override fun parser() = parse {
-        System.setProperty("jsse.enableSNIExtension", "false")
-        parserGns("https://www.gns-tender.ru/")
-        (2..3).forEach {
-            try {
-                parserGns("https://www.gns-tender.ru/?page=$it")
-            } catch (e: Exception) {
-                logger(e)
+class ParserGns :
+    ParserAbstract(),
+    IParser {
+    override fun parser() =
+        parse {
+            System.setProperty("jsse.enableSNIExtension", "false")
+            parserGns("https://www.gns-tender.ru/")
+            (2..3).forEach {
+                try {
+                    parserGns("https://www.gns-tender.ru/?page=$it")
+                } catch (e: Exception) {
+                    logger(e)
+                }
             }
         }
-    }
 
     private fun parserGns(url: String) {
-
         val pageTen = downloadFromUrlNoSslNew(url)
         if (pageTen == "") {
             logger("Gets empty string ${this::class.simpleName}", url)
@@ -62,7 +63,10 @@ class ParserGns : IParser, ParserAbstract() {
         parsingTender(htmlTen, urlTend)
     }
 
-    private fun parsingTender(e: Element, url: String) {
+    private fun parsingTender(
+        e: Element,
+        url: String,
+    ) {
         val purName =
             e.selectFirst("h1")?.ownText()?.trim { it <= ' ' }
                 ?: run {
@@ -90,7 +94,11 @@ class ParserGns : IParser, ParserAbstract() {
                     return
                 }
         val pubYear =
-            e.selectFirst("div.tender-year")?.ownText()?.replace("год", "")?.trim { it <= ' ' }
+            e
+                .selectFirst("div.tender-year")
+                ?.ownText()
+                ?.replace("год", "")
+                ?.trim { it <= ' ' }
                 ?: run {
                     logger("pubYear not found")
                     return
@@ -98,7 +106,8 @@ class ParserGns : IParser, ParserAbstract() {
         val datePubT = "$pubDay$pubMounth$pubYear".replaceDateBoretsEnd()
         val datePub = Date()
         val dateEndT =
-            e.selectFirst("div.tender-info:contains(Дата окончания приема заявок на участие:)")
+            e
+                .selectFirst("div.tender-info:contains(Дата окончания приема заявок на участие:)")
                 ?.ownText()
                 ?.trim { it <= ' ' }
                 ?: run {
@@ -109,7 +118,11 @@ class ParserGns : IParser, ParserAbstract() {
         if (dateEnd == Date(0)) {
             dateEnd =
                 Date.from(
-                    datePub.toInstant().atZone(ZoneId.systemDefault()).plusDays(2).toInstant()
+                    datePub
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .plusDays(2)
+                        .toInstant(),
                 )
         }
         val dateBiddingT =

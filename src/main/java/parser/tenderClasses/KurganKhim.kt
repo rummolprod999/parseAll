@@ -9,5 +9,5 @@ data class KurganKhim(
     var pubDate: Date,
     val endDate: Date,
     val attachments: Map<String, String>,
-    val orgName: String
+    val orgName: String,
 )

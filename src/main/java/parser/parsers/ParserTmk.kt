@@ -18,7 +18,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserTmk : IParser, ParserAbstract() {
+class ParserTmk :
+    ParserAbstract(),
+    IParser {
     private val tendersList = mutableListOf<TenderTmk>()
     lateinit var driver: ChromeDriver
     lateinit var wait: WebDriverWait
@@ -27,9 +29,11 @@ class ParserTmk : IParser, ParserAbstract() {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -39,13 +43,14 @@ class ParserTmk : IParser, ParserAbstract() {
         const val CountPage = 10
     }
 
-    override fun parser() = parse {
-        try {
-            parserTmk()
-        } catch (e: Exception) {
-            logger("Error in parserSelen function", e.stackTrace, e)
+    override fun parser() =
+        parse {
+            try {
+                parserTmk()
+            } catch (e: Exception) {
+                logger("Error in parserSelen function", e.stackTrace, e)
+            }
         }
-    }
 
     private fun getchromeOptions(): ChromeOptions {
         val options = ChromeOptions()
@@ -109,8 +114,8 @@ class ParserTmk : IParser, ParserAbstract() {
         clickException()
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[@class = 'x-grid3-body']/div[contains(@class, 'x-grid3-row')][25]")
-            )
+                By.xpath("//div[@class = 'x-grid3-body']/div[contains(@class, 'x-grid3-row')][25]"),
+            ),
         )
         getListTenders()
         (1..CountPage).forEach { _ ->
@@ -135,8 +140,8 @@ class ParserTmk : IParser, ParserAbstract() {
     private fun getNextPage() {
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//button[contains(@class, 'x-tbar-page-next')]")
-            )
+                By.xpath("//button[contains(@class, 'x-tbar-page-next')]"),
+            ),
         )
         try {
             val paginator =
@@ -156,14 +161,13 @@ class ParserTmk : IParser, ParserAbstract() {
         val tenders =
             driver.findElements(
                 By.xpath(
-                    "//div[@class = 'x-grid3-body']/div[contains(@class, 'x-grid3-row')]//tr[1]"
-                )
+                    "//div[@class = 'x-grid3-body']/div[contains(@class, 'x-grid3-row')]//tr[1]",
+                ),
             )
         tenders.forEach {
             try {
                 parserTender(it)
             } catch (e: Exception) {
-
                 logger("error in parserTender", e.stackTrace, e)
             }
         }
@@ -171,7 +175,8 @@ class ParserTmk : IParser, ParserAbstract() {
 
     private fun parserTender(el: WebElement) {
         val href =
-            el.findElementWithoutException(By.xpath(".//td[last()]/div/a[1]"))
+            el
+                .findElementWithoutException(By.xpath(".//td[last()]/div/a[1]"))
                 ?.getAttribute("href")
                 ?.trim { it <= ' ' } ?: ""
         if (href == "") {

@@ -10,15 +10,18 @@ import parser.tenderClasses.OrPnz
 import parser.tenders.TenderOrPnz
 import parser.tools.formatterOnlyDate
 
-class ParserOrPnz : IParser, ParserAbstract() {
+class ParserOrPnz :
+    ParserAbstract(),
+    IParser {
     val url = "https://www.ornpz.ru/tenderyi/predlozheniya/"
     val urlNew =
         "https://www.ornpz.ru/tenderyi/potrebnosti/dogovornaya-konkursnaya-komissiya/tablicza-tenderov-oao-orsknefteorgsintez/"
 
-    override fun parser() = parse {
-        parserOrPnz()
-        parserOrPnzNew()
-    }
+    override fun parser() =
+        parse {
+            parserOrPnz()
+            parserOrPnzNew()
+        }
 
     private fun parserOrPnz() {
         val pageTen = downloadFromUrl(url)

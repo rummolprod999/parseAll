@@ -11,7 +11,9 @@ import parser.tenderClasses.Akbars
 import parser.tenders.TenderAkbars
 import parser.tools.formatterOnlyDate
 
-class ParserAkbars : IParser, ParserAbstract() {
+class ParserAkbars :
+    ParserAbstract(),
+    IParser {
     companion object WebCl {
         const val BaseUrl = "https://akbarsstroi.ru/tenders/all.php"
     }
@@ -67,7 +69,12 @@ class ParserAkbars : IParser, ParserAbstract() {
         val delivTerm2 = el.selectFirst("td:eq(4)")?.text()?.trim { it <= ' ' } ?: ""
         val delivTerm =
             "Начало проведения работ: $delivTerm1\nОкончание проведения работ: $delivTerm2"
-        val nmck = el.selectFirst("td:eq(7)")?.text()?.trim { it <= ' ' }?.extractPrice() ?: ""
+        val nmck =
+            el
+                .selectFirst("td:eq(7)")
+                ?.text()
+                ?.trim { it <= ' ' }
+                ?.extractPrice() ?: ""
         val href = BaseUrl
         val docHrefT =
             el.selectFirst("td:eq(9) a")?.attr("href") ?: throw Exception("docHrefT was not found")

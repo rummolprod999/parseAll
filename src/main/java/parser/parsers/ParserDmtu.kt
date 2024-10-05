@@ -10,7 +10,9 @@ import parser.tenderClasses.Dmtu
 import parser.tenders.TenderDmtu
 import parser.tools.formatterOnlyDate
 
-class ParserDmtu : IParser, ParserAbstract() {
+class ParserDmtu :
+    ParserAbstract(),
+    IParser {
     val url = "https://anomtu.ru/zakupki/"
 
     override fun parser() = parse { parserDmtu() }

@@ -16,16 +16,19 @@ import parser.tools.formatterGpn
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserKurganKhim : IParser, ParserAbstract() {
-
+class ParserKurganKhim :
+    ParserAbstract(),
+    IParser {
     private val tendersS = mutableListOf<TenderKurganKhim>()
 
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -70,8 +73,8 @@ class ParserKurganKhim : IParser, ParserAbstract() {
             val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//tbody/tr/div[contains(@class, 'v-card')]")
-                )
+                    By.xpath("//tbody/tr/div[contains(@class, 'v-card')]"),
+                ),
             )
 
             driver.switchTo().defaultContent()
@@ -99,28 +102,34 @@ class ParserKurganKhim : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun parserPageN(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         driver.switchTo().defaultContent()
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//button[@aria-label = 'Следующая страница']")
-            )
+                By.xpath("//button[@aria-label = 'Следующая страница']"),
+            ),
         )
         val js = driver as JavascriptExecutor
         js.executeScript(
-            "document.querySelectorAll('button[aria-label = \"Следующая страница\"]')[0].click()"
+            "document.querySelectorAll('button[aria-label = \"Следующая страница\"]')[0].click()",
         )
         driver.switchTo().defaultContent()
         return getListTenders(driver, wait)
     }
 
-    private fun getListTenders(driver: ChromeDriver, wait: WebDriverWait): Boolean {
+    private fun getListTenders(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+    ): Boolean {
         Thread.sleep(5000)
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//tbody/tr/div[contains(@class, 'v-card')]")
-                )
+                    By.xpath("//tbody/tr/div[contains(@class, 'v-card')]"),
+                ),
             )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
@@ -149,9 +158,13 @@ class ParserKurganKhim : IParser, ParserAbstract() {
         return true
     }
 
-    private fun parserTender(el: WebElement, driver: ChromeDriver) {
+    private fun parserTender(
+        el: WebElement,
+        driver: ChromeDriver,
+    ) {
         val purNum =
-            el.findElementWithoutException(By.xpath(".//div/b[@class = 'font_size16']"))
+            el
+                .findElementWithoutException(By.xpath(".//div/b[@class = 'font_size16']"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
@@ -160,7 +173,8 @@ class ParserKurganKhim : IParser, ParserAbstract() {
         }
 
         val urlTender =
-            el.findElementWithoutException(By.xpath(".//div/b[@class = 'font_size16']/a"))
+            el
+                .findElementWithoutException(By.xpath(".//div/b[@class = 'font_size16']/a"))
                 ?.getAttribute("href")
                 ?.trim { it <= ' ' } ?: ""
         if (urlTender == "") {
@@ -168,26 +182,28 @@ class ParserKurganKhim : IParser, ParserAbstract() {
             throw Exception("cannot urlT in tender")
         }
         val purName =
-            el.findElementWithoutException(By.xpath(".//div/b[@class = 'font_size16']/a"))
+            el
+                .findElementWithoutException(By.xpath(".//div/b[@class = 'font_size16']/a"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         val orgName =
-            el.findElementWithoutException(
-                    By.xpath(".//div[b[@class = 'font_size16']]/following-sibling::div")
-                )
-                ?.text
+            el
+                .findElementWithoutException(
+                    By.xpath(".//div[b[@class = 'font_size16']]/following-sibling::div"),
+                )?.text
                 ?.trim { it <= ' ' } ?: ""
         val datePubTmp =
-            el.findElementWithoutException(By.xpath(".//div[b[. = 'Дата начала подачи заявок:']]"))
+            el
+                .findElementWithoutException(By.xpath(".//div[b[. = 'Дата начала подачи заявок:']]"))
                 ?.text
                 ?.replace("Дата начала подачи заявок:", "")
                 ?.trim()
                 ?.trim { it <= ' ' } ?: ""
         val dateEndTmp =
-            el.findElementWithoutException(
-                    By.xpath(".//div[b[. = 'Дата окончания подачи заявок:']]")
-                )
-                ?.text
+            el
+                .findElementWithoutException(
+                    By.xpath(".//div[b[. = 'Дата окончания подачи заявок:']]"),
+                )?.text
                 ?.replace("Дата окончания подачи заявок:", "")
                 ?.trim()
                 ?.trim { it <= ' ' } ?: ""

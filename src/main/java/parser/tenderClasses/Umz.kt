@@ -10,5 +10,5 @@ data class Umz(
     val placingWayName: String,
     val nameCus: String,
     val nmck: String,
-    val status: String
+    val status: String,
 )

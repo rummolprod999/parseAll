@@ -17,13 +17,17 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserSalavat : IParser, ParserAbstract() {
+class ParserSalavat :
+    ParserAbstract(),
+    IParser {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -83,30 +87,35 @@ class ParserSalavat : IParser, ParserAbstract() {
         }
     }
 
-    private fun parserPageN(driver: ChromeDriver, wait: WebDriverWait, np: Int = 0) {
+    private fun parserPageN(
+        driver: ChromeDriver,
+        wait: WebDriverWait,
+        np: Int = 0,
+    ) {
         if (np != 0) {
             try {
                 val js = driver as JavascriptExecutor
                 js.executeScript(
-                    "document.querySelectorAll('div.dataTables_paginate span[data-href = \"$np\"]')[0].click()"
+                    "document.querySelectorAll('div.dataTables_paginate span[data-href = \"$np\"]')[0].click()",
                 )
-            } catch (e: Exception) {}
+            } catch (e: Exception) {
+            }
         }
         Thread.sleep(5000)
         driver.switchTo().defaultContent()
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath(
-                    "//section[@class = 'dataTables_wrapper']//table[contains(@class, 'text_data')]/tbody"
-                )
-            )
+                    "//section[@class = 'dataTables_wrapper']//table[contains(@class, 'text_data')]/tbody",
+                ),
+            ),
         )
         driver.switchTo().defaultContent()
         val tenders =
             driver.findElements(
                 By.xpath(
-                    "//section[@class = 'dataTables_wrapper']//table[contains(@class, 'text_data')]/tbody/tr"
-                )
+                    "//section[@class = 'dataTables_wrapper']//table[contains(@class, 'text_data')]/tbody/tr",
+                ),
             )
         tenders.forEach {
             try {
@@ -136,11 +145,13 @@ class ParserSalavat : IParser, ParserAbstract() {
         val purObj =
             el.findElementWithoutException(By.xpath("./td[2]/p[2]"))?.text?.trim { it <= ' ' } ?: ""
         val pwName =
-            el.findElementWithoutException(By.xpath("./td[2]/p/span[@class = 'tender_type']"))
+            el
+                .findElementWithoutException(By.xpath("./td[2]/p/span[@class = 'tender_type']"))
                 ?.text
                 ?.trim { it <= ' ' } ?: ""
         val dateEndTmp =
-            el.findElementWithoutException(By.xpath("./td[1]/p/span"))
+            el
+                .findElementWithoutException(By.xpath("./td[1]/p/span"))
                 ?.text
                 ?.trim()
                 ?.replace("в ", "")

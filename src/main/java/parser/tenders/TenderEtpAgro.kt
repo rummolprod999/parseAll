@@ -17,7 +17,11 @@ import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
 
-class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(), ITender {
+class TenderEtpAgro(
+    val tn: EtpAgro,
+    val driver: ChromeDriver,
+) : TenderAbstract(),
+    ITender {
     init {
         etpName = "ЭТП-АГРО"
         etpUrl = "https://zakupka.etpagro.ru/"
@@ -29,14 +33,15 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
 
     override fun parsing() {
         val dateVer = Date()
-        DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
+        DriverManager
+            .getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
             .use(
                 fun(con: Connection) {
                     val stmt0 =
-                        con.prepareStatement(
-                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
-                            )
-                            .apply {
+                        con
+                            .prepareStatement(
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? AND end_date = ? AND notice_version = ?",
+                            ).apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
                                 setTimestamp(3, Timestamp(tn.endDate.time))
@@ -53,10 +58,10 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                     var cancelstatus = 0
                     var updated = false
                     val stmt =
-                        con.prepareStatement(
-                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                            )
-                            .apply {
+                        con
+                            .prepareStatement(
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?",
+                            ).apply {
                                 setString(1, tn.purNum)
                                 setInt(2, TenderAkbars.typeFz)
                             }
@@ -66,10 +71,10 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                         val idT = rs.getInt(1)
                         val dateB: Timestamp = rs.getTimestamp(2)
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
-                            con.prepareStatement(
-                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                                )
-                                .apply {
+                            con
+                                .prepareStatement(
+                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?",
+                                ).apply {
                                     setInt(1, idT)
                                     execute()
                                     close()
@@ -85,17 +90,16 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                     val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
                     wait.until(
                         ExpectedConditions.visibilityOfElementLocated(
-                            By.xpath("//span[. = 'Сведения о процедуре']")
-                        )
+                            By.xpath("//span[. = 'Сведения о процедуре']"),
+                        ),
                     )
                     val datePubTmp =
                         driver
                             .findElementWithoutException(
                                 By.xpath(
-                                    "//ef-widget-label//span[. = 'Дата публикации процедуры']/../../following-sibling::div//span"
-                                )
-                            )
-                            ?.text
+                                    "//ef-widget-label//span[. = 'Дата публикации процедуры']/../../following-sibling::div//span",
+                                ),
+                            )?.text
                             ?.trim()
                             ?.trim { it <= ' ' } ?: ""
                     val pubDate = datePubTmp.getDateFromString(formatterOnlyDate)
@@ -108,15 +112,14 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                         driver
                             .findElementWithoutException(
                                 By.xpath(
-                                    "//ef-widget-label//span[. = 'Наименование организации']/../../following-sibling::div//span"
-                                )
-                            )
-                            ?.text
+                                    "//ef-widget-label//span[. = 'Наименование организации']/../../following-sibling::div//span",
+                                ),
+                            )?.text
                             ?.trim { it <= ' ' } ?: ""
                     if (fullnameOrg != "") {
                         val stmto =
                             con.prepareStatement(
-                                "SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?"
+                                "SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?",
                             )
                         stmto.setString(1, fullnameOrg)
                         val rso = stmto.executeQuery()
@@ -132,56 +135,51 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                                 driver
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//ef-widget-label//span[. = 'Юридический адрес']/../../following-sibling::div//span"
-                                        )
-                                    )
-                                    ?.text
+                                            "//ef-widget-label//span[. = 'Юридический адрес']/../../following-sibling::div//span",
+                                        ),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
                             val kpp =
                                 driver
                                     .findElementWithoutException(
-                                        By.xpath("//div[@id = 'customerKpp']")
-                                    )
-                                    ?.text
+                                        By.xpath("//div[@id = 'customerKpp']"),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
                             val email =
                                 driver
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//ef-widget-label//span[. = 'Адрес электронной почты']/../../following-sibling::div//span"
-                                        )
-                                    )
-                                    ?.text
+                                            "//ef-widget-label//span[. = 'Адрес электронной почты']/../../following-sibling::div//span",
+                                        ),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
                             val phone =
                                 driver
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//ef-widget-label//span[. = 'Контактный телефон']/../../following-sibling::div//span"
-                                        )
-                                    )
-                                    ?.text
+                                            "//ef-widget-label//span[. = 'Контактный телефон']/../../following-sibling::div//span",
+                                        ),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
                             val contactPerson =
                                 driver
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//ef-widget-label//span[. = 'Ответственный исполнитель']/../../following-sibling::div//span"
-                                        )
-                                    )
-                                    ?.text
+                                            "//ef-widget-label//span[. = 'Ответственный исполнитель']/../../following-sibling::div//span",
+                                        ),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
                             val stmtins =
-                                con.prepareStatement(
+                                con
+                                    .prepareStatement(
                                         "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                        Statement.RETURN_GENERATED_KEYS
-                                    )
-                                    .apply {
+                                        Statement.RETURN_GENERATED_KEYS,
+                                    ).apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
                                         setString(3, email)
@@ -207,10 +205,9 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                         driver
                             .findElementWithoutException(
                                 By.xpath(
-                                    "//ef-widget-label//span[. = 'Форма проведения торгов']/../../following-sibling::div//span"
-                                )
-                            )
-                            ?.text
+                                    "//ef-widget-label//span[. = 'Форма проведения торгов']/../../following-sibling::div//span",
+                                ),
+                            )?.text
                             ?.trim()
                             ?.trim { it <= ' ' } ?: ""
                     if (placingWayName != "") {
@@ -220,10 +217,9 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                         driver
                             .findElementWithoutException(
                                 By.xpath(
-                                    "//ef-widget-label//span[. = 'Регион']/../../following-sibling::div//span"
-                                )
-                            )
-                            ?.text
+                                    "//ef-widget-label//span[. = 'Регион']/../../following-sibling::div//span",
+                                ),
+                            )?.text
                             ?.trim()
                             ?.trim { it <= ' ' } ?: ""
                     val idRegion = getIdRegion(con, regionName)
@@ -231,7 +227,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                     val insertTender =
                         con.prepareStatement(
                             "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?",
-                            Statement.RETURN_GENERATED_KEYS
+                            Statement.RETURN_GENERATED_KEYS,
                         )
                     insertTender.setString(1, tn.purNum)
                     insertTender.setString(2, tn.purNum)
@@ -266,8 +262,8 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                     // Thread.sleep(3000)
                     wait.until(
                         ExpectedConditions.visibilityOfElementLocated(
-                            By.xpath("//span[contains(., ' Наименование ')]")
-                        )
+                            By.xpath("//span[contains(., ' Наименование ')]"),
+                        ),
                     )
                     driver.findElement(By.xpath("//p-treetabletoggler/button")).click()
                     Thread.sleep(3000)
@@ -278,17 +274,16 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                     val lotName =
                         driver
                             .findElementWithoutException(
-                                By.xpath("//tr[contains(@class, 'treetable__node_root')]/td[2]")
-                            )
-                            ?.text
+                                By.xpath("//tr[contains(@class, 'treetable__node_root')]/td[2]"),
+                            )?.text
                             ?.trim()
                             ?.trim { it <= ' ' } ?: ""
                     val insertLot =
-                        con.prepareStatement(
+                        con
+                            .prepareStatement(
                                 "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?, lot_name = ?",
-                                Statement.RETURN_GENERATED_KEYS
-                            )
-                            .apply {
+                                Statement.RETURN_GENERATED_KEYS,
+                            ).apply {
                                 setInt(1, idTender)
                                 setInt(2, lotNumber)
                                 setString(3, currency)
@@ -307,16 +302,15 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                         driver
                             .findElementWithoutException(
                                 By.xpath(
-                                    "//tr[contains(@class, 'treetable__node_root')]/td[3]//div[@efcfgelement]/span"
-                                )
-                            )
-                            ?.text
+                                    "//tr[contains(@class, 'treetable__node_root')]/td[3]//div[@efcfgelement]/span",
+                                ),
+                            )?.text
                             ?.trim()
                             ?.trim { it <= ' ' } ?: ""
                     if (cusName != "") {
                         val stmtoc =
                             con.prepareStatement(
-                                "SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1"
+                                "SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1",
                             )
                         stmtoc.setString(1, cusName)
                         val rsoc = stmtoc.executeQuery()
@@ -330,10 +324,15 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                             val stmtins =
                                 con.prepareStatement(
                                     "INSERT INTO ${BuilderApp.Prefix}customer SET full_name = ?, is223=1, reg_num = ?, inn = ?",
-                                    Statement.RETURN_GENERATED_KEYS
+                                    Statement.RETURN_GENERATED_KEYS,
                                 )
                             stmtins.setString(1, cusName)
-                            stmtins.setString(2, java.util.UUID.randomUUID().toString())
+                            stmtins.setString(
+                                2,
+                                java.util.UUID
+                                    .randomUUID()
+                                    .toString(),
+                            )
                             stmtins.setString(3, "")
                             stmtins.executeUpdate()
                             val rsoi = stmtins.generatedKeys
@@ -347,33 +346,31 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                     driver.switchTo().defaultContent()
                     val purObjts =
                         driver.findElements(
-                            By.xpath("//tr[contains(@class, 'treetable__node_child')]")
+                            By.xpath("//tr[contains(@class, 'treetable__node_child')]"),
                         )
                     purObjts.forEach { element ->
                         val purName =
                             element
                                 .findElementWithoutException(
-                                    By.xpath("./td[2]//div[@efcfgelement]/span")
-                                )
-                                ?.text
+                                    By.xpath("./td[2]//div[@efcfgelement]/span"),
+                                )?.text
                                 ?.trim()
                                 ?.trim { it <= ' ' } ?: ""
                         val okeiT =
                             element
                                 .findElementWithoutException(
-                                    By.xpath("./td[4]//div[@efcfgelement]/span")
-                                )
-                                ?.text
+                                    By.xpath("./td[4]//div[@efcfgelement]/span"),
+                                )?.text
                                 ?.trim()
                                 ?.trim { it <= ' ' } ?: ""
                         val okei = okeiT.getDataFromRegexp("""\d+\s*(.+)""")
                         val quant = okeiT.getDataFromRegexp("""(\d+)""")
                         val price = ""
                         val sum = ""
-                        con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?"
-                            )
-                            .apply {
+                        con
+                            .prepareStatement(
+                                "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, price = ?, sum = ?",
+                            ).apply {
                                 setInt(1, idLot)
                                 setInt(2, idCustomer)
                                 setString(3, purName)
@@ -397,7 +394,7 @@ class TenderEtpAgro(val tn: EtpAgro, val driver: ChromeDriver) : TenderAbstract(
                     } catch (e: Exception) {
                         logger("Ошибка добавления версий", e.stackTrace, e)
                     }
-                }
+                },
             )
     }
 }

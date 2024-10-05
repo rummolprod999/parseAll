@@ -5,13 +5,12 @@ import org.openqa.selenium.SearchContext
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 
-fun <T> T.findElementWithoutException(by: By): WebElement? where T : SearchContext {
-    return try {
+fun <T> T.findElementWithoutException(by: By): WebElement? where T : SearchContext =
+    try {
         this.findElement(by)
     } catch (e: Exception) {
         null
     }
-}
 
 fun ChromeDriver.clickerExp(xpath: String) {
     for (i in 1..20) {

@@ -11,7 +11,9 @@ import parser.tenders.TenderDellin
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserDellin : IParser, ParserAbstract() {
+class ParserDellin :
+    ParserAbstract(),
+    IParser {
     private val tendersList = mutableListOf<TenderDellin>()
     lateinit var driver: ChromeDriver
     lateinit var wait: WebDriverWait
@@ -20,9 +22,11 @@ class ParserDellin : IParser, ParserAbstract() {
     init {
         System.setProperty(
             "org.apache.commons.logging.Log",
-            "org.apache.commons.logging.impl.NoOpLog"
+            "org.apache.commons.logging.impl.NoOpLog",
         )
-        java.util.logging.Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        java.util.logging.Logger
+            .getLogger("org.openqa.selenium")
+            .level = Level.OFF
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
     }
 
@@ -32,13 +36,14 @@ class ParserDellin : IParser, ParserAbstract() {
         const val timeoutB = 30L
     }
 
-    override fun parser() = parse {
-        try {
-            parserDellin()
-        } catch (e: Exception) {
-            logger("Error in parserSelen function", e.stackTrace, e)
+    override fun parser() =
+        parse {
+            try {
+                parserDellin()
+            } catch (e: Exception) {
+                logger("Error in parserSelen function", e.stackTrace, e)
+            }
         }
-    }
 
     private fun getchromeOptions(): ChromeOptions {
         val options = ChromeOptions()
@@ -94,8 +99,8 @@ class ParserDellin : IParser, ParserAbstract() {
         wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//table[@__gwtcellbasedwidgetimpldispatchingfocus]/tbody/tr")
-            )
+                By.xpath("//table[@__gwtcellbasedwidgetimpldispatchingfocus]/tbody/tr"),
+            ),
         )
         getListTenders()
     }
@@ -105,13 +110,12 @@ class ParserDellin : IParser, ParserAbstract() {
         driver.switchTo().defaultContent()
         val tenders =
             driver.findElements(
-                By.xpath("//table[@__gwtcellbasedwidgetimpldispatchingfocus]/tbody/tr")
+                By.xpath("//table[@__gwtcellbasedwidgetimpldispatchingfocus]/tbody/tr"),
             )
         tenders.forEach {
             try {
                 parserTender(it)
             } catch (e: Exception) {
-
                 logger("error in parserTender", e.stackTrace, e)
             }
         }

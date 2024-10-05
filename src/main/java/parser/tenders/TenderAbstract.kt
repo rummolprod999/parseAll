@@ -29,15 +29,15 @@ abstract class TenderAbstract {
         con: Connection,
         dateVer: Date,
         typeFz: Int,
-        purNum: String
+        purNum: String,
     ): Result {
         var updated1 = false
         var cancelstatus1 = 0
         val stmt =
-            con.prepareStatement(
-                    "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                )
-                .apply {
+            con
+                .prepareStatement(
+                    "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?",
+                ).apply {
                     setString(1, purNum)
                     setInt(2, typeFz)
                 }
@@ -47,10 +47,10 @@ abstract class TenderAbstract {
             val idT = rs.getInt(1)
             val dateB: Timestamp = rs.getTimestamp(2)
             if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
-                con.prepareStatement(
-                        "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                    )
-                    .apply {
+                con
+                    .prepareStatement(
+                        "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?",
+                    ).apply {
                         setInt(1, idT)
                         execute()
                         close()
@@ -68,7 +68,7 @@ abstract class TenderAbstract {
         var IdEtp = 0
         val stmto =
             con.prepareStatement(
-                "SELECT id_etp FROM ${BuilderApp.Prefix}etp WHERE name = ? AND url = ? LIMIT 1"
+                "SELECT id_etp FROM ${BuilderApp.Prefix}etp WHERE name = ? AND url = ? LIMIT 1",
             )
         stmto.setString(1, etpName)
         stmto.setString(2, etpUrl)
@@ -83,7 +83,7 @@ abstract class TenderAbstract {
             val stmtins =
                 con.prepareStatement(
                     "INSERT INTO ${BuilderApp.Prefix}etp SET name = ?, url = ?, conf=0",
-                    Statement.RETURN_GENERATED_KEYS
+                    Statement.RETURN_GENERATED_KEYS,
                 )
             stmtins.setString(1, etpName)
             stmtins.setString(2, etpUrl)
@@ -98,11 +98,14 @@ abstract class TenderAbstract {
         return IdEtp
     }
 
-    fun getPlacingWay(con: Connection, placingWay: String): Int {
+    fun getPlacingWay(
+        con: Connection,
+        placingWay: String,
+    ): Int {
         var idPlacingWay = 0
         val stmto =
             con.prepareStatement(
-                "SELECT id_placing_way FROM ${BuilderApp.Prefix}placing_way WHERE name = ? LIMIT 1"
+                "SELECT id_placing_way FROM ${BuilderApp.Prefix}placing_way WHERE name = ? LIMIT 1",
             )
         stmto.setString(1, placingWay)
         val rso = stmto.executeQuery()
@@ -117,7 +120,7 @@ abstract class TenderAbstract {
             val stmtins =
                 con.prepareStatement(
                     "INSERT INTO ${BuilderApp.Prefix}placing_way SET name = ?, conformity = ?",
-                    Statement.RETURN_GENERATED_KEYS
+                    Statement.RETURN_GENERATED_KEYS,
                 )
             stmtins.setString(1, placingWay)
             stmtins.setInt(2, conf)
@@ -132,7 +135,10 @@ abstract class TenderAbstract {
         return idPlacingWay
     }
 
-    fun getIdRegion(con: Connection, reg: String): Int {
+    fun getIdRegion(
+        con: Connection,
+        reg: String,
+    ): Int {
         var idReg = 0
         val re = getRegion(reg)
         if (re != "") {
@@ -155,23 +161,27 @@ abstract class TenderAbstract {
         SQLException::class,
         ClassNotFoundException::class,
         IllegalAccessException::class,
-        InstantiationException::class
+        InstantiationException::class,
     )
-    fun addVNum(con: Connection, id: String, typeFz: Int) {
+    fun addVNum(
+        con: Connection,
+        id: String,
+        typeFz: Int,
+    ) {
         var verNum = 1
         val p1: PreparedStatement =
             con.prepareStatement(
-                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? ORDER BY UNIX_TIMESTAMP(date_version) ASC"
+                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND type_fz = ? ORDER BY UNIX_TIMESTAMP(date_version) ASC",
             )
         p1.setString(1, id)
         p1.setInt(2, typeFz)
         val r1: ResultSet = p1.executeQuery()
         while (r1.next()) {
             val IdTender = r1.getInt(1)
-            con.prepareStatement(
-                    "UPDATE ${BuilderApp.Prefix}tender SET num_version = ? WHERE id_tender = ? AND type_fz = ?"
-                )
-                .apply {
+            con
+                .prepareStatement(
+                    "UPDATE ${BuilderApp.Prefix}tender SET num_version = ? WHERE id_tender = ? AND type_fz = ?",
+                ).apply {
                     setInt(1, verNum)
                     setInt(2, IdTender)
                     setInt(3, typeFz)
@@ -188,14 +198,18 @@ abstract class TenderAbstract {
         SQLException::class,
         ClassNotFoundException::class,
         IllegalAccessException::class,
-        InstantiationException::class
+        InstantiationException::class,
     )
-    fun tenderKwords(idTender: Int, con: Connection, addInfo: String = "") {
+    fun tenderKwords(
+        idTender: Int,
+        con: Connection,
+        addInfo: String = "",
+    ) {
         val s = StringBuilder()
         if (addInfo != "") with(s) { append(addInfo) }
         val p1: PreparedStatement =
             con.prepareStatement(
-                "SELECT DISTINCT po.name, po.okpd_name FROM ${BuilderApp.Prefix}purchase_object AS po LEFT JOIN ${BuilderApp.Prefix}lot AS l ON l.id_lot = po.id_lot WHERE l.id_tender = ?"
+                "SELECT DISTINCT po.name, po.okpd_name FROM ${BuilderApp.Prefix}purchase_object AS po LEFT JOIN ${BuilderApp.Prefix}lot AS l ON l.id_lot = po.id_lot WHERE l.id_tender = ?",
             )
         p1.setInt(1, idTender)
         val r1: ResultSet = p1.executeQuery()
@@ -217,7 +231,7 @@ abstract class TenderAbstract {
         p1.close()
         val p2: PreparedStatement =
             con.prepareStatement(
-                "SELECT DISTINCT file_name FROM ${BuilderApp.Prefix}attachment WHERE id_tender = ?"
+                "SELECT DISTINCT file_name FROM ${BuilderApp.Prefix}attachment WHERE id_tender = ?",
             )
         p2.setInt(1, idTender)
         val r2: ResultSet = p2.executeQuery()
@@ -233,7 +247,7 @@ abstract class TenderAbstract {
         var idOrg = 0
         val p3: PreparedStatement =
             con.prepareStatement(
-                "SELECT purchase_object_info, id_organizer FROM ${BuilderApp.Prefix}tender WHERE id_tender = ?"
+                "SELECT purchase_object_info, id_organizer FROM ${BuilderApp.Prefix}tender WHERE id_tender = ?",
             )
         p3.setInt(1, idTender)
         val r3: ResultSet = p3.executeQuery()
@@ -247,7 +261,7 @@ abstract class TenderAbstract {
         if (idOrg != 0) {
             val p4: PreparedStatement =
                 con.prepareStatement(
-                    "SELECT full_name, inn FROM ${BuilderApp.Prefix}organizer WHERE id_organizer = ?"
+                    "SELECT full_name, inn FROM ${BuilderApp.Prefix}organizer WHERE id_organizer = ?",
                 )
             p4.setInt(1, idOrg)
             val r4: ResultSet = p4.executeQuery()
@@ -270,7 +284,7 @@ abstract class TenderAbstract {
         }
         val p5: PreparedStatement =
             con.prepareStatement(
-                "SELECT DISTINCT cus.inn, cus.full_name FROM ${BuilderApp.Prefix}customer AS cus LEFT JOIN ${BuilderApp.Prefix}purchase_object AS po ON cus.id_customer = po.id_customer LEFT JOIN ${BuilderApp.Prefix}lot AS l ON l.id_lot = po.id_lot WHERE l.id_tender = ?"
+                "SELECT DISTINCT cus.inn, cus.full_name FROM ${BuilderApp.Prefix}customer AS cus LEFT JOIN ${BuilderApp.Prefix}purchase_object AS po ON cus.id_customer = po.id_customer LEFT JOIN ${BuilderApp.Prefix}lot AS l ON l.id_lot = po.id_lot WHERE l.id_tender = ?",
             )
         p5.setInt(1, idTender)
         val r5: ResultSet = p5.executeQuery()
@@ -298,7 +312,7 @@ abstract class TenderAbstract {
         ss = ss.trim { it <= ' ' }
         val p6 =
             con.prepareStatement(
-                "UPDATE ${BuilderApp.Prefix}tender SET tender_kwords = ? WHERE id_tender = ?"
+                "UPDATE ${BuilderApp.Prefix}tender SET tender_kwords = ? WHERE id_tender = ?",
             )
         p6.setString(1, ss)
         p6.setInt(2, idTender)
@@ -315,7 +329,8 @@ abstract class TenderAbstract {
                 val okpd2GroupCodeTemp = s.slice(0 until dot)
                 try {
                     okpd2GroupCode = Integer.parseInt(okpd2GroupCodeTemp)
-                } catch (e: Exception) {}
+                } catch (e: Exception) {
+                }
             }
         }
         if (s.length > 3) {
@@ -509,7 +524,7 @@ abstract class TenderAbstract {
         drv: ChromeDriver,
         con: Connection,
         section: String,
-        idTender: Int
+        idTender: Int,
     ) {
         try {
             val docXml =
@@ -524,7 +539,7 @@ abstract class TenderAbstract {
                         "http://utp.sberbank-ast.ru/$section/File/DownloadFile?fid=${it.fileid}"
                     val insertDoc =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
+                            "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?",
                         )
                     insertDoc.setInt(1, idTender)
                     insertDoc.setString(2, it.filename)
@@ -539,7 +554,7 @@ abstract class TenderAbstract {
                         "http://utp.sberbank-ast.ru/$section/File/DownloadFile?fid=${it.fileid}"
                     val insertDoc =
                         con.prepareStatement(
-                            "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
+                            "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?",
                         )
                     insertDoc.setInt(1, idTender)
                     insertDoc.setString(2, it.filename)
@@ -563,7 +578,7 @@ abstract class TenderAbstract {
                             "http://utp.sberbank-ast.ru/$section/File/DownloadFile?fid=${this.fileid}"
                         val insertDoc =
                             con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
+                                "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?",
                             )
                         insertDoc.setInt(1, idTender)
                         insertDoc.setString(2, this.filename)
@@ -578,10 +593,14 @@ abstract class TenderAbstract {
         }
     }
 
-    protected fun getAttachmentsZmo(idTender: Int, con: Connection, purNum: String) {
+    protected fun getAttachmentsZmo(
+        idTender: Int,
+        con: Connection,
+        purNum: String,
+    ) {
         val page =
             downloadFromUrl(
-                "https://zmo-new-webapi.rts-tender.ru/api/Trade/$purNum/GetTradeDocuments"
+                "https://zmo-new-webapi.rts-tender.ru/api/Trade/$purNum/GetTradeDocuments",
             )
         if (page == "") {
             return
@@ -591,10 +610,10 @@ abstract class TenderAbstract {
         val docs: List<UnTenderZmo.RtsAtt> = gson.fromJson(page, listType)
         docs.forEach {
             if (it.FileName != null && it.Url != null) {
-                con.prepareStatement(
-                        "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
-                    )
-                    .apply {
+                con
+                    .prepareStatement(
+                        "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?",
+                    ).apply {
                         setInt(1, idTender)
                         setString(2, it.FileName)
                         setString(3, it.Url)

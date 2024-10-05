@@ -15,8 +15,11 @@ import java.sql.Statement
 import java.sql.Timestamp
 import java.util.*
 
-class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITender {
-
+class TenderTmk(
+    val tn: Tmk,
+    val driver: ChromeDriver,
+) : TenderAbstract(),
+    ITender {
     init {
         etpName = "ПАО «Трубная Металлургическая Компания»"
         etpUrl = "https://zakupki.tmk-group.com/"
@@ -24,14 +27,15 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
 
     override fun parsing() {
         val dateVer = Date()
-        DriverManager.getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
+        DriverManager
+            .getConnection(BuilderApp.UrlConnect, BuilderApp.UserDb, BuilderApp.PassDb)
             .use(
                 fun(con: Connection) {
                     val stmt0 =
-                        con.prepareStatement(
-                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?"
-                            )
-                            .apply {
+                        con
+                            .prepareStatement(
+                                "SELECT id_tender FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND doc_publish_date = ? AND type_fz = ? AND end_date = ? AND notice_version = ?",
+                            ).apply {
                                 setString(1, tn.purNum)
                                 setTimestamp(2, Timestamp(tn.pubDate.time))
                                 setInt(3, typeFz)
@@ -52,10 +56,10 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                     driver.switchTo().defaultContent()
                     val wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
                     val stmt =
-                        con.prepareStatement(
-                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?"
-                            )
-                            .apply {
+                        con
+                            .prepareStatement(
+                                "SELECT id_tender, date_version FROM ${BuilderApp.Prefix}tender WHERE purchase_number = ? AND cancel=0 AND type_fz = ?",
+                            ).apply {
                                 setString(1, tn.purNum)
                                 setInt(2, typeFz)
                             }
@@ -65,10 +69,10 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                         val idT = rs.getInt(1)
                         val dateB: Timestamp = rs.getTimestamp(2)
                         if (dateVer.after(dateB) || dateB == Timestamp(dateVer.time)) {
-                            con.prepareStatement(
-                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?"
-                                )
-                                .apply {
+                            con
+                                .prepareStatement(
+                                    "UPDATE ${BuilderApp.Prefix}tender SET cancel=1 WHERE id_tender = ?",
+                                ).apply {
                                     setInt(1, idT)
                                     execute()
                                     close()
@@ -81,8 +85,8 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                     stmt.close()
                     wait.until(
                         ExpectedConditions.visibilityOfElementLocated(
-                            By.xpath("//td[contains(., 'Тип процедуры:')]/following-sibling::td")
-                        )
+                            By.xpath("//td[contains(., 'Тип процедуры:')]/following-sibling::td"),
+                        ),
                     )
                     Thread.sleep(2000)
                     driver.switchTo().defaultContent()
@@ -91,7 +95,7 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                     if (fullnameOrg != "") {
                         val stmto =
                             con.prepareStatement(
-                                "SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?"
+                                "SELECT id_organizer FROM ${BuilderApp.Prefix}organizer WHERE full_name = ?",
                             )
                         stmto.setString(1, fullnameOrg)
                         val rso = stmto.executeQuery()
@@ -106,20 +110,18 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                                 driver
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//td[contains(., 'Почтовый адрес:')]/following-sibling::td"
-                                        )
-                                    )
-                                    ?.text
+                                            "//td[contains(., 'Почтовый адрес:')]/following-sibling::td",
+                                        ),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
                             val factAdr =
                                 driver
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//td[contains(., 'Юридический адрес:')]/following-sibling::td"
-                                        )
-                                    )
-                                    ?.text
+                                            "//td[contains(., 'Юридический адрес:')]/following-sibling::td",
+                                        ),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
                             val inn = ""
@@ -128,29 +130,27 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                                 driver
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//td[contains(., 'Адрес электронной почты:')]/following-sibling::td"
-                                        )
-                                    )
-                                    ?.text
+                                            "//td[contains(., 'Адрес электронной почты:')]/following-sibling::td",
+                                        ),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
                             val phone =
                                 driver
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//td[contains(., 'Контактный телефон:')]/following-sibling::td"
-                                        )
-                                    )
-                                    ?.text
+                                            "//td[contains(., 'Контактный телефон:')]/following-sibling::td",
+                                        ),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
                             val contactPerson = ""
                             val stmtins =
-                                con.prepareStatement(
+                                con
+                                    .prepareStatement(
                                         "INSERT INTO ${BuilderApp.Prefix}organizer SET full_name = ?, post_address = ?, contact_email = ?, contact_phone = ?, fact_address = ?, contact_person = ?, inn = ?, kpp = ?",
-                                        Statement.RETURN_GENERATED_KEYS
-                                    )
-                                    .apply {
+                                        Statement.RETURN_GENERATED_KEYS,
+                                    ).apply {
                                         setString(1, fullnameOrg)
                                         setString(2, postalAdr)
                                         setString(3, email)
@@ -175,10 +175,9 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                         driver
                             .findElementWithoutException(
                                 By.xpath(
-                                    "//td[contains(., 'Тип процедуры:')]/following-sibling::td"
-                                )
-                            )
-                            ?.text
+                                    "//td[contains(., 'Тип процедуры:')]/following-sibling::td",
+                                ),
+                            )?.text
                             ?.trim()
                             ?.trim { it <= ' ' } ?: ""
                     if (placingWayName != "") {
@@ -188,10 +187,9 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                         driver
                             .findElementWithoutException(
                                 By.xpath(
-                                    "//td[contains(., 'Место поставки:')]/following-sibling::td"
-                                )
-                            )
-                            ?.text
+                                    "//td[contains(., 'Место поставки:')]/following-sibling::td",
+                                ),
+                            )?.text
                             ?.trim()
                             ?.trim { it <= ' ' } ?: ""
                     val idRegion = getIdRegion(con, regionName)
@@ -199,7 +197,7 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                     val insertTender =
                         con.prepareStatement(
                             "INSERT INTO ${BuilderApp.Prefix}tender SET id_xml = ?, purchase_number = ?, doc_publish_date = ?, href = ?, purchase_object_info = ?, type_fz = ?, id_organizer = ?, id_placing_way = ?, id_etp = ?, end_date = ?, cancel = ?, date_version = ?, num_version = ?, notice_version = ?, xml = ?, print_form = ?, id_region = ?",
-                            Statement.RETURN_GENERATED_KEYS
+                            Statement.RETURN_GENERATED_KEYS,
                         )
                     insertTender.setString(1, tn.purNum)
                     insertTender.setString(2, tn.purNum)
@@ -228,15 +226,15 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                     addCounts(updated)
                     val docs =
                         driver.findElements(
-                            By.xpath("//a[starts-with(@href, '/file/get/t/LotDocuments')]")
+                            By.xpath("//a[starts-with(@href, '/file/get/t/LotDocuments')]"),
                         )
                     docs.forEach {
                         val name = it?.text?.trim { it <= ' ' } ?: ""
                         val hatt = it?.getAttribute("href")?.trim { it <= ' ' } ?: ""
-                        con.prepareStatement(
-                                "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?"
-                            )
-                            .apply {
+                        con
+                            .prepareStatement(
+                                "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?",
+                            ).apply {
                                 setInt(1, idTender)
                                 setString(2, name)
                                 setString(3, hatt)
@@ -247,36 +245,36 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                     val lots =
                         driver.findElements(
                             By.xpath(
-                                "//div[contains(@class, 'x-tab-panel-body')]/div[contains(@id, 'ext-comp-') and contains(@class, 'x-panel x-panel-noborder')]/div[@class = 'x-panel-bwrap']"
-                            )
+                                "//div[contains(@class, 'x-tab-panel-body')]/div[contains(@id, 'ext-comp-') and contains(@class, 'x-panel x-panel-noborder')]/div[@class = 'x-panel-bwrap']",
+                            ),
                         )
                     lots.forEachIndexed { index, lot ->
                         val lotNum = index + 1
                         val nmck =
-                            lot.findElementWithoutException(
+                            lot
+                                .findElementWithoutException(
                                     By.xpath(
-                                        ".//td[contains(., 'Начальная цена без учета НДС:')]/following-sibling::td"
-                                    )
-                                )
-                                ?.text
+                                        ".//td[contains(., 'Начальная цена без учета НДС:')]/following-sibling::td",
+                                    ),
+                                )?.text
                                 ?.deleteAllWhiteSpace()
                                 ?.replace(",", ".")
                                 ?.trim()
                                 ?.trim { it <= ' ' } ?: ""
                         val currency =
-                            lot.findElementWithoutException(
-                                    By.xpath(".//td[contains(., 'Валюта:')]/following-sibling::td")
-                                )
-                                ?.text
+                            lot
+                                .findElementWithoutException(
+                                    By.xpath(".//td[contains(., 'Валюта:')]/following-sibling::td"),
+                                )?.text
                                 ?.trim()
                                 ?.trim { it <= ' ' } ?: ""
                         var idLot = 0
                         val insertLot =
-                            con.prepareStatement(
+                            con
+                                .prepareStatement(
                                     "INSERT INTO ${BuilderApp.Prefix}lot SET id_tender = ?, lot_number = ?, currency = ?, max_price = ?",
-                                    Statement.RETURN_GENERATED_KEYS
-                                )
-                                .apply {
+                                    Statement.RETURN_GENERATED_KEYS,
+                                ).apply {
                                     setInt(1, idTender)
                                     setInt(2, lotNum)
                                     setString(3, currency)
@@ -291,19 +289,18 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                         insertLot.close()
                         var idCustomer = 0
                         val cusName =
-                            lot.findElementWithoutException(
+                            lot
+                                .findElementWithoutException(
                                     By.xpath(
-                                        ".//td[contains(., 'Наименование заказчика:')]/following-sibling::td"
-                                    )
-                                )
-                                ?.text
+                                        ".//td[contains(., 'Наименование заказчика:')]/following-sibling::td",
+                                    ),
+                                )?.text
                                 ?.trim()
                                 ?.trim { it <= ' ' } ?: ""
                         if (cusName != "") {
-
                             val stmtoc =
                                 con.prepareStatement(
-                                    "SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1"
+                                    "SELECT id_customer FROM ${BuilderApp.Prefix}customer WHERE full_name = ? LIMIT 1",
                                 )
                             stmtoc.setString(1, cusName)
                             val rsoc = stmtoc.executeQuery()
@@ -317,10 +314,15 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                                 val stmtins =
                                     con.prepareStatement(
                                         "INSERT INTO ${BuilderApp.Prefix}customer SET full_name = ?, is223=1, reg_num = ?, inn = ?",
-                                        Statement.RETURN_GENERATED_KEYS
+                                        Statement.RETURN_GENERATED_KEYS,
                                     )
                                 stmtins.setString(1, cusName)
-                                stmtins.setString(2, java.util.UUID.randomUUID().toString())
+                                stmtins.setString(
+                                    2,
+                                    java.util.UUID
+                                        .randomUUID()
+                                        .toString(),
+                                )
                                 stmtins.setString(3, "")
                                 stmtins.executeUpdate()
                                 val rsoi = stmtins.generatedKeys
@@ -332,28 +334,28 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                             }
                         }
                         val delivPlace =
-                            lot.findElementWithoutException(
+                            lot
+                                .findElementWithoutException(
                                     By.xpath(
-                                        ".//td[contains(., 'Место поставки:')]/following-sibling::td"
-                                    )
-                                )
-                                ?.text
+                                        ".//td[contains(., 'Место поставки:')]/following-sibling::td",
+                                    ),
+                                )?.text
                                 ?.trim()
                                 ?.trim { it <= ' ' } ?: ""
                         val delivTerm =
-                            lot.findElementWithoutException(
+                            lot
+                                .findElementWithoutException(
                                     By.xpath(
-                                        ".//td[contains(., 'Условия, сроки поставки и оплаты:')]/following-sibling::td"
-                                    )
-                                )
-                                ?.text
+                                        ".//td[contains(., 'Условия, сроки поставки и оплаты:')]/following-sibling::td",
+                                    ),
+                                )?.text
                                 ?.trim()
                                 ?.trim { it <= ' ' } ?: ""
                         if (delivPlace != "" || delivTerm != "") {
-                            con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?"
-                                )
-                                .apply {
+                            con
+                                .prepareStatement(
+                                    "INSERT INTO ${BuilderApp.Prefix}customer_requirement SET id_lot = ?, id_customer = ?, delivery_place = ?, delivery_term = ?",
+                                ).apply {
                                     setInt(1, idLot)
                                     setInt(2, idCustomer)
                                     setString(3, delivPlace)
@@ -365,42 +367,42 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                         val purObjects =
                             driver.findElements(
                                 By.xpath(
-                                    ".//div[@class = 'x-fieldset-body']/fieldset[contains(., 'Позиция')]"
-                                )
+                                    ".//div[@class = 'x-fieldset-body']/fieldset[contains(., 'Позиция')]",
+                                ),
                             )
                         for (po in purObjects) {
                             val poName =
-                                po.findElementWithoutException(
+                                po
+                                    .findElementWithoutException(
                                         By.xpath(
-                                            ".//td[contains(., 'Наименование:')]/following-sibling::td"
-                                        )
-                                    )
-                                    ?.text
+                                            ".//td[contains(., 'Наименование:')]/following-sibling::td",
+                                        ),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
                             if (poName == "") continue
                             val quant =
-                                po.findElementWithoutException(
+                                po
+                                    .findElementWithoutException(
                                         By.xpath(
-                                            ".//td[contains(., 'Количество:')]/following-sibling::td"
-                                        )
-                                    )
-                                    ?.text
+                                            ".//td[contains(., 'Количество:')]/following-sibling::td",
+                                        ),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
                             val okei =
-                                po.findElementWithoutException(
+                                po
+                                    .findElementWithoutException(
                                         By.xpath(
-                                            ".//td[contains(., 'Единица измерения:')]/following-sibling::td"
-                                        )
-                                    )
-                                    ?.text
+                                            ".//td[contains(., 'Единица измерения:')]/following-sibling::td",
+                                        ),
+                                    )?.text
                                     ?.trim()
                                     ?.trim { it <= ' ' } ?: ""
-                            con.prepareStatement(
-                                    "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?"
-                                )
-                                .apply {
+                            con
+                                .prepareStatement(
+                                    "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?",
+                                ).apply {
                                     setInt(1, idLot)
                                     setInt(2, idCustomer)
                                     setString(3, poName)
@@ -413,11 +415,15 @@ class TenderTmk(val tn: Tmk, val driver: ChromeDriver) : TenderAbstract(), ITend
                         }
                     }
                     afterParsing(idTender, con, tn.purNum)
-                }
+                },
             )
     }
 
-    private fun afterParsing(idTender: Int, con: Connection, purNum: String) {
+    private fun afterParsing(
+        idTender: Int,
+        con: Connection,
+        purNum: String,
+    ) {
         try {
             tenderKwords(idTender, con)
         } catch (e: Exception) {

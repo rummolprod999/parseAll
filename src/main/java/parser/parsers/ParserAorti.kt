@@ -13,7 +13,9 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
 
-class ParserAorti : IParser, ParserAbstract() {
+class ParserAorti :
+    ParserAbstract(),
+    IParser {
     val url = "https://www.aorti.ru/purchases/tenders/?PAGEN_1="
 
     override fun parser() = parse { (1..10).forEach { parserAorti("$url$it") } }

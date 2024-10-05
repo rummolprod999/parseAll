@@ -10,5 +10,5 @@ data class Vgtrk(
     val endDate: Date,
     val state: String,
     val Nmck: String,
-    val cusName: String
+    val cusName: String,
 )

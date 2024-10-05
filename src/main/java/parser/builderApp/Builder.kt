@@ -26,7 +26,9 @@ object BuilderApp {
 const val arguments =
     "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu, tuva, gzalt, amurobl, dvrt, afkast, tmk, evraz, rosles, rusnano, uzex, achi, vipast, retailast, neftast, exusex, postast, cbrfast, protek, dmtu, rencredit, berel, orpnz, dellin, vgtrk, aorti, kurgankhim, oilb2b, domrfast, enplusast, kamaz, rb2b, zakazrf, bidbe, spnova, vprom, aomsz, fpk, borets, tknso, gns, dsk1, cds, stroyserv, molskaz, akbars, snm, mmkcoal, prneft, zakazrfex, zakazrfudmurt, etpagro, kblutch, psfond, russalt, bidast"
 
-class Builder(args: Array<String>) {
+class Builder(
+    args: Array<String>,
+) {
     lateinit var arg: Arguments
     lateinit var Database: String
     lateinit var Prefix: String
@@ -35,8 +37,11 @@ class Builder(args: Array<String>) {
     lateinit var Server: String
     var Port: Int = 3306
     val executePath: String =
-        File(Class.forName("parser.AppKt").protectionDomain.codeSource.location.path)
-            .parentFile
+        File(
+            Class
+                .forName("parser.AppKt")
+                .protectionDomain.codeSource.location.path,
+        ).parentFile
             .toString()
     lateinit var TempPath: String
     lateinit var LogPath: String
@@ -146,7 +151,7 @@ class Builder(args: Array<String>) {
             else ->
                 run {
                     println(
-                        "Неверно указаны аргументы, используйте $arguments, выходим из программы"
+                        "Неверно указаны аргументы, используйте $arguments, выходим из программы",
                     )
                     exitProcess(0)
                 }

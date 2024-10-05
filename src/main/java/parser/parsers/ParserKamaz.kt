@@ -11,7 +11,9 @@ import parser.tenders.TenderKamaz
 import parser.tools.formatterOnlyDate
 import java.util.*
 
-public class ParserKamaz : IParser, ParserAbstract() {
+public class ParserKamaz :
+    ParserAbstract(),
+    IParser {
     companion object WebCl {
         const val BaseUrl = "https://kamaz.ru/about/supplier/notification/"
     }
