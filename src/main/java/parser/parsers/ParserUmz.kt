@@ -93,7 +93,7 @@ class ParserUmz : IParser, ParserAbstract() {
             } catch (e: TimeoutException) {
                 logger("next page not found")
                 return
-            } catch (e: NoSuchElementException) {
+            } catch (e: org.openqa.selenium.NoSuchElementException) {
                 logger("next page not exist")
                 return
             } catch (e: Exception) {
@@ -109,7 +109,7 @@ class ParserUmz : IParser, ParserAbstract() {
                 } catch (e: TimeoutException) {
                     logger("next page not found")
                     return
-                } catch (e: NoSuchElementException) {
+                } catch (e: org.openqa.selenium.NoSuchElementException) {
                     logger("next page not exist")
                     return
                 } catch (e: Exception) {
