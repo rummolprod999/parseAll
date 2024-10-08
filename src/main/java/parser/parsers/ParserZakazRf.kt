@@ -117,7 +117,7 @@ class ParserZakazRf :
             try {
                 wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//table[@objecttype]/tbody/tr[@id]"),
+                        By.xpath("//table[@objecttype]/tbody/tr[position() > 1]"),
                     ),
                 )
             } catch (e: Exception) {
@@ -179,14 +179,14 @@ class ParserZakazRf :
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//table[@objecttype]/tbody/tr[@id][1]"),
+                    By.xpath("//table[@objecttype]/tbody/tr[position() > 1][1]"),
                 ),
             )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
             return false
         }
-        val tenders = driver.findElements(By.xpath("//table[@objecttype]/tbody/tr[@id]"))
+        val tenders = driver.findElements(By.xpath("//table[@objecttype]/tbody/tr[position() > 1]"))
         for (it in tenders) {
             try {
                 parserTender(it)
@@ -282,6 +282,6 @@ class ParserZakazRf :
     companion object WebCl {
         const val BaseUrl = "http://bp.zakazrf.ru/DeliveryRequest"
         const val timeoutB = 30L
-        const val CountPage = 80
+        const val CountPage = 1
     }
 }

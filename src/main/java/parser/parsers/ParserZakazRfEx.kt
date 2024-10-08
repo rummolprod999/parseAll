@@ -88,7 +88,7 @@ class ParserZakazRfEx :
             try {
                 wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//table[@objecttype]/tbody/tr[@id]"),
+                        By.xpath("//table[@objecttype]/tbody/tr[position() > 1]"),
                     ),
                 )
             } catch (e: Exception) {
@@ -148,14 +148,14 @@ class ParserZakazRfEx :
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//table[@objecttype]/tbody/tr[@id][1]"),
+                    By.xpath("//table[@objecttype]/tbody/trr[position() > 1][1]"),
                 ),
             )
         } catch (e: Exception) {
             logger("Error in wait tender table function")
             return false
         }
-        val tenders = driver.findElements(By.xpath("//table[@objecttype]/tbody/tr[@id]"))
+        val tenders = driver.findElements(By.xpath("//table[@objecttype]/tbody/tr[position() > 1]"))
         for (it in tenders) {
             try {
                 parserTender(it)
