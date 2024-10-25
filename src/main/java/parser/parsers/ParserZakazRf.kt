@@ -66,7 +66,7 @@ class ParserZakazRf :
         )
         val driver = ChromeDriver(options)
         driver.manage().window().size = Dimension(1280, 1024)
-        driver.manage().window().fullscreen()
+        // driver.manage().window().fullscreen()
         try {
             driver.manage().timeouts().pageLoadTimeout(timeoutB, TimeUnit.SECONDS)
             driver.manage().deleteAllCookies()
@@ -88,8 +88,8 @@ class ParserZakazRf :
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id = 'userName']")),
             )
-            driver.findElement(By.xpath("//input[@id = 'userName']")).sendKeys("enter-it_1@mail.ru")
-            driver.findElement(By.xpath("//input[@id = 'password']")).sendKeys("aa!rVdW8M8vEcE")
+            driver.findElement(By.xpath("//input[@id = 'userName']")).sendKeys("1140492250")
+            driver.findElement(By.xpath("//input[@id = 'password']")).sendKeys("eG2)7TA,3rM2vbC")
             driver.findElement(By.xpath("//button[@type = 'submit']")).click()
             Thread.sleep(5000)
             try {

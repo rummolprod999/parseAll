@@ -148,6 +148,7 @@ class Builder(
             "psfond" -> arg = Arguments.PSFOND
             "russalt" -> arg = Arguments.RUSSALT
             "bidast" -> arg = Arguments.BIDAST
+            "atrgov" -> arg = Arguments.ATRGOV
             else ->
                 run {
                     println(

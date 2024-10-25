@@ -96,4 +96,5 @@ enum class Arguments {
     PSFOND,
     RUSSALT,
     BIDAST,
+    ATRGOV,
 }

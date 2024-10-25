@@ -148,7 +148,7 @@ class ParserZakazRfEx :
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//table[@objecttype]/tbody/trr[position() > 1][1]"),
+                    By.xpath("//table[@objecttype]/tbody/tr[position() > 1][1]"),
                 ),
             )
         } catch (e: Exception) {
