@@ -7,7 +7,7 @@ import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import parser.extensions.findElementWithoutException
-import parser.extensions.md5
+import parser.extensions.getDataFromRegexp
 import parser.logger.logger
 import parser.tenderClasses.AtrGov
 import parser.tenders.TendeAtrGov
@@ -149,7 +149,7 @@ class ParserAtrGov :
                     ' '
             }
                 ?: ""
-        val purNum = urlT.md5()
+        val purNum = urlT.getDataFromRegexp("tproduct\\/(\\d+-\\d+)")
         val tt = AtrGov(purNum, urlT, name)
         val t = TendeAtrGov(tt, driver)
         tendersS.add(t)
