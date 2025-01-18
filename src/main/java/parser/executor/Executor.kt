@@ -743,6 +743,11 @@ class Executor {
                     p = ParserAtrGov()
                     executeParser(p, IParser::parser)
                 }
+            Arguments.KOMOS ->
+                run {
+                    p = ParserKomos()
+                    executeParser(p, IParser::parser)
+                }
         }
     }
 

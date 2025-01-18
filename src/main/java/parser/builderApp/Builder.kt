@@ -24,7 +24,7 @@ object BuilderApp {
 }
 
 const val arguments =
-    "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu, tuva, gzalt, amurobl, dvrt, afkast, tmk, evraz, rosles, rusnano, uzex, achi, vipast, retailast, neftast, exusex, postast, cbrfast, protek, dmtu, rencredit, berel, orpnz, dellin, vgtrk, aorti, kurgankhim, oilb2b, domrfast, enplusast, kamaz, rb2b, zakazrf, bidbe, spnova, vprom, aomsz, fpk, borets, tknso, gns, dsk1, cds, stroyserv, molskaz, akbars, snm, mmkcoal, prneft, zakazrfex, zakazrfudmurt, etpagro, kblutch, psfond, russalt, bidast"
+    "salavat, umz, lsr, zmokursk, zmo45, zmokurgan, zmochel, transast, alrosa, ageat, rzn, brn, ivan, orel, nov, komi, kalin, nen, yalta, dag, stav, chuv, cheb, hant, neft, omsk, omskobl, ppp, magnit, surgut, irkobl, altay, hakas, zabay, novosib, tpu, gortomsk, tsu, tusur, tgasu, tuva, gzalt, amurobl, dvrt, afkast, tmk, evraz, rosles, rusnano, uzex, achi, vipast, retailast, neftast, exusex, postast, cbrfast, protek, dmtu, rencredit, berel, orpnz, dellin, vgtrk, aorti, kurgankhim, oilb2b, domrfast, enplusast, kamaz, rb2b, zakazrf, bidbe, spnova, vprom, aomsz, fpk, borets, tknso, gns, dsk1, cds, stroyserv, molskaz, akbars, snm, mmkcoal, prneft, zakazrfex, zakazrfudmurt, etpagro, kblutch, psfond, russalt, bidast, komos"
 
 class Builder(
     args: Array<String>,
@@ -149,6 +149,7 @@ class Builder(
             "russalt" -> arg = Arguments.RUSSALT
             "bidast" -> arg = Arguments.BIDAST
             "atrgov" -> arg = Arguments.ATRGOV
+            "komos" -> arg = Arguments.KOMOS
             else ->
                 run {
                     println(

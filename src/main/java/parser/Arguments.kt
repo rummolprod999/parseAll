@@ -97,4 +97,5 @@ enum class Arguments {
     RUSSALT,
     BIDAST,
     ATRGOV,
+    KOMOS,
 }
