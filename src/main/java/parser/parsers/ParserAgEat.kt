@@ -161,7 +161,7 @@ class ParserAgEat :
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath(
-                    "//span[contains(@class, 'p-paginator-icon pi pi-angle-double-right')]/parent::button",
+                    "//button[@aria-label='Next Page']",
                 ),
             ),
         )
