@@ -200,7 +200,7 @@ class ParserAgEat :
                 it <= ' '
             } ?: ""
         if (purNum == "") {
-            logger("cannot purNum in tender")
+            logger("need authorization")
             return
         }
         val purObj =

@@ -55,7 +55,7 @@ class TenderAgEat(
                 ?.trim { it <= ' ' } ?: ""
         val pubDate = datePubTmp.getDateFromString(formatterGpn)
         if (pubDate == Date(0L)) {
-            logger("can not find pubDate on page", datePubTmp, url)
+            logger("cannot find pubDate on page", datePubTmp, url)
             return
         }
         val dateEndTmp =
@@ -67,7 +67,7 @@ class TenderAgEat(
                 ?.trim { it <= ' ' } ?: ""
         val endDate = dateEndTmp.getDateFromString(formatterGpn)
         if (endDate == Date(0L)) {
-            logger("can not find dateEnd on page", dateEndTmp, url)
+            logger("cannot find dateEnd on page", dateEndTmp, url)
             return
         }
         val dateVer = Date()
