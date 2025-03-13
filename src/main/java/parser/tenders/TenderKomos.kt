@@ -5,8 +5,9 @@ import org.jsoup.select.Elements
 import parser.builderApp.BuilderApp
 import parser.extensions.getDateFromString
 import parser.logger.logger
-import parser.networkTools.downloadFromUrlNoSslNew
 import parser.tools.formatterGpn
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
@@ -14,6 +15,7 @@ import java.sql.Timestamp
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+
 
 class TenderKomos(val Url: String, val ContactPerson: String, val NumberT: String, var PurchaseObj: String, var TypeT: String, val DateSt: Date, var DateEn: Date): TenderAbstract(),
     ITender  {
@@ -33,7 +35,7 @@ class TenderKomos(val Url: String, val ContactPerson: String, val NumberT: Strin
             }
             r.close()
             stmt0.close()
-            val stPage = downloadFromUrlNoSslNew(Url)
+            val stPage = curl(Url)
             if (stPage == "") {
                 logger("Gets empty string urlPageAll", Url)
                 return
@@ -278,5 +280,17 @@ class TenderKomos(val Url: String, val ContactPerson: String, val NumberT: Strin
         } catch (e: Exception) {
         }
         return nm
+    }
+
+    fun curl(url: String): String {
+        val commands: Array<String> = arrayOf<String>("curl", "-X", "GET", url)
+        val process = Runtime.getRuntime().exec(commands)
+        val reader = BufferedReader(InputStreamReader(process.getInputStream()))
+        var line: String?
+        val response: StringBuilder = StringBuilder()
+        while ((reader.readLine().also { line = it }) != null) {
+            response.append(line)
+        }
+        return response?.toString() ?: "";
     }
 }
