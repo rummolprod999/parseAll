@@ -23,5 +23,5 @@ fun ChromeDriver.clickerExp(xpath: String) {
             Thread.sleep(1000)
         }
     }
-    throw Exception("Can not click on element for 20 times")
+    throw Exception("Cannot click on element for 20 times")
 }

@@ -182,4 +182,4 @@ fun String.replaceDateBorets(): String {
     return this
 }
 
-fun String.md5(): String = DigestUtils.md5Hex(this).toUpperCase()
+fun String.md5(): String = DigestUtils.md5Hex(this).uppercase()

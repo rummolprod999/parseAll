@@ -81,7 +81,7 @@ class TendeAtrGov(
                 dateEndTmp.getDateFromString(formatterGpn)
             }
         if (pubDate == Date(0L) && endDate == Date(0L)) {
-            logger("can not find pubDate and dateEnd on page", tn.href)
+            logger("cannot find pubDate and dateEnd on page", tn.href)
             return
         }
         val dateVer = Date()

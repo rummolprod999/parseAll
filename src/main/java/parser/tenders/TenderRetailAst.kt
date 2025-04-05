@@ -45,7 +45,7 @@ class TenderRetailAst(
                 ),
             )
         } catch (e: Exception) {
-            logger("can not wait appier purNum", href)
+            logger("cannot wait appier purNum", href)
             return
         }
         val purNum =
@@ -55,7 +55,7 @@ class TenderRetailAst(
                 )?.text
                 ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
-            logger("can not purNum in tender", href)
+            logger("cannot purNum in tender", href)
             return
         }
         val status =
@@ -73,7 +73,7 @@ class TenderRetailAst(
                 )?.text
                 ?.trim { it <= ' ' } ?: ""
         if (purName == "") {
-            logger("can not purName in tender", href)
+            logger("cannot purName in tender", href)
             return
         }
         val datePubTmp =
@@ -97,7 +97,7 @@ class TenderRetailAst(
         val pubDate = datePubTmp.getDateFromString(formatterGpn)
         val endDate = dateEndTmp.getDateFromString(formatterGpn)
         if (pubDate == Date(0L) || endDate == Date(0L)) {
-            logger("can not find pubDate or dateEnd on page", href, purNum)
+            logger("cannot find pubDate or dateEnd on page", href, purNum)
             return
         }
         val dateScoringTmp =
@@ -591,7 +591,7 @@ class TenderRetailAst(
                 By.xpath("//thead[.//th[ contains(.,'Лоты')]]/following-sibling::tbody/tr"),
             )
         if (lots.isEmpty()) {
-            logger("Can not find lots in tender", href)
+            logger("cannot find lots in tender", href)
             return
         }
         for ((ind, el) in lots.withIndex()) {

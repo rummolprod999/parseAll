@@ -104,7 +104,7 @@ class TenderEtpAgro(
                             ?.trim { it <= ' ' } ?: ""
                     val pubDate = datePubTmp.getDateFromString(formatterOnlyDate)
                     if (pubDate == Date(0L)) {
-                        logger("can not find pubDate on page", datePubTmp, tn.href)
+                        logger("cannot find pubDate on page", datePubTmp, tn.href)
                         return
                     }
                     var idOrganizer = 0

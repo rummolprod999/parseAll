@@ -91,7 +91,7 @@ class TenderEvraz(
             endDate = dateEndTmp.getDateFromString(formatterOnlyDate)
         }
         if (endDate == Date(0L)) {
-            logger("can not find dateEnd on page", dateEndTmp, url)
+            logger("cannot find dateEnd on page", dateEndTmp, url)
             return
         }
         val dateVer = Date()
