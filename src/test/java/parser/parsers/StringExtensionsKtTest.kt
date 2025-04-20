@@ -92,4 +92,39 @@ class StringExtensionsKtTest {
         val result = input.getDataFromRegexp(regex)
         assertEquals("", result)
     }
+
+    @Test
+    fun testDeleteDoubleWhiteSpace_whenSingleSpaces_remainsUntouched() {
+        val input = "This is a test"
+        val result = input.deleteDoubleWhiteSpace()
+        assertEquals("This is a test", result)
+    }
+
+    @Test
+    fun testDeleteDoubleWhiteSpace_whenDoubleSpaces_removedSuccessfully() {
+        val input = "This  is  a  test"
+        val result = input.deleteDoubleWhiteSpace()
+        assertEquals("This is a test", result)
+    }
+
+    @Test
+    fun testDeleteDoubleWhiteSpace_whenLeadingTrailingSpaces_removedSuccessfully() {
+        val input = "   This is a test   "
+        val result = input.deleteDoubleWhiteSpace()
+        assertEquals("This is a test", result)
+    }
+
+    @Test
+    fun testDeleteDoubleWhiteSpace_whenTabsAndNewLines_normalizedToSingleSpace() {
+        val input = "This\tis\na\t\ntest"
+        val result = input.deleteDoubleWhiteSpace()
+        assertEquals("This is a test", result)
+    }
+
+    @Test
+    fun testDeleteDoubleWhiteSpace_whenComplexWhitespace_normalizedSuccessfully() {
+        val input = "  This\tis  a\n test \twith   random \n\t\rspaces  "
+        val result = input.deleteDoubleWhiteSpace()
+        assertEquals("This is a test with random spaces", result)
+    }
 }
