@@ -2,6 +2,7 @@ package parser.parsers
 
 import org.openqa.selenium.By
 import org.openqa.selenium.Dimension
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -40,7 +41,7 @@ class ParserRusSalt :
     companion object WebCl {
         const val BaseUrl = "https://russalt.ru/tendery/"
         const val timeoutB = 30L
-        const val CountPage = 10
+        const val CountPage = 1
     }
 
     override fun parser() =
@@ -54,7 +55,7 @@ class ParserRusSalt :
 
     private fun getchromeOptions(): ChromeOptions {
         val options = ChromeOptions()
-        options.addArguments("headless")
+        // options.addArguments("headless")
         options.addArguments("disable-gpu")
         options.addArguments("no-sandbox")
         return options
@@ -111,6 +112,8 @@ class ParserRusSalt :
         driver.switchTo().defaultContent()
         wait = WebDriverWait(driver, java.time.Duration.ofSeconds(30L))
         Thread.sleep(3000)
+        val js = driver as JavascriptExecutor
+        js.executeScript("window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight)")
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[@class = 'tenders-item tenders-grid']"),
