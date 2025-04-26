@@ -89,7 +89,7 @@ class ParserZakazRf :
                 ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id = 'userName']")),
             )
             driver.findElement(By.xpath("//input[@id = 'userName']")).sendKeys("1140492250")
-            driver.findElement(By.xpath("//input[@id = 'password']")).sendKeys("eG2)7TA,3rM2vbC")
+            driver.findElement(By.xpath("//input[@id = 'password']")).sendKeys("vbM-3YK-Yjs-P9d")
             driver.findElement(By.xpath("//button[@type = 'submit']")).click()
             Thread.sleep(5000)
             try {
