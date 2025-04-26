@@ -41,7 +41,7 @@ class ParserRusSalt :
     companion object WebCl {
         const val BaseUrl = "https://russalt.ru/tendery/"
         const val timeoutB = 30L
-        const val CountPage = 1
+        const val CountPage = 10
     }
 
     override fun parser() =
