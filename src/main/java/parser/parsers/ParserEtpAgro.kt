@@ -239,6 +239,6 @@ class ParserEtpAgro :
     companion object WebCl {
         const val BaseUrl = "https://zakupka.etpagro.ru/cabinet/procedure/all"
         const val timeoutB = 30L
-        const val CountPage = 1
+        const val CountPage = 10
     }
 }
