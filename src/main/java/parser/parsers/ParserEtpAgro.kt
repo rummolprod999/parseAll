@@ -201,7 +201,7 @@ class ParserEtpAgro :
             el
                 .findElementWithoutException(
                     By.xpath(
-                        ".//ef-widget-info[contains(@element_path, 'nameBlock.name')]//div[@efcfgelement = 'value']/span",
+                        ".//ef-widget-info[contains(@element_path, 'nameBlock.name')]//div[@efclasselement = 'value']/span",
                     ),
                 )?.text
                 ?.trim { it <= ' ' }
@@ -213,7 +213,7 @@ class ParserEtpAgro :
             el
                 .findElementWithoutException(
                     By.xpath(
-                        ".//ef-widget-html[contains(@element_path, 'statusBlock.status')]//div[@efcfgelement = 'value']/span",
+                        ".//ef-widget-html[contains(@element_path, 'statusBlock.status')]//div[@efclasselement = 'value']/span",
                     ),
                 )?.text
                 ?.trim { it <= ' ' } ?: ""
@@ -221,7 +221,7 @@ class ParserEtpAgro :
             el
                 .findElementWithoutException(
                     By.xpath(
-                        ".//ef-widget-html[contains(@element_path, 'infoBlock.applicationDeadline')]//div[@efcfgelement = 'value']/span",
+                        ".//ef-widget-html[contains(@element_path, 'infoBlock.applicationDeadline')]//div[@efclasselement = 'value']/span",
                     ),
                 )?.text
                 ?.trim { it <= ' ' }
@@ -239,6 +239,6 @@ class ParserEtpAgro :
     companion object WebCl {
         const val BaseUrl = "https://zakupka.etpagro.ru/cabinet/procedure/all"
         const val timeoutB = 30L
-        const val CountPage = 10
+        const val CountPage = 1
     }
 }

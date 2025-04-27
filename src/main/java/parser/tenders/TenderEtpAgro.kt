@@ -302,7 +302,7 @@ class TenderEtpAgro(
                         driver
                             .findElementWithoutException(
                                 By.xpath(
-                                    "//tr[contains(@class, 'treetable__node_root')]/td[3]//div[@efcfgelement]/span",
+                                    "//tr[contains(@class, 'treetable__node_root')]/td[3]//div[@efclasselement]/span",
                                 ),
                             )?.text
                             ?.trim()
@@ -352,14 +352,14 @@ class TenderEtpAgro(
                         val purName =
                             element
                                 .findElementWithoutException(
-                                    By.xpath("./td[2]//div[@efcfgelement]/span"),
+                                    By.xpath("./td[2]//div[@efclasselement]/span"),
                                 )?.text
                                 ?.trim()
                                 ?.trim { it <= ' ' } ?: ""
                         val okeiT =
                             element
                                 .findElementWithoutException(
-                                    By.xpath("./td[4]//div[@efcfgelement]/span"),
+                                    By.xpath("./td[4]//div[@efclasselement]/span"),
                                 )?.text
                                 ?.trim()
                                 ?.trim { it <= ' ' } ?: ""
