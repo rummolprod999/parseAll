@@ -5,7 +5,7 @@ import org.jsoup.select.Elements
 import parser.builderApp.BuilderApp
 import parser.extensions.getDateFromString
 import parser.logger.logger
-import parser.networkTools.downloadFromUrl
+import parser.networkTools.downloadFromUrlNoSslNew
 import parser.tenderClasses.ZakazRf
 import parser.tools.formatterEtpRf
 import parser.tools.formatterEtpRfN
@@ -53,7 +53,7 @@ class TenderZakazRfUdmurt(
                     }
                     r.close()
                     stmt0.close()
-                    val stPage = downloadFromUrl(tn.href, i = 1)
+                    val stPage = downloadFromUrlNoSslNew(tn.href, i = 1)
                     if (stPage == "") {
                         logger("Gets empty string TenderEtpRf", tn.href)
                         return
