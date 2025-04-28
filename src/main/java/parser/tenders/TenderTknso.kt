@@ -5,7 +5,7 @@ import org.jsoup.nodes.Document
 import parser.builderApp.BuilderApp
 import parser.extensions.getDataFromRegexp
 import parser.logger.logger
-import parser.networkTools.downloadFromUrl
+import parser.networkTools.downloadFromUrlNoSslNew
 import parser.tenderClasses.Tknso
 import java.sql.Connection
 import java.sql.DriverManager
@@ -49,7 +49,7 @@ class TenderTknso(
                     }
                     r.close()
                     stmt0.close()
-                    val pageTen = downloadFromUrl(tn.href)
+                    val pageTen = downloadFromUrlNoSslNew(tn.href)
                     if (pageTen == "") {
                         logger("Gets empty string ${this::class.simpleName}", tn.href)
                         return
@@ -138,6 +138,26 @@ class TenderTknso(
                         UpdateTender++
                     } else {
                         AddTender++
+                    }
+                    val attachments = mutableMapOf<String, String>()
+                    htmlTen.select("h2:contains(Файлы к тендеру) + p a").forEach {
+                        val urlAtt = "https://gorkunov.com${it.attr("href")}"
+                        val attName = it.text()
+                        if (attName != "") {
+                            attachments[attName] = urlAtt
+                        }
+                    }
+                    attachments.forEach {
+                        con
+                            .prepareStatement(
+                                "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?",
+                            ).apply {
+                                setInt(1, idTender)
+                                setString(2, it.key)
+                                setString(3, it.value)
+                                executeUpdate()
+                                close()
+                            }
                     }
                     var idLot = 0
                     val lotNumber = 1

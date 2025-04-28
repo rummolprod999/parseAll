@@ -2,12 +2,9 @@ package parser.parsers
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import parser.extensions.deleteDoubleWhiteSpace
-import parser.extensions.getDataFromRegexp
-import parser.extensions.getDateFromString
-import parser.extensions.md5
+import parser.extensions.*
 import parser.logger.logger
-import parser.networkTools.downloadWaitWithRef
+import parser.networkTools.downloadFromUrlNoSslNew
 import parser.tenderClasses.Tknso
 import parser.tenders.TenderTknso
 import parser.tools.formatterGpn
@@ -17,27 +14,30 @@ import java.util.*
 class ParserTknso :
     ParserAbstract(),
     IParser {
+    val listOfUrl = mutableListOf<String>(
+        "https://gorkunov.com/company/altay/tenders/",
+        "https://gorkunov.com/company/bel/tenders/",
+        "https://gorkunov.com/company/nsk/tenders/",
+        "https://gorkunov.com/company/obskoy/tenders/",
+        "https://gorkunov.com/company/smolensk/tenders/",
+        "https://gorkunov.com/company/tkt/tenders/",
+        "https://gorkunov.com/company/tkyar/tenders/"
+    )
     override fun parser() =
         parse {
             System.setProperty("jsse.enableSNIExtension", "false")
-            parserTknso("http://tknso.ru/tendery.html")
-            (2..20).forEach {
-                try {
-                    parserTknso("http://tknso.ru/tendery/$it.html")
-                } catch (e: Exception) {
-                    logger(e)
-                }
-            }
+            listOfUrl.forEach { parserTknso(it) }
+
         }
 
     private fun parserTknso(url: String) {
-        val pageTen = downloadWaitWithRef(url)
+        val pageTen = downloadFromUrlNoSslNew(url)
         if (pageTen == "") {
             logger("Gets empty string ${this::class.simpleName}", url)
             return
         }
         val htmlTen = Jsoup.parse(pageTen)
-        val tenders = htmlTen.select("div.media")
+        val tenders = htmlTen.select("div.uncos__item")
         tenders.forEach {
             try {
                 parsingTender(it)
@@ -49,7 +49,7 @@ class ParserTknso :
 
     private fun parsingTender(e: Element) {
         val purName =
-            e.selectFirst("h4.media-heading")?.ownText()?.trim { it <= ' ' }
+            e.selectFirst("div.uncos__name a")?.ownText()?.trim { it <= ' ' }
                 ?: run {
                     logger("purName not found")
                     return
@@ -60,12 +60,14 @@ class ParserTknso :
                     logger("urlT not found on $purName")
                     return
                 }
-        val urlTend = "http://tknso.ru$urlT"
+        val urlTend = "https://gorkunov.com$urlT"
         val dates =
             e
-                .selectFirst("span:contains(Прием заявок:)")
+                .selectFirst("div.uncos__priem p")
                 ?.ownText()
-                ?.replace("Прием заявок:", "")
+                ?.replace("«", "")
+                ?.replace("»", "")
+                ?.replace(",", "")
                 ?.trim { it <= ' ' }
                 ?: run {
                     logger("dates not found")
@@ -73,8 +75,11 @@ class ParserTknso :
                 }
         val datePubR =
             dates
-                .getDataFromRegexp("""с\s+(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")
+                .getDataFromRegexp("""Начало приема предложений:\s+(\d{1,2}.+?\d{4}\s+\d{2}:\d{2})""")
                 .deleteDoubleWhiteSpace()
+                .replaceDateBoretsEnd()
+                .replace(" .", ".")
+                .replace(". ", ".")
                 .trim()
         val datePub = datePubR.getDateFromString(formatterGpn)
         if (datePub == Date(0L)) {
@@ -83,11 +88,13 @@ class ParserTknso :
                 throw Exception("datePub was not found")
             }
         }
-        val dateEndR =
-            dates
-                .getDataFromRegexp("""до\s+(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2})""")
-                .deleteDoubleWhiteSpace()
-                .trim()
+        val dateEndR = dates
+            .getDataFromRegexp("""Окончание приема предложений:\s+(\d{1,2}.+?\d{4}\s+\d{2}:\d{2})""")
+            .deleteDoubleWhiteSpace()
+            .replaceDateBoretsEnd()
+            .replace(" .", ".")
+            .replace(". ", ".")
+            .trim()
         var dateEnd = dateEndR.getDateFromString(formatterGpn)
         if (dateEnd == Date(0)) {
             dateEnd =
