@@ -42,7 +42,7 @@ class TenderCbrfAst(
         try {
             wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//td[contains(., 'Номер процедуры')]/following-sibling::td/span"),
+                    By.xpath("//div[p[contains(., 'Номер процедуры')]]/following-sibling::div/p"),
                 ),
             )
         } catch (e: Exception) {
@@ -52,7 +52,7 @@ class TenderCbrfAst(
         val purNum =
             drv
                 .findElementWithoutException(
-                    By.xpath("//td[contains(., 'Номер процедуры')]/following-sibling::td/span"),
+                    By.xpath("//div[p[contains(., 'Номер процедуры')]]/following-sibling::div/p"),
                 )?.text
                 ?.trim { it <= ' ' } ?: ""
         if (purNum == "") {
@@ -62,14 +62,14 @@ class TenderCbrfAst(
         val status =
             drv
                 .findElementWithoutException(
-                    By.xpath("//td[contains(., 'Статус процедуры')]/following-sibling::td/span"),
+                    By.xpath("//div[p[contains(., 'Статус процедуры')]]/following-sibling::div/p"),
                 )?.text
                 ?.trim { it <= ' ' } ?: ""
         val purName =
             drv
                 .findElementWithoutException(
                     By.xpath(
-                        "//td[contains(., 'Наименование процедуры')]/following-sibling::td/span",
+                        "//div[p[contains(., 'Наименование процедуры')]]/following-sibling::div/p",
                     ),
                 )?.text
                 ?.trim { it <= ' ' } ?: ""
@@ -81,7 +81,7 @@ class TenderCbrfAst(
             drv
                 .findElementWithoutException(
                     By.xpath(
-                        "//td[contains(., 'Дата и время начала срока подачи предложений')]/following-sibling::td/span",
+                        "//div[p[contains(., 'Дата и время начала срока подачи предложений')]]/following-sibling::div/p",
                     ),
                 )?.text
                 ?.trim()
@@ -91,7 +91,7 @@ class TenderCbrfAst(
                 drv
                     .findElementWithoutException(
                         By.xpath(
-                            "//td[contains(., 'Дата и время начала подачи заявок на участие')]/following-sibling::td/span",
+                            "//div[p[contains(., 'Дата и время начала подачи заявок на участие')]]/following-sibling::div/p",
                         ),
                     )?.text
                     ?.trim()
@@ -101,7 +101,7 @@ class TenderCbrfAst(
             drv
                 .findElementWithoutException(
                     By.xpath(
-                        "//td[contains(., 'Дата и время окончания подачи заявок на участие')]/following-sibling::td/span",
+                        "//div[p[contains(., 'Дата и время окончания подачи заявок на участие')]]/following-sibling::div/p",
                     ),
                 )?.text
                 ?.trim()
@@ -111,7 +111,7 @@ class TenderCbrfAst(
                 drv
                     .findElementWithoutException(
                         By.xpath(
-                            "//td[contains(., 'Дата и время окончания срока подачи заявок на участие')]/following-sibling::td/span",
+                            "//div[p[contains(., 'Дата и время окончания срока подачи заявок на участие')]]/following-sibling::div/p",
                         ),
                     )?.text
                     ?.trim()
@@ -127,7 +127,7 @@ class TenderCbrfAst(
             drv
                 .findElementWithoutException(
                     By.xpath(
-                        "//td[contains(., 'Окончание рассмотрения заявок на участие')]/following-sibling::td/span",
+                        "//div[p[contains(., 'Окончание рассмотрения заявок на участие')]]/following-sibling::div/p",
                     ),
                 )?.text
                 ?.trim()
@@ -137,7 +137,7 @@ class TenderCbrfAst(
             drv
                 .findElementWithoutException(
                     By.xpath(
-                        "//td[contains(., 'Дата и время начала торгов')]/following-sibling::td/span",
+                        "//div[p[contains(., 'Дата и время начала торгов')]]/following-sibling::div/p",
                     ),
                 )?.text
                 ?.trim()
@@ -204,7 +204,7 @@ class TenderCbrfAst(
                         drv
                             .findElementWithoutException(
                                 By.xpath(
-                                    "//td[contains(., 'Наименование организатора')]/following-sibling::td",
+                                    "//div[p[contains(., 'Наименование организатора')]]/following-sibling::div/p",
                                 ),
                             )?.text
                             ?.trim()
@@ -227,7 +227,7 @@ class TenderCbrfAst(
                                 drv
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//td[contains(., 'Фактический адрес (почтовый)')]/following-sibling::td/span",
+                                            "//div[p[contains(., 'Фактический адрес (почтовый)')]]/following-sibling::div/p",
                                         ),
                                     )?.text
                                     ?.trim()
@@ -236,7 +236,7 @@ class TenderCbrfAst(
                                 drv
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//td[contains(., 'Место нахождения (юридический адрес)')]/following-sibling::td/span",
+                                            "//div[p[contains(., 'Место нахождения (юридический адрес)')]]/following-sibling::div/p",
                                         ),
                                     )?.text
                                     ?.trim()
@@ -245,7 +245,7 @@ class TenderCbrfAst(
                                 drv
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//td[contains(., 'ИНН организатора')]/following-sibling::td/span",
+                                            "//div[p[contains(., 'ИНН организатора')]]/following-sibling::div/p",
                                         ),
                                     )?.text
                                     ?.trim()
@@ -254,7 +254,7 @@ class TenderCbrfAst(
                                 drv
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//td[contains(., 'КПП организатора')]/following-sibling::td/span",
+                                            "//div[p[contains(., 'КПП организатора')]]/following-sibling::div/p",
                                         ),
                                     )?.text
                                     ?.trim()
@@ -263,7 +263,7 @@ class TenderCbrfAst(
                                 drv
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//td[contains(., 'Адрес электронной почты')]/following-sibling::td/span",
+                                            "//div[p[contains(., 'Адрес электронной почты')]]/following-sibling::div/p",
                                         ),
                                     )?.text
                                     ?.trim()
@@ -272,7 +272,7 @@ class TenderCbrfAst(
                                 drv
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//td[contains(., 'Номер контактного телефона')]/following-sibling::td/span",
+                                            "//div[p[contains(., 'Номер контактного телефона')]]/following-sibling::div/p",
                                         ),
                                     )?.text
                                     ?.trim()
@@ -281,7 +281,7 @@ class TenderCbrfAst(
                                 drv
                                     .findElementWithoutException(
                                         By.xpath(
-                                            "//td[contains(., 'Контактное лицо')]/following-sibling::td/span",
+                                            "//div[p[contains(., 'Контактное лицо')]]/following-sibling::div/p",
                                         ),
                                     )?.text
                                     ?.trim()
@@ -315,7 +315,7 @@ class TenderCbrfAst(
                         drv
                             .findElementWithoutException(
                                 By.xpath(
-                                    "//td[contains(., 'Тип процедуры')]/following-sibling::td//span",
+                                    "//div[p[contains(., 'Тип процедуры')]]/following-sibling::div/p",
                                 ),
                             )?.text
                             ?.trim()
@@ -328,7 +328,7 @@ class TenderCbrfAst(
                         drv
                             .findElementWithoutException(
                                 By.xpath(
-                                    "//td[contains(., 'Место нахождения')]/following-sibling::td/span",
+                                    "//div[p[contains(., 'Место нахождения')]]/following-sibling::div/p",
                                 ),
                             )?.text
                             ?.trim()
@@ -393,6 +393,41 @@ class TenderCbrfAst(
         return
     }
 
+    override fun getDocsAst(
+        drv: ChromeDriver,
+        con: Connection,
+        section: String,
+        idTender: Int,
+    ) {
+        val docs = drv.findElements(By.xpath("//div[@class = 'file-wrapper']"))
+        docs.forEach {
+            it.click()
+            Thread.sleep(1000)
+            val name =
+                drv.findElementWithoutException(By.xpath("//p[a[@class='file-modal']]"))?.text?.trim {
+                    it <= ' '
+                } ?: ""
+            val href =
+                drv.findElementWithoutException(By.xpath("//p[a[@class='file-modal']]/a"))?.getAttribute("href")?.trim {
+                    it <= ' '
+                } ?: ""
+            if (name != "" && href != "") {
+                val insertDoc =
+                    con.prepareStatement(
+                        "INSERT INTO ${BuilderApp.Prefix}attachment SET id_tender = ?, file_name = ?, url = ?",
+                    )
+                insertDoc.setInt(1, idTender)
+                insertDoc.setString(2, name)
+                insertDoc.setString(3, href)
+                insertDoc.executeUpdate()
+                insertDoc.close()
+            }
+            drv.findElement(By.xpath("//p[.='Скачивание файла']/following-sibling::div[@class='modal-close']")).click()
+            Thread.sleep(500)
+
+        }
+    }
+
     private fun parserLot(
         el: WebElement,
         con: Connection,
@@ -403,7 +438,7 @@ class TenderCbrfAst(
             el
                 .findElementWithoutException(
                     By.xpath(
-                        ".//td[contains(., 'Начальная (максимальная) цена')]/following-sibling::td/span",
+                        ".//div[p[contains(., 'Начальная (максимальная) цена')]]/following-sibling::div/p",
                     ),
                 )?.text
                 ?.replace(',', '.')
@@ -412,14 +447,14 @@ class TenderCbrfAst(
         val lotName =
             el
                 .findElementWithoutException(
-                    By.xpath(".//td[contains(., 'Наименование лота')]/following-sibling::td/span"),
+                    By.xpath(".//div[p[contains(., 'Наименование лота')]]/following-sibling::div/p"),
                 )?.text
                 ?.trim()
                 ?.trim { it <= ' ' } ?: ""
         val currency =
             el
                 .findElementWithoutException(
-                    By.xpath(".//td[contains(., 'Валюта')]/following-sibling::td/span"),
+                    By.xpath(".//div[p[contains(., 'Валюта')]]/following-sibling::div/p"),
                 )?.text
                 ?.trim()
                 ?.trim { it <= ' ' } ?: ""
@@ -445,7 +480,7 @@ class TenderCbrfAst(
         var idCustomer = 0
         val customers =
             el.findElements(
-                By.xpath("//td[contains(., 'Заказчики')]/following-sibling::td//tbody/tr"),
+                By.xpath("//div[p[contains(., 'Заказчики')]]/following-sibling::div//tbody/tr"),
             )
         if (!customers.isEmpty()) {
             val cusName =
@@ -501,7 +536,7 @@ class TenderCbrfAst(
             el
                 .findElementWithoutException(
                     By.xpath(
-                        ".//td[contains(., 'Место поставки товара, выполнения работ, оказания услуг')]/following-sibling::td/span",
+                        ".//div[p[contains(., 'Место поставки товара, выполнения работ, оказания услуг')]]/following-sibling::div/p",
                     ),
                 )?.text
                 ?.trim()
@@ -510,7 +545,7 @@ class TenderCbrfAst(
             el
                 .findElementWithoutException(
                     By.xpath(
-                        ".//td[contains(., 'Сроки поставки товара, выполнения работ, оказания услуг')]/following-sibling::td/span",
+                        ".//div[p[contains(., 'Сроки поставки товара, выполнения работ, оказания услуг')]]/following-sibling::div/p",
                     ),
                 )?.text
                 ?.trim()
@@ -530,26 +565,40 @@ class TenderCbrfAst(
         }
         val purObjects =
             el.findElements(
-                By.xpath(".//td[contains(., 'Позиции лота')]/following-sibling::td//tbody/tr"),
+                By.xpath(".//div[p[contains(., 'Позиции лота')]]/following-sibling::div//tbody/tr"),
             )
         if (purObjects.isNotEmpty()) {
             for (po in purObjects) {
                 val name =
-                    po.findElementWithoutException(By.xpath("./td[3]/span"))?.text?.trim()?.trim {
+                    po.findElementWithoutException(By.xpath("./td[2]//p"))?.text?.trim()?.trim {
                         it <= ' '
                     } ?: ""
                 val quantity =
                     po
-                        .findElementWithoutException(By.xpath("./td[4]/span"))
+                        .findElementWithoutException(By.xpath("./td[3]//p"))
                         ?.text
                         ?.trim()
                         ?.deleteAllWhiteSpace()
                         ?.trim { it <= ' ' } ?: ""
+                val okei =
+                    po
+                        .findElementWithoutException(By.xpath("./td[5]//p"))
+                        ?.text
+                        ?.trim()
+                        ?.deleteAllWhiteSpace()
+                        ?.trim { it <= ' ' } ?: ""
+                val pr =
+                    po
+                        .findElementWithoutException(By.xpath("./td[4]//p"))
+                        ?.text
+                        ?.trim()
+                        ?.replace(',', '.')
+                        ?.deleteAllWhiteSpace()
+                        ?.trim { it <= ' ' } ?: ""
                 val okpd2 = ""
-                val okei = ""
                 con
                     .prepareStatement(
-                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, okpd2_code = ?",
+                        "INSERT INTO ${BuilderApp.Prefix}purchase_object SET id_lot = ?, id_customer = ?, name = ?, okei = ?, quantity_value = ?, customer_quantity_value = ?, okpd2_code = ?, sum = ?",
                     ).apply {
                         setInt(1, idLot)
                         setInt(2, idCustomer)
@@ -558,6 +607,7 @@ class TenderCbrfAst(
                         setString(5, quantity)
                         setString(6, quantity)
                         setString(7, okpd2)
+                        setString(8, pr)
                         executeUpdate()
                         close()
                     }
@@ -584,7 +634,7 @@ class TenderCbrfAst(
     ) {
         val lots =
             drv.findElements(
-                By.xpath("//thead[.//th[ contains(.,'Лоты')]]/following-sibling::tbody/tr"),
+                By.xpath("//div[@class = 'div-hidden__header' and div[p[ contains(.,'Лоты')]]]/following-sibling::div"),
             )
         if (lots.isEmpty()) {
             logger("cannot find lots in tender", href)
