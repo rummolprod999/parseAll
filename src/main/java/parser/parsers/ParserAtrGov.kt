@@ -146,7 +146,7 @@ class ParserAtrGov :
         val name =
             el.findElementWithoutException(By.xpath(".//div[contains(@class, 'js-store-prod-name js-product-name')]"))?.text?.trim {
                 it <=
-                    ' '
+                        ' '
             }
                 ?: ""
         val purNum = urlT.getDataFromRegexp("tproduct\\/(\\d+-\\d+)")

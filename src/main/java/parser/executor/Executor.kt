@@ -738,11 +738,13 @@ class Executor {
                     p = ParserBidAst()
                     executeParser(p, IParser::parser)
                 }
+
             Arguments.ATRGOV ->
                 run {
                     p = ParserAtrGov()
                     executeParser(p, IParser::parser)
                 }
+
             Arguments.KOMOS ->
                 run {
                     p = ParserKomos()

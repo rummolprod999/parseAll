@@ -490,10 +490,10 @@ class TenderZakazRfEx(
                                 ?.trim { it <= ' ' } ?: ""
                         delivPlace =
                             "Регион: " +
-                            region +
-                            " " +
-                            "Место поставки товаров, выполнения работ, оказания услуг: " +
-                            delivPlace1
+                                    region +
+                                    " " +
+                                    "Место поставки товаров, выполнения работ, оказания услуг: " +
+                                    delivPlace1
                     }
                     val delivTerm =
                         html

@@ -23,6 +23,7 @@ class ParserTknso :
         "https://gorkunov.com/company/tkt/tenders/",
         "https://gorkunov.com/company/tkyar/tenders/"
     )
+
     override fun parser() =
         parse {
             System.setProperty("jsse.enableSNIExtension", "false")

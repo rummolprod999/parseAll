@@ -200,11 +200,11 @@ class TenderRusNano(
                         } ?: ""
                     val nmck =
                         (
-                            htmlTen
-                                .selectFirst("td:contains(Общая стоимость:) + td")
-                                ?.ownText()
+                                htmlTen
+                                    .selectFirst("td:contains(Общая стоимость:) + td")
+                                    ?.ownText()
                                     ?.trim { it <= ' ' } ?: ""
-                        ).extractPrice()
+                                ).extractPrice()
                     val insertLot =
                         con
                             .prepareStatement(

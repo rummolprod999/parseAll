@@ -16,7 +16,7 @@ import parser.tools.formatterGpn
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
-class ParserKomos:
+class ParserKomos :
     ParserAbstract(),
     IParser {
 
@@ -152,7 +152,8 @@ class ParserKomos:
 
     private fun parserTender(el: WebElement) {
         val purNum =
-            el.findElementWithoutException(By.xpath(".//div[@class = 'mt-1']/b"))?.text?.trim { it <= ' ' }?.replace("№", "") ?: ""
+            el.findElementWithoutException(By.xpath(".//div[@class = 'mt-1']/b"))?.text?.trim { it <= ' ' }
+                ?.replace("№", "") ?: ""
         if (purNum == "") {
             logger("cannot purNum in tender")
             return
@@ -166,7 +167,11 @@ class ParserKomos:
             throw Exception("cannot urlT in tender")
         }
         val purObj = el.findElementWithoutException(By.xpath("./td[4]/a"))?.text?.trim { it <= ' ' } ?: ""
-        val datePubTmp = el.findElementWithoutException(By.xpath(".//span[contains(.,'Дата начала сбора предложений')]"))?.text?.replace("Дата начала сбора предложений:", "")?.trim { it <= ' ' } ?: ""
+        val datePubTmp =
+            el.findElementWithoutException(By.xpath(".//span[contains(.,'Дата начала сбора предложений')]"))?.text?.replace(
+                "Дата начала сбора предложений:",
+                ""
+            )?.trim { it <= ' ' } ?: ""
         val datePub = datePubTmp.getDateFromString(formatterGpn)
         val dateEnd = datePub.dateAddHours(48)
         val contactP = ""

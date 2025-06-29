@@ -472,10 +472,10 @@ class TenderZakazRfUdmurt(
                                 ?.trim { it <= ' ' } ?: ""
                         delivPlace =
                             "Регион: " +
-                            tn.delivPlace +
-                            " " +
-                            "Место поставки товаров, выполнения работ, оказания услуг: " +
-                            delivPlace1
+                                    tn.delivPlace +
+                                    " " +
+                                    "Место поставки товаров, выполнения работ, оказания услуг: " +
+                                    delivPlace1
                     }
                     val delivTerm =
                         html
