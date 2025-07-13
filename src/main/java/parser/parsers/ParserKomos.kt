@@ -7,7 +7,6 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
-import parser.extensions.dateAddHours
 import parser.extensions.findElementWithoutException
 import parser.extensions.getDateFromString
 import parser.logger.logger
@@ -79,8 +78,8 @@ class ParserKomos :
             getListTenders(driver, wait)
             (1..CountPage).forEach { _ ->
                 try {
-                    val res = parserPageN(driver, wait)
-                    if (!res) return@forEach
+                    //val res = parserPageN(driver, wait)
+                    //if (!res) return@forEach
                 } catch (e: Exception) {
                     logger("Error in parserPageN function", e.stackTrace, e)
                 }
@@ -158,22 +157,27 @@ class ParserKomos :
             logger("cannot purNum in tender")
             return
         }
-        val urlT =
-            el.findElementWithoutException(By.xpath(".//div[@class = 'mt-1']/a"))?.getAttribute("href")?.trim {
+        var urlT =
+            el.getAttribute("onclick")?.replace("window.open('", "")?.replace("window.open('", "')")?.trim {
                 it <= ' '
             } ?: ""
         if (urlT == "") {
             logger("cannot urlT in tender", purNum)
             throw Exception("cannot urlT in tender")
         }
-        val purObj = el.findElementWithoutException(By.xpath("./td[4]/a"))?.text?.trim { it <= ' ' } ?: ""
+        urlT = "https://komos.suppman.ru${urlT}"
+        val purObj = el.findElementWithoutException(By.xpath(".//a"))?.text?.trim { it <= ' ' } ?: ""
         val datePubTmp =
             el.findElementWithoutException(By.xpath(".//span[contains(.,'Дата начала сбора предложений')]"))?.text?.replace(
                 "Дата начала сбора предложений:",
                 ""
             )?.trim { it <= ' ' } ?: ""
         val datePub = datePubTmp.getDateFromString(formatterGpn)
-        val dateEnd = datePub.dateAddHours(48)
+        val dateEndT = el.findElementWithoutException(By.xpath(".//span[contains(.,'Идут торги до')]"))?.text?.replace(
+            "Идут торги до",
+            ""
+        )?.trim { it <= ' ' } ?: ""
+        val dateEnd = dateEndT.getDateFromString(formatterGpn)
         val contactP = ""
         val tn = TenderKomos(urlT, contactP, purNum, purObj, "", datePub, dateEnd)
         tn.parsing()

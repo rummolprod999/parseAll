@@ -242,7 +242,7 @@ class TenderKomos(
                         if (addChar != "") {
                             name = "$name ($addChar)"
                         }
-                        val okei = po.select("div > meta[itemprop = 'priceCurrency']")?.text()?.trim() ?: ""
+                        val okei = ppp.selectFirst("meta[itemprop = 'priceCurrency']")?.attr("content")?.trim() ?: ""
                         val quantity_value = ""
                         val price = ppp.selectFirst("meta[itemprop='price']")?.attr("content")?.trim() ?: ""
                         if (name != "") {
