@@ -168,7 +168,7 @@ class ParserAgEat :
         try {
             val js = driver as JavascriptExecutor
             js.executeScript(
-                "document.querySelector('button.p-ripple.p-element.p-paginator-next.p-paginator-element.p-link').click();",
+                "document.querySelector('button.p-ripple.p-paginator-next').click();",
             )
             getListTenders()
         } catch (e: Exception) {
