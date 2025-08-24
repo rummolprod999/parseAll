@@ -118,12 +118,13 @@ class ParserAgEat :
                     logger("Error in getNextPage function", e.stackTrace, e)
                 }
             }
-        }
-        (2..CountPage).forEach {
-            try {
-                getNextPage(it, driver)
-            } catch (e: Exception) {
-                logger("Error in getNextPage function", e.stackTrace, e)
+        } else {
+            (2..CountPage).forEach {
+                try {
+                    getNextPage(it, driver)
+                } catch (e: Exception) {
+                    logger("Error in getNextPage function", e.stackTrace, e)
+                }
             }
         }
         return false
