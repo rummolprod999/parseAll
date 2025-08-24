@@ -4,5 +4,7 @@
   "userdb": "root",
   "passdb": "1234",
   "server": "localhost",
-  "port": "3306"
+  "port": "3306",
+  "bidzaar_start": 0,
+  "bidzaar_end": 0
 }

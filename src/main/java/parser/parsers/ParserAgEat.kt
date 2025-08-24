@@ -9,6 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
+import parser.builderApp.BuilderApp
 import parser.extensions.clickerExp
 import parser.extensions.findElementWithoutException
 import parser.logger.logger
@@ -104,6 +105,20 @@ class ParserAgEat :
             return true
         }
         getListTenders()
+        if (BuilderApp.BidzaarStart > 0 && BuilderApp.BidzaarEnd > 0) {
+            var start = 0
+            while (start < BuilderApp.BidzaarStart) {
+                getNextPage(0, driver, true)
+                start++
+            }
+            (1..BuilderApp.BidzaarEnd - BuilderApp.BidzaarStart).forEach {
+                try {
+                    getNextPage(it, driver)
+                } catch (e: Exception) {
+                    logger("Error in getNextPage function", e.stackTrace, e)
+                }
+            }
+        }
         (2..CountPage).forEach {
             try {
                 getNextPage(it, driver)
@@ -157,6 +172,7 @@ class ParserAgEat :
     private fun getNextPage(
         num: Int,
         driver: ChromeDriver,
+        skip: Boolean = false,
     ) {
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
@@ -170,6 +186,10 @@ class ParserAgEat :
             js.executeScript(
                 "document.querySelector('button.p-ripple.p-paginator-next').click();",
             )
+            if (skip) {
+                Thread.sleep(2000)
+                return
+            }
             getListTenders()
         } catch (e: Exception) {
             logger("Bad clicker", e.stackTrace, e)

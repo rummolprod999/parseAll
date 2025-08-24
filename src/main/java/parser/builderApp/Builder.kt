@@ -21,6 +21,8 @@ object BuilderApp {
     lateinit var LogPath: String
     lateinit var LogFile: String
     lateinit var UrlConnect: String
+    var BidzaarStart: Int = 0
+    var BidzaarEnd: Int = 0
 }
 
 const val arguments =
@@ -36,6 +38,8 @@ class Builder(
     lateinit var PassDb: String
     lateinit var Server: String
     var Port: Int = 3306
+    var BidzaarStart: Int = 0
+    var BidzaarEnd: Int = 0
     val executePath: String =
         File(
             Class
@@ -174,6 +178,8 @@ class Builder(
         PassDb = doc.passdb ?: throw IllegalArgumentException("bad passdb")
         Server = doc.server ?: throw IllegalArgumentException("bad server")
         Port = doc.port ?: 3306
+        BidzaarStart = doc.BidzaarStart ?: 0
+        BidzaarEnd = doc.BidzaarEnd ?: 0
         TempPath =
             "$executePath${File.separator}tempdir_tenders_${arg.name.lowercase(Locale.getDefault())}"
         LogPath =
@@ -207,6 +213,8 @@ class Builder(
         BuilderApp.LogPath = LogPath
         BuilderApp.TempPath = TempPath
         BuilderApp.LogFile = LogFile
+        BuilderApp.BidzaarStart = BidzaarStart
+        BuilderApp.BidzaarEnd = BidzaarEnd
         BuilderApp.UrlConnect =
             "jdbc:mysql://$Server:$Port/$Database?jdbcCompliantTruncation=false&useUnicode=true&characterEncoding=utf-8&useLegacyDatetimeCode=false&serverTimezone=Europe/Moscow&connectTimeout=30000&socketTimeout=30000"
     }
@@ -219,4 +227,6 @@ class Settings {
     var passdb: String? = null
     var server: String? = null
     var port: Int? = null
+    var BidzaarStart: Int? = null
+    var BidzaarEnd: Int? = null
 }
