@@ -1,6 +1,7 @@
 package parser.builderApp
 
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import com.google.gson.stream.JsonReader
 import parser.Arguments
 import java.io.File
@@ -227,6 +228,10 @@ class Settings {
     var passdb: String? = null
     var server: String? = null
     var port: Int? = null
+
+    @SerializedName("bidzaar_start")
     var BidzaarStart: Int? = null
+
+    @SerializedName("bidzaar_end")
     var BidzaarEnd: Int? = null
 }
