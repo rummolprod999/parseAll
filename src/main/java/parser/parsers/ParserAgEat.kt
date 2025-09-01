@@ -1,10 +1,7 @@
 package parser.parsers
 
 import com.frogking.chromedriver.ChromeDriverBuilder
-import org.openqa.selenium.By
-import org.openqa.selenium.Dimension
-import org.openqa.selenium.JavascriptExecutor
-import org.openqa.selenium.WebElement
+import org.openqa.selenium.*
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -49,6 +46,13 @@ class ParserAgEat :
         parse {
             try {
                 parserAgEat()
+            } catch (e: WebDriverException) {
+                if (e.message?.contains("The driver server has unexpectedly died") ?: false) {
+                    logger("The driver server has unexpectedly died")
+                } else {
+                    logger("Error in parserAgEat function", e.stackTrace, e)
+                }
+
             } catch (e: Exception) {
                 logger("Error in parserSelen function", e.stackTrace, e)
             }
