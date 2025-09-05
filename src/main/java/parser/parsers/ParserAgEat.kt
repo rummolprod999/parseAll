@@ -46,19 +46,6 @@ class ParserAgEat :
         parse {
             try {
                 parserAgEat()
-            } catch (e: WebDriverException) {
-                if (e.message?.contains("The driver server has unexpectedly died") ?: false) {
-                    logger("The driver server has unexpectedly died")
-                    try {
-                        driver.quit()
-                    } catch (e: Exception) {
-                        //not need
-                    }
-                    createDriver()
-                } else {
-                    logger("Error in parserAgEat function", e.stackTrace, e)
-                }
-
             } catch (e: Exception) {
                 logger("Error in parserSelen function", e.stackTrace, e)
             }
@@ -223,6 +210,19 @@ class ParserAgEat :
         tenders.forEach {
             try {
                 parserTender(it)
+            } catch (e: WebDriverException) {
+                if (e.message?.contains("The driver server has unexpectedly died") ?: false) {
+                    logger("The driver server has unexpectedly died")
+                    try {
+                        driver.quit()
+                    } catch (e: Exception) {
+                        //not need
+                    }
+                    createDriver()
+                } else {
+                    logger("Error in parserAgEat function", e.stackTrace, e)
+                }
+
             } catch (e: Exception) {
                 logger("error in parserTender", e.stackTrace, e)
             }
