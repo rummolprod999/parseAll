@@ -214,7 +214,7 @@ class ParserAgEat :
         Thread.sleep(5000)
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[@class = 'registry-sorting' and contains(., 'Сортировать:')]"),
+                By.xpath("//app-registry-sorting[contains(., 'Сортировать:')]"),
             ),
         )
         driver.switchTo().defaultContent()
