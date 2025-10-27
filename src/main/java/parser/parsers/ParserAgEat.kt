@@ -37,7 +37,7 @@ class ParserAgEat :
     }
 
     companion object WebCl {
-        const val BaseUrl = "https://agregatoreat.ru/purchases/all"
+        const val BaseUrl = "https://agregatoreat.ru/purchases-registry/all"
         val timeoutB = java.time.Duration.ofSeconds(30L)
         const val CountPage = 170
     }
